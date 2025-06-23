@@ -1,15 +1,16 @@
-# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
-
 # dependencies
 node_modules/
 
 # Expo
 .expo/
+.expo-shared/
 dist/
 web-build/
 expo-env.d.ts
 
 # Native
+android/
+ios/
 .kotlin/
 *.orig.*
 *.jks
@@ -35,3 +36,7 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+
+# editor
+.vscode/
+.idea/
