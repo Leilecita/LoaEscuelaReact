@@ -1,9 +1,8 @@
-// AppTabs.tsx
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { NavigationContainer } from '@react-navigation/native'
 import { StudentListScreen } from '../../containers/students/screens/StudentListScreen'
-import { StudentListWithCheck } from '../../containers/students/screens/StudentListWithCheck'
+import { StudentAssistListScreen } from '../../containers/students/screens/StudentAssistListScreen'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Category, Subcategoria } from 'types'
 
@@ -20,7 +19,6 @@ const tabs = [
 
 export const AppTabs = () => {
   return (
-    // <Tab.Navigator screenOptions={{ headerShown: false }}>
     <Tab.Navigator 
     screenOptions={({ route }) => ({
       headerShown: false,
@@ -39,7 +37,7 @@ export const AppTabs = () => {
         key={title}
         name={title}
         children={() => (
-          <StudentListWithCheck category={category} subcategoria={subcategoria} />
+          <StudentAssistListScreen category={category} subcategoria={subcategoria} />
         )}
       />
     ))}

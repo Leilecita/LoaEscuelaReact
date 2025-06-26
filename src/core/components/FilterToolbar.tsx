@@ -1,57 +1,75 @@
-import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Keyboard } from 'react-native';
-import { Chip, TextInput } from 'react-native-paper';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { CustomDatePicker} from './DatePickerCustom';
+import React, { useState, useEffect } from 'react'
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native'
+import { Chip, TextInput } from 'react-native-paper'
+import DateTimePicker from '@react-native-community/datetimepicker'
+import { CustomDatePicker } from './DatePickerCustom'
 
-type Props = {
-  date: Date;
-  onDateChange: (date: Date) => void;
-  showOnlyPresent: boolean;
-  onTogglePresent: () => void;
-  sortOrder: 'asc' | 'desc';
-  onToggleSortOrder: () => void;
-  onRefresh: () => void;
-  searchText: string;
-  onSearchTextChange: (text: string) => void;
-  countPresentes: number;
-};
+type FilterBarProps = {
+  date?: Date
+  onDateChange?: (date: Date) => void
+  showOnlyPresent?: boolean
+  onTogglePresent?: () => void
+  sortOrder?: 'asc' | 'desc'
+  onToggleSortOrder?: () => void
+  onRefresh?: () => void
+  searchText: string
+  onSearchTextChange: (text: string) => void
+  countPresentes?: number
+  enableDatePicker?: boolean
+  enablePresentFilter?: boolean
+  enableSortOrder?: boolean
+  enableRefresh?: boolean
+}
 
-export const FilterBar: React.FC<Props> = ({
-  date,
-  onDateChange,
-  showOnlyPresent,
-  onTogglePresent,
-  sortOrder,
-  onToggleSortOrder,
-  onRefresh,
+export const FilterBar: React.FC<FilterBarProps> = ({
+  date = new Date(),
+  onDateChange = () => {},
+  showOnlyPresent = false,
+  onTogglePresent = () => {},
+  sortOrder = 'asc',
+  onToggleSortOrder = () => {},
+  onRefresh = () => {},
   searchText,
   onSearchTextChange,
-  countPresentes,
+  countPresentes = 0,
+  enableDatePicker = false,
+  enablePresentFilter = false,
+  enableSortOrder = false,
+  enableRefresh = false,
 }) => {
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false)
 
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardVisible(true);
-    });
+      setKeyboardVisible(true)
+    })
     const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardVisible(false);
-    });
+      setKeyboardVisible(false)
+    })
 
     return () => {
-      showSubscription.remove();
-      hideSubscription.remove();
-    };
-  }, []);
+      showSubscription.remove()
+      hideSubscription.remove()
+    }
+  }, [])
 
   const handleClear = () => {
-    onSearchTextChange('');
-    Keyboard.dismiss();
-  };
+    onSearchTextChange('')
+    Keyboard.dismiss()
+  }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={styles.container}
+    >
       <TextInput
         value={searchText}
         onChangeText={onSearchTextChange}
@@ -67,11 +85,12 @@ export const FilterBar: React.FC<Props> = ({
         placeholderTextColor="#888"
         underlineColor="transparent"
         activeUnderlineColor="transparent"
+        blurOnSubmit={false}
         theme={{
           colors: {
-            background: '#ede7f6', // violeta claro
+            background: '#ede7f6',
             text: '#333',
-            primary: '#6200ee', // color del cursor
+            primary: '#6200ee',
             placeholder: '#888',
           },
         }}
@@ -83,40 +102,48 @@ export const FilterBar: React.FC<Props> = ({
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.chipScrollContainer}
         >
-         <CustomDatePicker date={date} onDateChange={onDateChange} />
+          {enableDatePicker && (
+            <CustomDatePicker date={date} onDateChange={onDateChange} />
+          )}
 
-          <Chip
-            icon={showOnlyPresent ? "account-check" : "account-check-outline"}
-            mode="flat"
-            selected={showOnlyPresent}
-            onPress={onTogglePresent}
-            style={styles.chip}
-            textStyle={{ color: '#333' }}
-          >
-            Presentes {countPresentes}
-          </Chip>
+          {enablePresentFilter && (
+            <Chip
+              icon={showOnlyPresent ? 'account-check' : 'account-check-outline'}
+              mode="flat"
+              selected={showOnlyPresent}
+              onPress={onTogglePresent}
+              style={styles.chip}
+              textStyle={{ color: '#333' }}
+            >
+              Presentes {countPresentes}
+            </Chip>
+          )}
 
-          <Chip icon="refresh" onPress={onRefresh} style={styles.chip}>
-            Refresh
-          </Chip>
+          {enableRefresh && (
+            <Chip icon="refresh" onPress={onRefresh} style={styles.chip}>
+              Refresh
+            </Chip>
+          )}
 
-          <Chip
-            icon={
-              sortOrder === 'asc'
-                ? 'sort-alphabetical-ascending'
-                : 'sort-alphabetical-descending'
-            }
-            selected
-            onPress={onToggleSortOrder}
-            style={styles.chip}
-          >
-            {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
-          </Chip>
+          {enableSortOrder && (
+            <Chip
+              icon={
+                sortOrder === 'asc'
+                  ? 'sort-alphabetical-ascending'
+                  : 'sort-alphabetical-descending'
+              }
+              selected
+              onPress={onToggleSortOrder}
+              style={styles.chip}
+            >
+              {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
+            </Chip>
+          )}
         </ScrollView>
       </View>
-    </View>
-  );
-};
+    </KeyboardAvoidingView>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -126,7 +153,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: 8,
   },
-  
   searchInput: {
     backgroundColor: '#ede7f6',
     borderRadius: 8,
@@ -142,10 +168,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   chipScrollContainer: {
-   paddingVertical: 8,
-   paddingRight: 8,
-   marginLeft: 0,
- },
+    paddingVertical: 8,
+    paddingRight: 8,
+    marginLeft: 0,
+  },
   chip: {
     marginRight: 8,
     marginLeft: 0,
@@ -154,9 +180,4 @@ const styles = StyleSheet.create({
     backgroundColor: '#ede7f6',
     borderRadius: 8,
   },
-  datePickerWrapper: {
-    marginRight: 8,
-    marginBottom: 8,
-  },
-  
-});
+})

@@ -8,7 +8,7 @@ const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem('userToken');
-    console.log('TOKEN para request:', token);  // <-- Acá el log para verificar token
+    console.log('TOKEN para request:', token);  
     if (token) {
       config.headers['Session'] = token; // <-- Esto agrega la cabecera 'Session'
     }

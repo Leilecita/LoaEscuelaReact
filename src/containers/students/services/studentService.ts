@@ -10,10 +10,10 @@ export type ReportSeasonPresent = {
   tot_paid_amount: number;
 };
 
-export type Student = {
+export type ReportStudent = {
   student_id: number;
   nombre: string;
-  apellido: string;
+  apellido: string; 
   dni: string;
   presente: string;
   planilla_presente_id: number ;
@@ -22,13 +22,31 @@ export type Student = {
   tel_papa: string;
   nombre_mama: string;
   nombre_papa: string;
-  taken_classes: ReportSeasonPresent[]; 
+  taken_classes: ReportSeasonPresent[];
+  created: string;
+  updated_date: string;
+
 };
+
+export type Student = {
+  id: number;
+  nombre: string;
+  apellido: string;
+  dni: string;
+
+  tel_mama: string;
+  tel_papa: string;
+  nombre_mama: string;
+  nombre_papa: string;
+  
+  created: string;
+  updated_date: string;
+}
 
 export async function fetchStudentsByAssists(
   page: number,
-  category: string, // 'Escuela'
-  subcategoria: 'adultos', // 'adultos', 'mini', etc.
+  category: string, 
+  subcategoria: string, 
   date: string,
   onlyPresents = 'false',
   orderby = 'alf',
@@ -40,8 +58,8 @@ export async function fetchStudentsByAssists(
     params: {
       method: 'getStudentsByAssists',
       page,
-      categoria: category,         // CAMBIO: ahora se manda como "categoria"
-      subcategoria,   // CAMBIO: ahora se manda como "subcategoria"
+      categoria: category,        
+      subcategoria,   
       date,
       onlyPresents,
       orderby,
@@ -50,7 +68,6 @@ export async function fetchStudentsByAssists(
     
   });
   
-
   if (response.data.result === 'success') {
     return response.data.data;
   } else if (response.data.result === 'error' && response.data.message === 'Session invalida') {
@@ -60,13 +77,35 @@ export async function fetchStudentsByAssists(
   }
 }
 
+export async function fetchAllStudents(
+  page: number,
+  category: string,
+  query: string,
+  order: 'created' | 'nombre' 
+): Promise<Student[]> {
+  const response = await api.get('/students.php', {
+    params: {
+      method: 'getStudents',
+      page,
+      categoria: category,
+      order,
+      ...(query ? { query } : {}),
+    },
+  })
+  console.log('Parámetros enviados:', { page: page, category, query, order });
+
+  if (response.data.result === 'success') {
+    return response.data.data 
+  } else {
+    throw new Error(response.data.message || 'Error al obtener estudiantes')
+  }
+}
 export async function guardarPresente(data: {
   planilla_id: number
   alumno_id: number
   fecha_presente: string
 }) {
   const response = await api.post('/planillas_presentes.php', data);
-  //console.log('Respuesta del backend al guardar presente:', response.data);
 
   if (response.data.result !== 'success') {
     throw new Error(response.data.message || 'Error al guardar presente');
@@ -94,8 +133,6 @@ export async function deletePresente(id: number) {
     throw error
   }
 }
-
-// studentService.ts
 
 export function usePresentCount(
   category: string,

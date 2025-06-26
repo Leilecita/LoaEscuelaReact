@@ -7,9 +7,9 @@ import { HomeScreen, LoginScreen, ProfileScreen, RegisterScreen, StudentListScre
 import { AuthContext } from '../../contexts/AuthContext';
 import type { AuthStackParamList, RootStackParamList } from '../../types';
 import { StudentTabsScreen } from '@containers';
-import { MenuHeader } from '../../../src/core/components/MenuHeader' // <-- importar
+import { MenuHeader } from '../../../src/core/components/MenuHeader' 
 
-import { AppTabs } from './AppTabs'  // ajusta la ruta si es necesario
+import { AppTabs } from './AppTabs'  
 
 const hideHeader = { headerShown: false };
 

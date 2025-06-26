@@ -12,7 +12,6 @@ import { PaperProvider } from 'react-native-paper';
 
 export default function App() {
 
-  // Use `useFonts` only if you can't use the config plugin.
   const [loaded, error] = useFonts({
     'PlaypenSans-Bold': require('./assets/fonts/PlaypenSans-Bold.ttf'),
     'PlaypenSans-Light': require('./assets/fonts/PlaypenSans-Light.ttf'),

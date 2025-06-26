@@ -18,8 +18,6 @@ export const LoginScreen = () => {
     const name = username.trim().toLowerCase();
     const passwordPlain = password;
 
-    console.log('Intentando login con:', { name, passwordPlain });
-
     try {
       const response = await axios.get('http://192.168.0.234/loa_school/login.php', {
         params: {

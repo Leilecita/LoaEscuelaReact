@@ -1,2 +1,2 @@
-export * from './StudentTabsScreen';
 export * from './StudentListScreen';
+export * from './StudentAssistListScreen';
