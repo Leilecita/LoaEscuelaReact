@@ -1,14 +1,14 @@
 import React from 'react'
 import { View, Text, Linking, StyleSheet } from 'react-native'
 import { Checkbox, IconButton } from 'react-native-paper'
-import type { Student } from '../../containers/students/services/studentService'
+import type { ReportStudent } from '../../containers/students/services/studentService'
 
 type Props = {
-  student: Student
+  student: ReportStudent
   isExpanded: boolean
   onToggleExpand: () => void
-  togglePresente: (student: Student) => void
-  eliminarPresente: (student: Student) => void
+  togglePresente: (student: ReportStudent) => void
+  eliminarPresente: (student: ReportStudent) => void
 }
 
 export const ItemStudentAssistView: React.FC<Props> = ({

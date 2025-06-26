@@ -8,7 +8,7 @@ export function useStudents(
   subcategoria: Subcategoria,
   date: string,
   showOnlyPresent: boolean,
-  sortOrder: 'asc' | 'desc'
+  sortOrder: 'alf' | ''
 ) {
   const [query, setQuery] = useState('')
   const [planillaId, setPlanillaId] = useState<number | null>(null)
@@ -26,6 +26,7 @@ export function useStudents(
       sortOrder,
       query
     )
+    console.log('📥 Respuesta del backend:', JSON.stringify(res.list_rep,null,2))
     setLastResponse({ planilla_id: res.planilla_id })
     return res.list_rep
   }, [category, subcategoria, date, showOnlyPresent, sortOrder, query])

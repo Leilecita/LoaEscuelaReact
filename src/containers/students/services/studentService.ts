@@ -51,13 +51,14 @@ export async function fetchStudentsByAssists(
   onlyPresents = 'false',
   orderby = 'alf',
   query = ''
-): Promise<{ planilla_id: number; list_rep: Student[] }> {
+): Promise<{ planilla_id: number; list_rep: ReportStudent[] }> {
 
   
   const response = await api.get('/students.php', {
     params: {
       method: 'getStudentsByAssists',
       page,
+      category:'todos',
       categoria: category,        
       subcategoria,   
       date,
@@ -100,7 +101,7 @@ export async function fetchAllStudents(
     throw new Error(response.data.message || 'Error al obtener estudiantes')
   }
 }
-export async function guardarPresente(data: {
+export async function savePresent(data: {
   planilla_id: number
   alumno_id: number
   fecha_presente: string
@@ -113,14 +114,13 @@ export async function guardarPresente(data: {
   return response.data.data;
 }
 
-export async function deletePresente(id: number) {
+export async function removePresent(id: number) {
   try {
     const response = await api.delete(`/planillas_presentes.php?id=${id}`)
 
     if (response.status !== 200 && response.status !== 204) {
       throw new Error('Error en respuesta del servidor')
     }
-
 
     // Si es 204 no hay contenido, devolvemos éxito
     if (response.status === 204) {
@@ -129,7 +129,7 @@ export async function deletePresente(id: number) {
 
     return response.data
   } catch (error) {
-    console.error('Error en deletePresente:', error)
+    console.error('Error en removePresent:', error)
     throw error
   }
 }

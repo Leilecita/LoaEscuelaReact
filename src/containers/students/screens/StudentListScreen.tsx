@@ -6,11 +6,19 @@ import {
   ActivityIndicator,
   StyleSheet,
 } from 'react-native'
-import { Category, Subcategoria } from 'types'
+import { Category, RootStackParamList, Subcategoria } from 'types'
 import { useAllStudents } from '../../../core/hooks/useAllStudents'
 import type { Student } from '../services/studentService'
 import { ItemStudentView } from '../../../core/components/ItemStudentView'
-import { FilterBar } from 'core/components/FilterToolbar' // ajustá ruta si es necesario
+import { FilterBar } from 'core/components/FilterToolbar' 
+import { FAB } from 'react-native-paper'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+
+type StudentListScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'ListaDeAlumnos'
+>
 
 type Props = {
   category: Category | 'Todo'
@@ -25,6 +33,8 @@ type Section = {
 export const StudentListScreen: React.FC<Props> = ({ category, subcategoria }) => {
   const [searchInput, setSearchInput] = useState('')
   const [debouncedSearchText, setDebouncedSearchText] = useState('')
+
+  const navigation = useNavigation<StudentListScreenNavigationProp>()
 
   // Aplicar debounce para no filtrar ni hacer fetch en cada letra
   useEffect(() => {
@@ -66,7 +76,7 @@ export const StudentListScreen: React.FC<Props> = ({ category, subcategoria }) =
     return groupStudentsByDate(filteredStudents)
   }, [filteredStudents])
 
-  if (loading) {
+ /* if (loading) {
     return <ActivityIndicator style={styles.center} size="large" />
   }
 
@@ -79,45 +89,67 @@ export const StudentListScreen: React.FC<Props> = ({ category, subcategoria }) =
         </Text>
       </View>
     )
-  }
+  } */
 
-  return (
-    <View style={{ flex: 1 }}>
-      <FilterBar
-        searchText={searchInput}            
-        onSearchTextChange={setSearchInput} 
-        onRefresh={reload}
-        countPresentes={students.length}
-        enableRefresh={false}
-        enableDatePicker={false}
-        enablePresentFilter={false}
-        enableSortOrder={false}
-      />
-
-      <SectionList
-        sections={sections}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <ItemStudentView
-            student={item}
-            isExpanded={expandedStudentId === item.id}
-            onToggleExpand={() => toggleExpand(item.id)}
-          />
-        )}
-        
-        renderSectionHeader={({ section: { title } }) => (
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionHeaderText}>{title}</Text>
+    return (
+      <View style={{ flex: 1 }}>
+        <FilterBar
+          searchText={searchInput}
+          onSearchTextChange={setSearchInput}
+          onRefresh={reload}
+          countPresentes={students.length}
+          enableRefresh={false}
+          enableDatePicker={false}
+          enablePresentFilter={false}
+          enableSortOrder={false}
+        />
+    
+        {loading ? (
+          <ActivityIndicator style={styles.center} size="large" />
+        ) : error ? (
+          <View style={styles.center}>
+            <Text style={{ marginBottom: 10 }}>{error}</Text>
+            <Text onPress={reload} style={{ color: '#007AFF' }}>
+              Reintentar
+            </Text>
           </View>
+        ) : (
+          <>
+            <SectionList
+              sections={sections}
+              keyExtractor={(item) => item.id.toString()}
+              renderItem={({ item }) => (
+                <ItemStudentView
+                  student={item}
+                  isExpanded={expandedStudentId === item.id}
+                  onToggleExpand={() => toggleExpand(item.id)}
+                />
+              )}
+              renderSectionHeader={({ section: { title } }) => (
+                <View style={styles.sectionHeader}>
+                  <Text style={styles.sectionHeaderText}>{title}</Text>
+                </View>
+              )}
+              stickySectionHeadersEnabled={true}
+              onEndReached={loadMore}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
+              contentContainerStyle={{ paddingBottom: 20 }}
+            />
+    
+            <FAB
+              icon="plus"
+              style={{
+                position: 'absolute',
+                bottom: 30,
+                right: 30,
+              }}
+              onPress={() => navigation.navigate('CreateStudent')}
+            />
+          </>
         )}
-        stickySectionHeadersEnabled={true}
-        onEndReached={loadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
-        contentContainerStyle={{ paddingBottom: 20 }}
-      />
-    </View>
-  )
+      </View>
+    )
 }
 
 function groupStudentsByDate(students: Student[]): Section[] {
@@ -149,5 +181,11 @@ const styles = StyleSheet.create({
   sectionHeaderText: {
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  fab: {
+    position: 'absolute',
+    right: 16,
+    bottom: 16,
+    backgroundColor: '#6200ee',
   },
 })

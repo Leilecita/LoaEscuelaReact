@@ -8,7 +8,7 @@ export function usePaginatedFetch<T>(
   const [loading, setLoading] = useState(false)
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [page, setPage] = useState(1)
+  const [page, setPage] = useState(0)
   const [hasMore, setHasMore] = useState(true)
 
   const load = useCallback(
@@ -41,18 +41,18 @@ export function usePaginatedFetch<T>(
   )
 
   useEffect(() => {
-    setPage(1)
-    load(1, true)
+    setPage(0)
+    load(0, true)
   }, [fetchFn, ...deps]) 
 
   useEffect(() => {
-    if (page === 1) return
+    if (page === 0) return
     load(page)
   }, [page, load])
 
   const reload = () => {
-    setPage(1)
-    load(1, true)
+    setPage(0)
+    load(0, true)
   }
 
   const loadMore = () => {

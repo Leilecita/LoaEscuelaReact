@@ -16,7 +16,7 @@ type FilterBarProps = {
   onDateChange?: (date: Date) => void
   showOnlyPresent?: boolean
   onTogglePresent?: () => void
-  sortOrder?: 'asc' | 'desc'
+  sortOrder?: 'alf' | ''
   onToggleSortOrder?: () => void
   onRefresh?: () => void
   searchText: string
@@ -33,7 +33,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onDateChange = () => {},
   showOnlyPresent = false,
   onTogglePresent = () => {},
-  sortOrder = 'asc',
+  sortOrder = 'alf',
   onToggleSortOrder = () => {},
   onRefresh = () => {},
   searchText,
@@ -128,7 +128,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           {enableSortOrder && (
             <Chip
               icon={
-                sortOrder === 'asc'
+                sortOrder === 'alf'
                   ? 'sort-alphabetical-ascending'
                   : 'sort-alphabetical-descending'
               }
@@ -136,7 +136,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               onPress={onToggleSortOrder}
               style={styles.chip}
             >
-              {sortOrder === 'asc' ? 'A-Z' : 'Z-A'}
+              {sortOrder === 'alf' ? 'A-Z' : 'Z-A'}
             </Chip>
           )}
         </ScrollView>

@@ -4,9 +4,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { HomeScreen, LoginScreen, ProfileScreen, RegisterScreen, StudentListScreen } from '@containers';
+import  CreateStudentScreen  from '../../../src/containers/students/screens/CreateStudentScreen'
 import { AuthContext } from '../../contexts/AuthContext';
 import type { AuthStackParamList, RootStackParamList } from '../../types';
-import { StudentTabsScreen } from '@containers';
 import { MenuHeader } from '../../../src/core/components/MenuHeader' 
 
 import { AppTabs } from './AppTabs'  
@@ -76,6 +76,10 @@ export function NavigationApp() {
             component={StudentListScreen}
             options={{ title: 'Todos los alumnos' }}
           />
+          <RootStack.Screen
+            name="CreateStudent"
+            component={CreateStudentScreen}
+          />
         </RootStack.Navigator>
       ) : (
         <RootStack.Navigator screenOptions={{ headerShown: false }}>
@@ -88,26 +92,3 @@ export function NavigationApp() {
 
 
 
-/*export function NavigationApp() {
-  return <AppTabs />
-}*/
-
-
-/*export function NavigationApp() {
-  const { userToken } = React.useContext(AuthContext);
-
-  return (
-    <NavigationContainer>
-      {userToken ? (
-        <RootStack.Navigator screenOptions={{ headerShown: false }}>
-          <RootStack.Screen name="MainApp" component={MainApp} />
-          <RootStack.Screen name="Students" component={StudentTabsScreen} />
-        </RootStack.Navigator>
-      ) : (
-        <RootStack.Navigator screenOptions={{ headerShown: false }}>
-          <RootStack.Screen name="Authentication" component={AuthStack} />
-        </RootStack.Navigator>
-      )}
-    </NavigationContainer>
-  );
-}*/

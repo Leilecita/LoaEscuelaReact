@@ -10,7 +10,7 @@ import { Category, Subcategoria } from 'types'
 const Tab = createBottomTabNavigator()
 const ICON_COLOR = '#9161d4'
 const tabs = [
-  { title: 'Adultos', category: 'Escuela' as Category, subcategoria: 'adultos' as Subcategoria, iconName: 'account' },
+  { title: 'Adultos', category: 'escuela' as Category, subcategoria: 'adultos' as Subcategoria, iconName: 'account' },
   { title: 'Intermedios', category: 'Escuela' as Category, subcategoria: 'intermedios' as Subcategoria, iconName: 'human' },
   { title: 'Mini', category: 'Colonia' as Category, subcategoria: 'mini' as Subcategoria, iconName: 'baby-face-outline' },
   { title: 'Kids', category: 'Colonia' as Category, subcategoria: 'kids' as Subcategoria, iconName: 'teddy-bear' },

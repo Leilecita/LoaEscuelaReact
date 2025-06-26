@@ -3,6 +3,8 @@ export type RootStackParamList = {
     MainApp: undefined;
     Students: undefined;
     Asistencias: undefined; 
+    CreateStudent: undefined;
+    
     ListaDeAlumnos: { category: string; subcategoria: string }
 
   };

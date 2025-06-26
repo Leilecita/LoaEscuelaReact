@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, Keyboard } from 'react-native'
 import { useStudents } from '../../../core/hooks/useStudents'
 import type { ReportStudent } from '../services/studentService'
-import { guardarPresente, usePresentCount, deletePresente } from '../services/studentService'
+import { savePresent, usePresentCount, removePresent } from '../services/studentService'
 import { formatDateToFullDateTime, formatDateToYYYYMMDD } from 'helpers/dateHelper'
 import { FilterBar } from 'core/components/FilterToolbar'
 import { Category, Subcategoria } from 'types'
@@ -18,7 +18,7 @@ type Props = {
 export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategoria }) => {
   const [searchInput, setSearchInput] = useState('')
   const [showOnlyPresent, setShowOnlyPresent] = useState(false)
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [sortOrder, setSortOrder] = useState<'alf' | ''>('alf')
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [refreshSignal, setRefreshSignal] = useState(false)
   const [expandedStudentId, setExpandedStudentId] = useState<number | null>(null)
@@ -49,20 +49,15 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
     updateQuery,
   } = useStudents(category, subcategoria, only_date, showOnlyPresent, sortOrder)
 
-  // Guardamos la función debounce con useRef para que no se cree en cada render
-  const debouncedUpdateQuery = useRef(
-    debounce((query: string) => {
-      updateQuery(query)
-    }, 600)
-  ).current
 
-  // Cada vez que cambia searchInput, llamamos al debounce para updateQuery
-  useEffect(() => {
-    debouncedUpdateQuery(searchInput)
-    return () => {
-      debouncedUpdateQuery.cancel()
-    }
-  }, [searchInput, debouncedUpdateQuery])
+    useEffect(() => {
+      const handler = setTimeout(() => {
+        updateQuery(searchInput.toLowerCase())
+      }, 400)
+  
+      return () => clearTimeout(handler)
+    }, [searchInput])
+  
 
   const toggleExpand = (id: number) => {
     setExpandedStudentId((prev) => (prev === id ? null : id))
@@ -81,7 +76,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
     const nuevoEstado = student.presente !== 'si'
 
     try {
-      const responseData = await guardarPresente({
+      const responseData = await savePresent({
         alumno_id: student.student_id,
         planilla_id: planillaId,
         fecha_presente: today,
@@ -125,7 +120,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
                 return Alert.alert('Error', 'No hay presente registrado para eliminar.')
               }
 
-              const res = await deletePresente(student.planilla_presente_id)
+              const res = await removePresent(student.planilla_presente_id)
               if (res.result && res.result !== 'success') {
                 return Alert.alert('Error', 'No se pudo eliminar el presente.')
               }
@@ -157,32 +152,6 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
     )
   }
 
-  if (loading) {
-    return <ActivityIndicator style={styles.center} size="large" />
-  }
-
-  if (error) {
-    return (
-      <View style={styles.center}>
-        <Text style={{ marginBottom: 10 }}>{error}</Text>
-        <Button title="Reintentar" onPress={reload} />
-      </View>
-    )
-  }
-
-  if (!planillaId) {
-    return (
-      <View style={styles.center}>
-        <Text>Cargando datos de la planilla...</Text>
-        <ActivityIndicator size="small" />
-      </View>
-    )
-  }
-
-  const filteredStudents = students.filter((student) => {
-    const fullName = `${student.nombre} ${student.apellido}`.toLowerCase()
-    return fullName.includes(searchInput.toLowerCase())
-  })
 
   return (
     <View style={{ flex: 1 }}>
@@ -192,7 +161,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
         showOnlyPresent={showOnlyPresent}
         onTogglePresent={() => setShowOnlyPresent((prev) => !prev)}
         sortOrder={sortOrder}
-        onToggleSortOrder={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+        onToggleSortOrder={() => setSortOrder((prev) => (prev === 'alf' ? '' : 'alf'))}
         onRefresh={handleRefresh}
         searchText={searchInput}
         onSearchTextChange={setSearchInput}
@@ -203,8 +172,12 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
         enableRefresh={true}
       />
 
-      <FlatList
-        data={filteredStudents}
+
+      { loading ? <ActivityIndicator style={styles.center} size="large" /> : (error ?  <View style={styles.center}>
+        <Text style={{ marginBottom: 10 }}>{error}</Text>
+        <Button title="Reintentar" onPress={reload} />
+      </View> : <FlatList
+        data={students}
         keyExtractor={(item, index) => `${item.planilla_alumno_id}-${item.student_id}-${index}`}
         keyboardShouldPersistTaps="handled"
         onEndReached={loadMore}
@@ -220,7 +193,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
             eliminarPresente={eliminarPresente}
           />
         )}
-      />
+      />)}
     </View>
   )
 }
