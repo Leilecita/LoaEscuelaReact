@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { View, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -10,6 +11,7 @@ import type { AuthStackParamList, RootStackParamList } from '../../types';
 import { MenuHeader } from '../../../src/core/components/MenuHeader' 
 
 import { AppTabs } from './AppTabs'  
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const hideHeader = { headerShown: false };
 
@@ -48,11 +50,19 @@ function MainApp() {
   );
 }
 
+/*
+<ImageBackground
+        source={require('../../../assets/fondo.png')}  // ruta a la imagen
+        style={styles.background}
+      >
+*/
+
 export function NavigationApp() {
   const { userToken } = React.useContext(AuthContext);
 
   return (
     <NavigationContainer>
+      <View style={styles.background}>
       {userToken ? (
         <RootStack.Navigator>
           <RootStack.Screen
@@ -86,9 +96,16 @@ export function NavigationApp() {
           <RootStack.Screen name="Authentication" component={AuthStack} />
         </RootStack.Navigator>
       )}
+      </View>
     </NavigationContainer>
   );
 }
 
 
 
+const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    backgroundColor: Colors.backgroundApp, 
+  },
+});

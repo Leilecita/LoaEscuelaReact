@@ -1,6 +1,12 @@
 import React, { useState } from 'react'
-import { View, Text, TextInput, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
-import { Checkbox } from 'react-native-paper'
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native'
+import { TextInput, Checkbox } from 'react-native-paper'
+import { postStudent } from '../services/studentService'
+import { COLORS } from '@core'
+import DateTimePicker from '@react-native-community/datetimepicker'
+import { Platform, Pressable } from 'react-native' 
+import { Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native'
+
 
 export default function CreateStudentScreen() {
   const [form, setForm] = useState({
@@ -10,137 +16,306 @@ export default function CreateStudentScreen() {
     dni: '',
     telefono: '',
     esMenor: false,
-    nombrePapa: '',
-    telPapa: '',
     nombreMama: '',
-    telMama: ''
+    telMama: '',
+    edad: 0, 
   })
 
-  const handleChange = (key: string, value: string | boolean) => {
+  const handleChange = (key: string, value: string | boolean | number) => {
     setForm({ ...form, [key]: value })
   }
 
-  const violetMain = '#ede7f6' // fondo clarito de input (tu color)
-  const violetText = '#6c55b8' // texto violeta medio suave
-  const violetPlaceholder = '#bcb0e4' // placeholder más claro
-  const violetButton = '#7b61ff' // botón y checkbox (violeta más intenso)
+  const violetMain = '#ede7f6'
+  const violetText = '#6c55b8'
+  const violetPlaceholder = '#bcb0e4'
+  const violetButton = COLORS.button
 
+  const [showDatePicker, setShowDatePicker] = useState(false)
+  const calcularEdad = (fechaISO: string): number => {
+    const hoy = new Date()
+    const nacimiento = new Date(fechaISO)
+    let edad = hoy.getFullYear() - nacimiento.getFullYear()
+    const mes = hoy.getMonth() - nacimiento.getMonth()
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+      edad--
+    }
+    return edad
+  }
+
+  function parseISODateToLocalDate(isoDate: string) {
+    const [year, month, day] = isoDate.split('-').map(Number)
+    return new Date(year, month - 1, day, 12, 0, 0) // Hora fija a 12:00 evita desfases
+  }
+
+
+
+  const formatDate = (date: Date): string => {
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, '0') // meses de 0 a 11
+    const day = String(date.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  
+  /*const handleDateChange = (event: any, selectedDate?: Date) => {
+    if (Platform.OS === 'android') {
+      if (event.type === 'set' && selectedDate) {
+        const iso = formatDate(selectedDate)
+        const edad = calcularEdad(iso)
+        handleChange('fechaNacimiento', iso)
+       // handleChange('edad', edad)
+       // handleChange('esMenor', edad < 18)
+      }
+      setShowDatePicker(false) // Cierra en ambos casos
+    } else {
+      // En iOS: se actualiza en vivo
+      if (selectedDate) {
+        const iso = formatDate(selectedDate)
+        const edad = calcularEdad(iso)
+        handleChange('fechaNacimiento', iso)
+        //handleChange('edad', edad)
+        //handleChange('esMenor', edad < 18)
+      }
+    }
+  } */
+
+  const handleDateChange = (event: any, selectedDate?: Date) => {
+    if (!selectedDate) {
+      if (Platform.OS === 'android') {
+        setShowDatePicker(false)
+      }
+      return
+    }
+  
+    const iso = formatDate(selectedDate)
+    const edad = calcularEdad(iso)
+  
+    setForm(prevForm => ({
+      ...prevForm,
+      fechaNacimiento: iso,
+      edad: edad,
+      esMenor: edad < 18,
+    }))
+  
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false)
+    }
+  } 
+  
+
+  
   return (
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    <TouchableWithoutFeedback
+      onPress={() => {
+        Keyboard.dismiss()
+        setShowDatePicker(false) 
+        console.log('toco fuera');
+      }}
+    >
+    <View style={{ flex: 1 }}>
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Text style={[styles.title, { color: violetButton }]}>Registro de Estudiante</Text>
-
-      <Text style={[styles.label, { color: violetText }]}>Nombre</Text>
+      <Text style={[styles.subtitle, { color: violetButton }]}>Datos del alumno</Text>
       <TextInput
-        style={[styles.input, { backgroundColor: violetMain, color: violetText }]}
+        label="Nombre"
         value={form.nombre}
         onChangeText={(text) => handleChange('nombre', text)}
-        placeholder="Nombre"
-        placeholderTextColor={violetPlaceholder}
+        mode="outlined"
+        style={styles.input}
+        outlineColor={violetPlaceholder}
+        activeOutlineColor={violetButton}
+        left={<TextInput.Icon icon="account" color={violetButton} />}
       />
 
-      <Text style={[styles.label, { color: violetText }]}>Apellido</Text>
       <TextInput
-        style={[styles.input, { backgroundColor: violetMain, color: violetText }]}
+        label="Apellido"
         value={form.apellido}
         onChangeText={(text) => handleChange('apellido', text)}
-        placeholder="Apellido"
-        placeholderTextColor={violetPlaceholder}
+        mode="outlined"
+        style={styles.input}
+        outlineColor={violetPlaceholder}
+        activeOutlineColor={violetButton}
+        left={<TextInput.Icon icon="account-outline" color={violetButton} />}
       />
 
-      <Text style={[styles.label, { color: violetText }]}>Fecha de Nacimiento</Text>
-      <TextInput
-        style={[styles.input, { backgroundColor: violetMain, color: violetText }]}
-        value={form.fechaNacimiento}
-        onChangeText={(text) => handleChange('fechaNacimiento', text)}
-        placeholder="YYYY-MM-DD"
-        placeholderTextColor={violetPlaceholder}
-      />
+      <Pressable onPress={() => setShowDatePicker(true)}>
+        <TextInput
+          label="Fecha de Nacimiento"
+          value={form.fechaNacimiento}
+          mode="outlined"
+          style={styles.input}
+          editable={false}
+          pointerEvents="none"
+          outlineColor={violetPlaceholder}
+          activeOutlineColor={violetButton}
+          left={<TextInput.Icon icon="calendar" color={violetButton} />}
+          placeholder="YYYY-MM-DD"
+        />
+      </Pressable>
 
-      <Text style={[styles.label, { color: violetText }]}>DNI</Text>
+      {showDatePicker && (
+        <DateTimePicker
+        value={
+          form.fechaNacimiento
+            ? parseISODateToLocalDate(form.fechaNacimiento)
+            : new Date(2010, 0, 1, 12, 0, 0)
+        }
+        mode="date"
+        display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+        maximumDate={new Date()}
+        onChange={handleDateChange}
+      />
+      )}
+
       <TextInput
-        style={[styles.input, { backgroundColor: violetMain, color: violetText }]}
+        label="DNI"
         value={form.dni}
         onChangeText={(text) => handleChange('dni', text)}
-        placeholder="DNI"
+        mode="outlined"
         keyboardType="numeric"
-        placeholderTextColor={violetPlaceholder}
+        style={styles.input}
+        outlineColor={violetPlaceholder}
+        activeOutlineColor={violetButton}
+        left={<TextInput.Icon icon="card-account-details" color={violetButton} />}
       />
 
-      <Text style={[styles.label, { color: violetText }]}>Teléfono</Text>
       <TextInput
-        style={[styles.input, { backgroundColor: violetMain, color: violetText }]}
+        label="Teléfono"
         value={form.telefono}
         onChangeText={(text) => handleChange('telefono', text)}
-        placeholder="Teléfono"
+        mode="outlined"
         keyboardType="phone-pad"
-        placeholderTextColor={violetPlaceholder}
+        style={styles.input}
+        outlineColor={violetPlaceholder}
+        activeOutlineColor={violetButton}
+        left={<TextInput.Icon icon="phone" color={violetButton} />}
       />
 
+       
       <View style={styles.checkboxContainer}>
-        <Checkbox
-          status={form.esMenor ? 'checked' : 'unchecked'}
-          onPress={() => handleChange('esMenor', !form.esMenor)}
-          color={violetButton}
-          uncheckedColor="#d6cfff"
-        />
-        <Text style={[styles.checkboxLabel, { color: violetText }]}>Soy menor de edad</Text>
+        <View style={{
+          width: 36,
+          height: 36,
+          borderWidth: 1,
+          borderRadius: 4,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: '#fff',
+          borderColor: '#7b61ff',
+        }}>
+          <Checkbox
+            status={form.esMenor ? 'checked' : 'unchecked'}
+            onPress={() => handleChange('esMenor', !form.esMenor)}
+            color="#7b61ff" // color del tilde
+            uncheckedColor="transparent"
+          />
+        </View>
+        <Text style={[styles.checkboxLabel, { color: '#6c55b8' }]}>Soy menor de edad</Text>
       </View>
 
+
+
+
       {form.esMenor && (
-        <View style={[styles.menorContainer, { backgroundColor: violetMain }]}>
+        <View >
           <Text style={[styles.subtitle, { color: violetButton }]}>Datos de los padres</Text>
 
-          <Text style={[styles.label, { color: violetText }]}>Nombre del padre</Text>
-          <TextInput
-            style={[styles.input, { backgroundColor: violetMain, color: violetText }]}
-            value={form.nombrePapa}
-            onChangeText={(text) => handleChange('nombrePapa', text)}
-            placeholder="Nombre del padre"
-            placeholderTextColor={violetPlaceholder}
-          />
+         
 
-          <Text style={[styles.label, { color: violetText }]}>Teléfono del padre</Text>
           <TextInput
-            style={[styles.input, { backgroundColor: violetMain, color: violetText }]}
-            value={form.telPapa}
-            onChangeText={(text) => handleChange('telPapa', text)}
-            placeholder="Teléfono del padre"
-            keyboardType="phone-pad"
-            placeholderTextColor={violetPlaceholder}
-          />
-
-          <Text style={[styles.label, { color: violetText }]}>Nombre de la madre</Text>
-          <TextInput
-            style={[styles.input, { backgroundColor: violetMain, color: violetText }]}
+            label="Nombre del responsable"
             value={form.nombreMama}
             onChangeText={(text) => handleChange('nombreMama', text)}
-            placeholder="Nombre de la madre"
-            placeholderTextColor={violetPlaceholder}
+            mode="outlined"
+            style={styles.input}
+            outlineColor={violetPlaceholder}
+            activeOutlineColor={violetButton}
           />
 
-          <Text style={[styles.label, { color: violetText }]}>Teléfono de la madre</Text>
           <TextInput
-            style={[styles.input, { backgroundColor: violetMain, color: violetText }]}
+            label="Teléfono del responsable"
             value={form.telMama}
             onChangeText={(text) => handleChange('telMama', text)}
-            placeholder="Teléfono de la madre"
+            mode="outlined"
             keyboardType="phone-pad"
-            placeholderTextColor={violetPlaceholder}
+            style={styles.input}
+            outlineColor={violetPlaceholder}
+            activeOutlineColor={violetButton}
           />
         </View>
       )}
 
-      <TouchableOpacity style={[styles.button, { backgroundColor: violetButton }]} onPress={() => alert('Formulario enviado!')}>
-        <Text style={styles.buttonText}>Enviar</Text>
-      </TouchableOpacity>
+    <TouchableOpacity
+      style={[styles.button, { backgroundColor: violetButton }]}
+      onPress={async () => {
+        // Validación
+        const camposRequeridos = [
+          form.nombre,
+          form.apellido,
+          form.fechaNacimiento,
+          form.dni,
+          form.telefono,
+        ];
+
+        if (camposRequeridos.some((campo) => campo.trim() === '')) {
+          alert('Por favor completá todos los campos obligatorios.');
+          return;
+        }
+
+        if (form.esMenor && (form.nombreMama.trim() === '' || form.telMama.trim() === '')) {
+          alert('Completá los datos del responsable si sos menor.');
+          return;
+        }
+
+        try {
+          const mappedData = {
+            nombre: form.nombre,
+            apellido: form.apellido,
+            fecha_nacimiento: form.fechaNacimiento, 
+            dni: form.dni,
+            tel_adulto: form.telefono,
+            nombre_mama: form.nombreMama,
+            tel_mama: form.telMama,
+            edad: form.edad,
+          }
+
+          const response = await postStudent(mappedData);
+          alert('Estudiante creado correctamente');
+
+
+          // Resetear formulario
+          setForm({
+            nombre: '',
+            apellido: '',
+            fechaNacimiento: '',
+            dni: '',
+            telefono: '',
+            esMenor: false,
+            nombreMama: '',
+            telMama: '',
+            edad: 0, 
+          })
+        } catch (e: any) {
+          alert(`Error al crear estudiante: ${e.message}`);
+        }
+      }}
+    >
+      <Text style={styles.buttonText}>Enviar</Text>
+    </TouchableOpacity>
+
+
+  
     </ScrollView>
+    </View>
+    </TouchableWithoutFeedback>
+  </KeyboardAvoidingView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     padding: 25,
-    backgroundColor: '#faf9ff',
+    backgroundColor: COLORS.background,
     flexGrow: 1
   },
   title: {
@@ -154,26 +329,27 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginVertical: 15
   },
-  label: {
-    marginTop: 12,
-    fontWeight: '600'
-  },
   input: {
-    borderRadius: 10,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    marginTop: 6,
-    fontSize: 16,
-    // sin borde ni sombra para look limpio
+    marginTop: 10
+  },
+  rightBox: {
+    width: 36,
+    height: 36,
+    borderWidth: 1,
+    borderColor: '#000',
+    backgroundColor: '#fff',
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   checkboxContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20
+    marginTop: 20,
   },
   checkboxLabel: {
     fontSize: 17,
-    marginLeft: 8
+    marginLeft: 8,
   },
   menorContainer: {
     borderRadius: 12,
@@ -186,13 +362,14 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: 'center',
     shadowColor: '#7b61ff',
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
     shadowOffset: { width: 0, height: 4 }
   },
   buttonText: {
     color: '#fff',
     fontWeight: '700',
     fontSize: 18
-  }
+  },
+  
 })

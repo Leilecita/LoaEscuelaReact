@@ -134,6 +134,49 @@ export async function removePresent(id: number) {
   }
 }
 
+export async function addStudentToAssist(studentData: {
+  planilla_id: number;
+  alumno_id: number;
+}) {
+  try {
+    const response = await api.post('/planillas_alumnos.php', studentData)
+
+    if (response.data.result !== 'success') {
+      throw new Error(response.data.message || 'Error al asignar el estudiante')
+    }
+
+    return response.data.data
+  } catch (error: any) {
+    console.error('Error al asignar estudiante:', error)
+    throw error
+  }
+}
+
+export async function postStudent(studentData: {
+  nombre: string;
+  apellido: string;
+  fecha_nacimiento: string;
+  dni: string;
+  tel_adulto: string;
+  tel_mama: string;
+  nombre_mama: string;
+  edad: number;
+}) {
+  try {
+    const response = await api.post('/students.php', studentData)
+
+    if (response.data.result !== 'success') {
+      throw new Error(response.data.message || 'Error al guardar estudiante')
+    }
+
+    return response.data.data
+  } catch (error: any) {
+    console.error('Error al crear estudiante:', error)
+    throw error
+  }
+}
+
+
 export function usePresentCount(
   category: string,
   subcategoria: string,

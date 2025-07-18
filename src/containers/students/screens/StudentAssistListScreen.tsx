@@ -9,6 +9,17 @@ import { Category, Subcategoria } from 'types'
 import { FlatList } from 'react-native'
 import { ItemStudentAssistView } from '../../../core/components/ItemStudentAssistView'
 import debounce from 'lodash.debounce'
+import { FAB } from 'react-native-paper'
+import { useNavigation } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootStackParamList } from 'types'
+
+
+
+type StudentListScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'ListaDeAlumnos'
+>
 
 type Props = {
   category: Category
@@ -25,6 +36,8 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
 
   const only_date = formatDateToYYYYMMDD(selectedDate)
   const today = formatDateToFullDateTime(selectedDate)
+  const navigation = useNavigation<StudentListScreenNavigationProp>()
+
 
   const { countPresentes, loading: loadingPresentes } = usePresentCount(
     category,
@@ -154,7 +167,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
 
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, overflow: 'visible' }}>
       <FilterBar
         date={selectedDate}
         onDateChange={setSelectedDate}
@@ -171,31 +184,55 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
         enableSortOrder={true}
         enableRefresh={true}
       />
-
-
-      { loading ? <ActivityIndicator style={styles.center} size="large" /> : (error ?  <View style={styles.center}>
-        <Text style={{ marginBottom: 10 }}>{error}</Text>
-        <Button title="Reintentar" onPress={reload} />
-      </View> : <FlatList
-        data={students}
-        keyExtractor={(item, index) => `${item.planilla_alumno_id}-${item.student_id}-${index}`}
-        keyboardShouldPersistTaps="handled"
-        onEndReached={loadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
-        contentContainerStyle={{ paddingBottom: 40 }}
-        renderItem={({ item }) => (
-          <ItemStudentAssistView
-            student={item}
-            isExpanded={expandedStudentId === item.student_id}
-            onToggleExpand={() => toggleExpand(item.student_id)}
-            togglePresente={togglePresente}
-            eliminarPresente={eliminarPresente}
+  
+      {loading ? (
+        <ActivityIndicator style={styles.center} size="large" />
+      ) : error ? (
+        <View style={styles.center}>
+          <Text style={{ marginBottom: 10 }}>{error}</Text>
+          <Button title="Reintentar" onPress={reload} />
+        </View>
+      ) : (
+        <>
+          <FlatList
+            data={students}
+            keyExtractor={(item, index) => `${item.planilla_alumno_id}-${item.student_id}-${index}`}
+            keyboardShouldPersistTaps="handled"
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
+            contentContainerStyle={{ paddingBottom: 40 }}
+            renderItem={({ item }) => (
+              <ItemStudentAssistView
+                student={item}
+                isExpanded={expandedStudentId === item.student_id}
+                onToggleExpand={() => toggleExpand(item.student_id)}
+                togglePresente={togglePresente}
+                eliminarPresente={eliminarPresente}
+                selectedDate={selectedDate}
+              />
+            )}
           />
-        )}
-      />)}
+          
+          <FAB
+              icon="plus"
+              style={{
+                position: 'absolute',
+                bottom: 30,
+                right: 30,
+              }}
+              onPress={() => navigation.navigate('ListaDeAlumnos', {
+                category: 'category',
+                subcategoria: 'subcategoria',
+                modo: 'asistencias',
+                planilla_id: planillaId
+              })}
+            />
+        </>
+      )}
     </View>
-  )
+  );
+  
 }
 
 const styles = StyleSheet.create({

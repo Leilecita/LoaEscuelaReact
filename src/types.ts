@@ -5,7 +5,8 @@ export type RootStackParamList = {
     Asistencias: undefined; 
     CreateStudent: undefined;
     
-    ListaDeAlumnos: { category: string; subcategoria: string }
+    ListaDeAlumnos: { category: string; subcategoria: string; shouldReload?: boolean;  modo?: 'lista' | 'asistencias'; planilla_id?: number | null }
+    StudentListScreen: undefined; // <-- no recibe params
 
   };
   

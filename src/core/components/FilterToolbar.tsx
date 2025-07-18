@@ -10,6 +10,7 @@ import {
 import { Chip, TextInput } from 'react-native-paper'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { CustomDatePicker } from './DatePickerCustom'
+import { COLORS } from 'core/constants'
 
 type FilterBarProps = {
   date?: Date
@@ -112,15 +113,28 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               mode="flat"
               selected={showOnlyPresent}
               onPress={onTogglePresent}
-              style={styles.chip}
-              textStyle={{ color: '#333' }}
+              style={[
+                styles.chip,
+                showOnlyPresent
+                  ? { backgroundColor: COLORS.buttonClear } // violeta oscuro cuando está seleccionado
+                  : { backgroundColor: '#ede7f6' } // violeta claro cuando NO está seleccionado
+              ]}
+              textStyle={{
+                color: showOnlyPresent ? COLORS.darkLetter : COLORS.darkLetter, 
+                fontFamily: 'OpenSans-SemiBold',
+                fontSize: 14
+              }}
             >
               Presentes {countPresentes}
-            </Chip>
+          </Chip>
           )}
 
           {enableRefresh && (
-            <Chip icon="refresh" onPress={onRefresh} style={styles.chip}>
+            <Chip icon="refresh" onPress={onRefresh} style={styles.chip}
+            textStyle={{
+              color: COLORS.darkLetter,              
+              fontSize: 14,                  
+            }}>
               Refresh
             </Chip>
           )}
@@ -135,6 +149,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               selected
               onPress={onToggleSortOrder}
               style={styles.chip}
+              textStyle={{
+                color: COLORS.darkLetter,              
+                fontSize: 14,                  
+              }}
             >
               {sortOrder === 'alf' ? 'A-Z' : 'Z-A'}
             </Chip>
@@ -147,9 +165,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginHorizontal: 12,
+    marginHorizontal: 4,
     marginTop: 12,
-    backgroundColor: '#f4f4f4',
+    backgroundColor: 'transparent',
     borderRadius: 12,
     padding: 8,
   },

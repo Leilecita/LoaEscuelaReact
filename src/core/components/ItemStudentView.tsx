@@ -2,6 +2,9 @@ import React from 'react'
 import { View, Text, Linking, StyleSheet } from 'react-native'
 import { IconButton } from 'react-native-paper'
 import type { Student } from '../../containers/students/services/studentService'
+import { ContactRow } from './ContactRow'
+import { InitialAvatar } from './InitialAvatar'
+import { COLORS } from 'core/constants'
 
 type Props = {
   student: Student
@@ -16,71 +19,23 @@ export const ItemStudentView: React.FC<Props> = ({
 }) => {
   return (
     <View style={styles.itemContainer}>
-      <Text style={styles.name} onPress={onToggleExpand}>
-        {student.nombre} {student.apellido}
-      </Text>
-      <Text>DNI: {student.dni}</Text>
-
+       <View style={styles.topRow}>
+        <InitialAvatar letra={student.nombre.charAt(0)} />
+        <View style={styles.leftColumn}>
+          <Text style={styles.name} onPress={onToggleExpand}>
+            {student.nombre} {student.apellido}
+          </Text>
+          <Text style={styles.dni}>{student.dni}</Text>
+        </View>
+      </View>
       {isExpanded && (
         <View style={styles.extraInfo}>
           {student.nombre_mama && (
-            <View style={styles.contactRow}>
-              <Text style={styles.contactName}>{student.nombre_mama}</Text>
-              <View style={styles.icons}>
-                {student.tel_mama ? (
-                  <>
-                    <IconButton
-                      icon="phone"
-                      size={20}
-                      iconColor="#007AFF"
-                      onPress={() => Linking.openURL(`tel:${student.tel_mama}`)}
-                      style={styles.iconButton}
-                    />
-                    <IconButton
-                      icon="whatsapp"
-                      size={20}
-                      iconColor="#25D366"
-                      onPress={() =>
-                        Linking.openURL(`https://wa.me/${student.tel_mama.replace(/\D/g, '')}`)
-                      }
-                      style={styles.iconButton}
-                    />
-                  </>
-                ) : (
-                  <Text style={styles.noPhone}>Sin teléfono</Text>
-                )}
-              </View>
-            </View>
+            <ContactRow name={student.nombre_mama} phone={student.tel_mama} />
           )}
 
           {student.nombre_papa && (
-            <View style={styles.contactRow}>
-              <Text style={styles.contactName}>{student.nombre_papa}</Text>
-              <View style={styles.icons}>
-                {student.tel_papa ? (
-                  <>
-                    <IconButton
-                      icon="phone"
-                      size={20}
-                      iconColor="#007AFF"
-                      onPress={() => Linking.openURL(`tel:${student.tel_papa}`)}
-                      style={styles.iconButton}
-                    />
-                    <IconButton
-                      icon="whatsapp"
-                      size={20}
-                      iconColor="#25D366"
-                      onPress={() =>
-                        Linking.openURL(`https://wa.me/${student.tel_papa.replace(/\D/g, '')}`)
-                      }
-                      style={styles.iconButton}
-                    />
-                  </>
-                ) : (
-                  <Text style={styles.noPhone}>Sin teléfono</Text>
-                )}
-              </View>
-            </View>
+            <ContactRow name={student.nombre_papa} phone={student.tel_papa} />
           )}
         </View>
       )}
@@ -90,13 +45,40 @@ export const ItemStudentView: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   itemContainer: {
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    backgroundColor: '#fff',
+    marginHorizontal: 8,
+    marginVertical: 2,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop:8,
+    paddingBottom:8,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2, // para Android
   },
+
+ leftColumn: {
+  flex: 1,
+  flexDirection: 'column',
+  justifyContent: 'center',
+ },
+  topRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 0,
+   },
   name: {
-    fontWeight: 'bold',
+    fontFamily:'OpenSans-Regular',
+    color: COLORS.darkLetter,
     fontSize: 16,
+  },
+  dni: {
+    fontFamily:'OpenSans-Light',
+    color: COLORS.darkLetter,
   },
   extraInfo: {
     marginTop: 10,
@@ -105,26 +87,5 @@ const styles = StyleSheet.create({
     borderTopColor: '#ddd',
     paddingTop: 8,
   },
-  contactRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 6,
-  },
-  contactName: {
-    fontSize: 15,
-    fontWeight: '500',
-    flex: 1,
-  },
-  icons: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  iconButton: {
-    marginLeft: 4,
-  },
-  noPhone: {
-    color: '#999',
-    fontSize: 14,
-  },
+  
 })

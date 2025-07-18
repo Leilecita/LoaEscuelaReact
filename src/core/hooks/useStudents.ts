@@ -26,7 +26,7 @@ export function useStudents(
       sortOrder,
       query
     )
-    console.log('📥 Respuesta del backend:', JSON.stringify(res.list_rep,null,2))
+    //console.log('📥 Respuesta del backend:', JSON.stringify(res.list_rep,null,2))
     setLastResponse({ planilla_id: res.planilla_id })
     return res.list_rep
   }, [category, subcategoria, date, showOnlyPresent, sortOrder, query])

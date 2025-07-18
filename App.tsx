@@ -16,6 +16,9 @@ export default function App() {
     'PlaypenSans-Bold': require('./assets/fonts/PlaypenSans-Bold.ttf'),
     'PlaypenSans-Light': require('./assets/fonts/PlaypenSans-Light.ttf'),
     'PlaypenSans-Regular': require('./assets/fonts/PlaypenSans-Regular.ttf'),
+
+    'OpenSans-Light': require('./assets/fonts/OpenSans-Light.ttf'),
+    'OpenSans-Regular': require('./assets/fonts/OpenSans-Regular.ttf'),
   });
 
   useEffect(() => {
