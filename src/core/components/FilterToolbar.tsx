@@ -121,8 +121,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               ]}
               textStyle={{
                 color: showOnlyPresent ? COLORS.darkLetter : COLORS.darkLetter, 
-                fontFamily: 'OpenSans-SemiBold',
-                fontSize: 14
+                fontFamily: 'OpenSans-Light',
+                fontSize: 16
               }}
             >
               Presentes {countPresentes}
@@ -132,8 +132,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           {enableRefresh && (
             <Chip icon="refresh" onPress={onRefresh} style={styles.chip}
             textStyle={{
-              color: COLORS.darkLetter,              
-              fontSize: 14,                  
+              color: COLORS.darkLetter,        
+              fontFamily: 'OpenSans-Light',      
+              fontSize: 16,                  
             }}>
               Refresh
             </Chip>
@@ -150,8 +151,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               onPress={onToggleSortOrder}
               style={styles.chip}
               textStyle={{
+                fontFamily: 'OpenSans-Light',
                 color: COLORS.darkLetter,              
-                fontSize: 14,                  
+                fontSize: 16,                  
               }}
             >
               {sortOrder === 'alf' ? 'A-Z' : 'Z-A'}

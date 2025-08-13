@@ -26,6 +26,7 @@
     "react": "19.0.0",
     "react-native": "0.79.4",
     "react-native-md5": "^1.0.0",
+    "react-native-modal": "^14.0.0-rc.1",
     "react-native-modal-datetime-picker": "^18.0.0",
     "react-native-pager-view": "6.7.1",
     "react-native-paper": "^5.14.5",

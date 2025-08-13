@@ -1,10 +1,11 @@
 import React from 'react'
 import { View, Text, Linking, StyleSheet } from 'react-native'
-import { IconButton } from 'react-native-paper'
-import type { Student } from '../../containers/students/services/studentService'
-import { ContactRow } from './ContactRow'
-import { InitialAvatar } from './InitialAvatar'
+import type { Student } from '../services/studentService'
+import { ContactRow } from '../../../core/components/ContactRow'
+import { InitialAvatar } from '../../../core/components/InitialAvatar'
 import { COLORS } from 'core/constants'
+import { TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 type Props = {
   student: Student
@@ -17,6 +18,8 @@ export const ItemStudentView: React.FC<Props> = ({
   isExpanded,
   onToggleExpand,
 }) => {
+
+  const navigation = useNavigation()
   return (
     <View style={styles.itemContainer}>
        <View style={styles.topRow}>
@@ -26,10 +29,16 @@ export const ItemStudentView: React.FC<Props> = ({
             {student.nombre} {student.apellido}
           </Text>
           <Text style={styles.dni}>{student.dni}</Text>
+          {student.observation?.trim() !== '' && (
+            <Text style={styles.dni}>{student.observation}</Text>
+          )}
         </View>
       </View>
       {isExpanded && (
         <View style={styles.extraInfo}>
+          {student.tel_adulto && (
+            <ContactRow name={student.nombre} phone={student.tel_adulto} />
+          )}
           {student.nombre_mama && (
             <ContactRow name={student.nombre_mama} phone={student.tel_mama} />
           )}
@@ -37,7 +46,17 @@ export const ItemStudentView: React.FC<Props> = ({
           {student.nombre_papa && (
             <ContactRow name={student.nombre_papa} phone={student.tel_papa} />
           )}
+
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('PagosYClases', { studentId: student.id })
+            }
+          >
+            <Text style={styles.masInfoText}>Más info</Text>
+          </TouchableOpacity>
         </View>
+
+        
       )}
     </View>
   )
@@ -74,11 +93,12 @@ const styles = StyleSheet.create({
   name: {
     fontFamily:'OpenSans-Regular',
     color: COLORS.darkLetter,
-    fontSize: 16,
+    fontSize: 18,
   },
   dni: {
     fontFamily:'OpenSans-Light',
     color: COLORS.darkLetter,
+    fontSize: 16,
   },
   extraInfo: {
     marginTop: 10,
@@ -86,6 +106,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#ddd',
     paddingTop: 8,
+  },
+  masInfoText: {
+    marginTop: 8,
+    color: 'blue',
+    textDecorationLine: 'underline',
+    fontSize: 14,
   },
   
 })

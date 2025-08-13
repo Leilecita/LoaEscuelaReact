@@ -47,18 +47,19 @@ const styles = StyleSheet.create({
   contactRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 6,
+    paddingVertical: 4,
+    paddingBottom: 4,
   },
   contactName: {
     flex: 1, // Ocupa espacio proporcional
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'OpenSans-Light',
     fontWeight: '500',
     color: COLORS.darkLetter,
   },
   phoneText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 16,
     color: COLORS.darkLetter,
     fontFamily: 'OpenSans-Light',
     

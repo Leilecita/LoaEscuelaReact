@@ -26,7 +26,7 @@ export const CustomDatePicker: React.FC<Props> = ({ date, onDateChange }) => {
         icon="calendar"
         onPress={openPicker}
         style={{ marginRight: 8, marginBottom: 8, backgroundColor: '#ede7f6' }}
-        textStyle={{ color: '#333' }}
+        textStyle={{ color: '#333',  fontFamily: 'OpenSans-Light', fontSize: 16 }}
       >
         {format(date, 'dd/MM/yyyy')}
       </Chip>

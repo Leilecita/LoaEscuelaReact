@@ -1,9 +1,10 @@
 import React from 'react'
 import { View, Text, Linking, StyleSheet } from 'react-native'
 import { Checkbox, IconButton } from 'react-native-paper'
-import type { ReportStudent } from '../../containers/students/services/studentService'
-import { ContactRow } from './ContactRow'
-import { InitialAvatar } from './InitialAvatar'
+import type { ReportStudent } from '../services/studentService'
+import { ContactRow } from '../../../core/components/ContactRow'
+import { InformationRow } from '../../../core/components/InformationRow'
+import { InitialAvatar } from '../../../core/components/InitialAvatar'
 import { COLORS } from 'core/constants'
 
 type Props = {
@@ -26,7 +27,6 @@ export const ItemStudentAssistView: React.FC<Props> = ({
 }) => {
   const totalClasesTomadas = student.taken_classes?.[0]?.cant_presents || 0
   const isToday = selectedDate.toDateString() === new Date().toDateString()
-
   return (
     <View style={styles.itemContainer_check}>
       <View style={styles.row}>
@@ -37,6 +37,9 @@ export const ItemStudentAssistView: React.FC<Props> = ({
             {student.nombre} {student.apellido}
           </Text>
           <Text style={styles.dni}>{student.dni}</Text>
+           {student.student_observation?.trim() !== '' && (
+            <Text style={[styles.dni, { color: '#6a1b9a', marginTop: 2 }]}>{student.student_observation}</Text>
+            )}
         </View>
         <Text style={{ marginRight: 8, color: '#666', fontSize: 12 }}>
           {totalClasesTomadas}
@@ -69,6 +72,17 @@ export const ItemStudentAssistView: React.FC<Props> = ({
 
       {isExpanded && (
         <View style={styles.extraInfo}>
+           <View style={styles.infoSection}>
+              <InformationRow texto="clases tomadas"  numero={student.taken_classes[0].cant_presents ?? 0} />
+              <InformationRow texto="deuda"  numero={`$ ${student.taken_classes[0].tot_amount ?? 0}`} />
+              <InformationRow texto="pago"  numero={`$ ${student.taken_classes[0].tot_paid_amount ?? 0}`} />
+            </View>
+  
+            {/* Línea separadora */}
+            <View style={styles.separator} />
+           {student.tel_adulto && (
+            <ContactRow name={student.nombre} phone={student.tel_adulto} />
+          )}
           {student.nombre_mama && (
             <ContactRow name={student.nombre_mama} phone={student.tel_mama} />
           )}
@@ -142,5 +156,12 @@ const styles = StyleSheet.create({
     borderTopColor: '#ddd',
     paddingTop: 8,
   },
-  
+  infoSection: {
+    marginBottom: 8, // espacio antes de la línea
+  },
+  separator: {
+    height: 1,
+    backgroundColor: '#ccc',
+    marginVertical: 8,
+  },
 })

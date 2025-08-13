@@ -1,6 +1,7 @@
 import React from 'react';
 import api from './axiosClient';
 import axios from 'axios';
+import { Alert } from 'react-native';
 
 export type ReportSeasonPresent = {
   name: string;
@@ -20,11 +21,13 @@ export type ReportStudent = {
   planilla_alumno_id: number;
   tel_mama: string;
   tel_papa: string;
+  tel_adulto: string;
   nombre_mama: string;
   nombre_papa: string;
   taken_classes: ReportSeasonPresent[];
   created: string;
   updated_date: string;
+  student_observation: string;
 
 };
 
@@ -34,13 +37,50 @@ export type Student = {
   apellido: string;
   dni: string;
 
+  observation: string;
+
   tel_mama: string;
   tel_papa: string;
+  tel_adulto: string;
   nombre_mama: string;
   nombre_papa: string;
   
   created: string;
   updated_date: string;
+}
+
+export async function fetchStudentsForPayment(
+  page: number,
+  category: string,
+  query: string,
+
+  date: string,
+  onlyPresents = 'false',
+  orderby = 'alf',
+): Promise<{ planilla_id: number; list_rep: ReportStudent[] }> {
+
+  
+  const response = await api.get('/students.php', {
+    params: {
+      method: 'getStudentsByAssists',
+      page,
+      category:'todos',
+      categoria: category,        
+      date,
+      onlyPresents,
+      orderby,
+      ...(query ? { query } : {}),
+    },
+    
+  });
+  
+  if (response.data.result === 'success') {
+    return response.data.data;
+  } else if (response.data.result === 'error' && response.data.message === 'Session invalida') {
+    throw new Error('Sesión inválida. Por favor inicie sesión nuevamente.');
+  } else {
+    throw new Error(response.data.message || 'Error al obtener estudiantes');
+  }
 }
 
 export async function fetchStudentsByAssists(
@@ -152,6 +192,23 @@ export async function addStudentToAssist(studentData: {
   }
 }
 
+export async function checkExistStudent(dni: string): Promise<boolean> {
+  try {
+    const response = await api.get('/students.php', {
+      params: {
+        dni,
+        method: 'checkExistStudent',
+      },
+    });
+
+    return response.data.data.val?.toLowerCase().trim() === "true";
+  } catch (error) {
+
+    Alert.alert('Error', 'No se pudo validar el DNI.');
+    return false;
+  }
+}
+
 export async function postStudent(studentData: {
   nombre: string;
   apellido: string;
@@ -161,6 +218,7 @@ export async function postStudent(studentData: {
   tel_mama: string;
   nombre_mama: string;
   edad: number;
+  observation: string;
 }) {
   try {
     const response = await api.post('/students.php', studentData)

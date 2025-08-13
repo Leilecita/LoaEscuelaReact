@@ -6,12 +6,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { HomeScreen, LoginScreen, ProfileScreen, RegisterScreen, StudentListScreen } from '@containers';
 import  CreateStudentScreen  from '../../../src/containers/students/screens/CreateStudentScreen'
+import  InformationStudentScreen  from '../../../src/containers/students/screens/InformationStudentScreen'
 import { AuthContext } from '../../contexts/AuthContext';
 import type { AuthStackParamList, RootStackParamList } from '../../types';
 import { MenuHeader } from '../../../src/core/components/MenuHeader' 
 
 import { AppTabs } from './AppTabs'  
 import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { PaymentStudentListScreen } from 'containers/students/screens/PaymentStudentListScreen';
 
 const hideHeader = { headerShown: false };
 
@@ -86,10 +88,24 @@ export function NavigationApp() {
             component={StudentListScreen}
             options={{ title: 'Todos los alumnos' }}
           />
+           <RootStack.Screen
+              name="PaymentStudentList"
+              component={PaymentStudentListScreen}
+              options={{ title: 'Alumnos' }}
+            />
           <RootStack.Screen
             name="CreateStudent"
             component={CreateStudentScreen}
           />
+          <RootStack.Screen
+              name="PagosYClases"
+              component={InformationStudentScreen}
+              options={{
+                title: 'Pagos y Clases',
+                headerBackTitle: 'Volver',
+                headerRight: () => <MenuHeader />,
+              }}
+            />
         </RootStack.Navigator>
       ) : (
         <RootStack.Navigator screenOptions={{ headerShown: false }}>

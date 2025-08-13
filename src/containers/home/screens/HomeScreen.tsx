@@ -24,6 +24,16 @@ export const HomeScreen = () => {
           })
         }
       />
+       <Button
+        title="Cargar Pago"
+        onPress={() =>
+          navigation.navigate('ListaDeAlumnos', {
+            category: 'Todas',
+            subcategoria: 'Todas',
+            modo: 'cargarPago', 
+          })
+        }
+      />
     </View>
   );
 };

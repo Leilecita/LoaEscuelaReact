@@ -10,20 +10,19 @@ import { Category, RootStackParamList, Subcategoria } from 'types'
 import { useAllStudents } from '../../../core/hooks/useAllStudents'
 import type { Student } from '../services/studentService'
 import { addStudentToAssist } from '../services/studentService'
-import { ItemStudentView } from '../components/ItemStudentView'
-import { ItemStudentAddPaymentView } from '../components/ItemStudentAddPaymentView'
-import { FilterBar } from 'core/components/FilterToolbar' 
+import { ItemStudentView } from '../../students/components/ItemStudentView'
+import { ItemStudentAddToAssistView } from '../../../core/components/ItemStudentAddToAssistView'
+import { SimpleFilterToolbar } from 'core/components/SimpleFilterToolbar' 
 import { FAB } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import type { RouteProp } from '@react-navigation/native'
 import { COLORS } from '@core'
-import { PaymentModal } from '../../../core/components/PaymentModal'
-
 
 type StudentListScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
-  'ListaDeAlumnos'
+  'ListaDeAlumnos',
+  'CargarPago'
 >
 
 /*type Props = {
@@ -105,39 +104,15 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
     return groupStudentsByDate(filteredStudents)
   }, [filteredStudents])
 
-  const [modalVisible, setModalVisible] = useState(false)
-  const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null)
-
-  const openCargarPagoModal = (studentId: number) => {
-    setSelectedStudentId(studentId)
-    setModalVisible(true)
-  }
-
-  const handleSubmitPago = (data: {
-    fecha: Date
-    monto: string
-    metodo: 'efectivo' | 'transferencia' | 'mp'
-    detalle: string
-  }) => {
-    console.log('Pago guardado para alumno', selectedStudentId, data)
-    // Aquí llamar al backend para guardar el pago
-    setModalVisible(false)
-  }
-
 
   return (
     <View style={{ flex: 1 }}>
-      <FilterBar
+      <SimpleFilterToolbar
         searchText={searchInput}
         onSearchTextChange={setSearchInput}
         onRefresh={reload}
-        countPresentes={students.length}
-        enableRefresh={false}
-        enableDatePicker={false}
-        enablePresentFilter={false}
-        enableSortOrder={false}
       />
-  
+
       {loading ? (
         <ActivityIndicator style={styles.center} size="large" />
       ) : error ? (
@@ -161,14 +136,6 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
                 planilla_id={planilla_id ?? undefined}  // si es null, le pasamos undefined
                 onAgregar={handleAgregar}
               />
-              ) : modo === 'cargarPago' ? (
-                <ItemStudentAddPaymentView
-                  student={item}
-                  isExpanded={expandedStudentId === item.id} // usar student_id
-                  onToggleExpand={() => toggleExpand(item.id)}
-                  onCargarPago={openCargarPagoModal}
-                />
-
               ) : (
                 <ItemStudentView
                   student={item}
@@ -188,12 +155,6 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
             ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
             contentContainerStyle={{ paddingBottom: 20 }}
           />
-
-        <PaymentModal
-            visible={modalVisible}
-            onClose={() => setModalVisible(false)}
-            onSubmit={handleSubmitPago}
-          />
   
           <FAB
             icon="plus"
@@ -210,7 +171,42 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
   )
 }
 
+function formatDateSpanish(dateString: string): string {
+  const days = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb']
+  const months = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+  ]
+
+  const date = new Date(dateString)
+  if (isNaN(date.getTime())) return 'Fecha desconocida'
+
+  const dayName = days[date.getDay()]
+  const dayNumber = date.getDate()
+  const monthName = months[date.getMonth()]
+  const year = date.getFullYear()
+
+  return `${dayName} ${dayNumber} ${monthName} ${year}`
+}
+
 function groupStudentsByDate(students: Student[]): Section[] {
+  const groups: Record<string, Student[]> = {}
+
+  students.forEach((student) => {
+    const dateKey = student.created ? student.created.slice(0, 10) : 'Fecha desconocida'
+    if (!groups[dateKey]) groups[dateKey] = []
+    groups[dateKey].push(student)
+  })
+
+  return Object.entries(groups)
+    .sort((a, b) => b[0].localeCompare(a[0])) // orden descendente por fecha
+    .map(([dateKey, data]) => ({
+      title: dateKey === 'Fecha desconocida' ? dateKey : formatDateSpanish(dateKey),
+      data,
+    }))
+}
+
+function groupStudentsByDate2(students: Student[]): Section[] {
   const groups: Record<string, Student[]> = {}
 
   students.forEach((student) => {
@@ -246,7 +242,7 @@ const styles = StyleSheet.create({
   },
   sectionHeaderText: {
     color: COLORS.buttonClearLetter,
-    fontSize: 14,
+    fontSize: 16,
   },
   fab: {
     position: 'absolute',

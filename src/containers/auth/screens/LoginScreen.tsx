@@ -19,7 +19,7 @@ export const LoginScreen = () => {
     const passwordPlain = password;
 
     try {
-      const response = await axios.get('http://192.168.0.234/loa_school/login.php', {
+      const response = await axios.get('http://192.168.5.33/loa_school/login.php', {
         params: {
           name: name,
           hash_password: passwordPlain,

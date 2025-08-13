@@ -4,9 +4,12 @@ export type RootStackParamList = {
     Students: undefined;
     Asistencias: undefined; 
     CreateStudent: undefined;
+    CargarPago : undefined;
     
-    ListaDeAlumnos: { category: string; subcategoria: string; shouldReload?: boolean;  modo?: 'lista' | 'asistencias'; planilla_id?: number | null }
+    ListaDeAlumnos: { category: string; subcategoria: string; shouldReload?: boolean;  modo?: 'lista' | 'asistencias' | 'cargarPago'; planilla_id?: number | null }
     StudentListScreen: undefined; // <-- no recibe params
+    PaymentStudentList: { category: string; subcategoria: string; date: string }; 
+
 
   };
   

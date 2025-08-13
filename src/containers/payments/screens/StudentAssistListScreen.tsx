@@ -7,7 +7,7 @@ import { formatDateToFullDateTime, formatDateToYYYYMMDD } from 'helpers/dateHelp
 import { FilterBar } from 'core/components/FilterToolbar'
 import { Category, Subcategoria } from 'types'
 import { FlatList } from 'react-native'
-import { ItemStudentAssistView } from '../components/ItemStudentAssistView'
+import { ItemStudentAssistView } from '../../students/components/ItemStudentAssistView'
 import debounce from 'lodash.debounce'
 import { FAB } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
