@@ -1,10 +1,10 @@
 import React from 'react'
 import { View, Text, Linking, StyleSheet, Pressable } from 'react-native'
 import { IconButton } from 'react-native-paper'
-import type { Student } from '../../containers/students/services/studentService'
+import type { Student } from '../services/studentService'
 import { COLORS } from 'core/constants'
-import { InitialAvatar } from './InitialAvatar'
-import { ContactRow } from './ContactRow'
+import { InitialAvatar } from '../../../core/components/InitialAvatar'
+import { ContactRow } from '../../../core/components/ContactRow'
 
 type Props = {
   student: Student

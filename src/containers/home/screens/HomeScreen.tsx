@@ -24,7 +24,7 @@ export const HomeScreen = () => {
           })
         }
       />
-       <Button
+      <Button
         title="Cargar Pago"
         onPress={() =>
           navigation.navigate('ListaDeAlumnos', {
@@ -34,6 +34,7 @@ export const HomeScreen = () => {
           })
         }
       />
+      <Button title="Ver pagos" onPress={() => navigation.navigate('ListaDePagos')} />
     </View>
   );
 };

@@ -1,5 +1,4 @@
-// src/core/components/PaymentModal.tsx
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -7,196 +6,313 @@ import {
   TextInput,
   TouchableOpacity,
   Platform,
-} from 'react-native'
-import Modal from 'react-native-modal'
-import DateTimePicker from '@react-native-community/datetimepicker'
-import { COLORS } from 'core/constants'
+  Switch,
+  ScrollView,
+  KeyboardAvoidingView,
+  Dimensions,
+} from 'react-native';
+import Modal from 'react-native-modal';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { COLORS } from 'core/constants';
+import api from '../services/axiosClient';
 
 type PaymentModalProps = {
-  visible: boolean
-  onClose: () => void
-  onSubmit: (data: {
-    fecha: Date
-    monto: string
-    clases: string
-    lugar: string
-    metodo: '💵' | '🏦' | '📱'
-    detalle: string
-  }) => void
-}
+  visible: boolean;
+  onClose: () => void;
+  studentId: number;
+  onSuccess?: () => void;
+};
 
 export const PaymentModal: React.FC<PaymentModalProps> = ({
   visible,
   onClose,
-  onSubmit,
+  studentId,
+  onSuccess,
 }) => {
-  const [fecha, setFecha] = useState(new Date())
-  const [showDatePicker, setShowDatePicker] = useState(false)
-  const [monto, setMonto] = useState('')
-  const [clases, setClases] = useState('')
-  const [lugar, setLugar] = useState('')
-  const [metodo, setMetodo] = useState<'💵' | '🏦' | '📱'>('💵')
-  const [detalle, setDetalle] = useState('')
+  const [fecha, setFecha] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [monto, setMonto] = useState('');
+  const [clases, setClases] = useState('');
+  const [total, setTotal] = useState('');
+  const [lugar, setLugar] = useState('Escuela');
+  const [metodo, setMetodo] = useState('💵 Efectivo');
+  const [detalle, setDetalle] = useState('');
+  const [tipoNuevo, setTipoNuevo] = useState(false);
+  const [showMetodoOptions, setShowMetodoOptions] = useState(false);
+  const [showLugarOptions, setShowLugarOptions] = useState(false);
 
-  const handleSubmit = () => {
-    if (!monto || !clases || !lugar) {
-      alert('Complete todos los campos obligatorios')
-      return
+  const medios = ['💵 Efectivo', '🏦 Banco', '📱 Transferencia'];
+  const lugares = ['Escuela', 'Negocio'];
+
+  const handleSubmit = async () => {
+    const cantidadClases = tipoNuevo ? parseInt(clases) || 0 : 0;
+    const montoTotalCurso = tipoNuevo ? parseFloat(total) || 0 : 0;
+    const paidAmount = parseFloat(monto) || 0;
+    const observation = `${detalle} ${tipoNuevo ? 'nuevo' : 'a cta'} ${cantidadClases}cl`;
+
+    if (tipoNuevo && (!clases || !total || !monto)) {
+      alert('Complete todos los campos obligatorios del curso y pago.');
+      return;
     }
-    onSubmit({ fecha, monto, clases, lugar, metodo, detalle })
-    // Reset campos
-    setMonto('')
-    setClases('')
-    setLugar('')
-    setDetalle('')
-    setMetodo('💵')
-    setFecha(new Date())
-    onClose()
-  }
+
+    if (!tipoNuevo && !monto) {
+      alert('Complete el monto del pago.');
+      return;
+    }
+
+    const courseData: any = {
+      student_id: studentId,
+      classes_number: cantidadClases,
+      amount: montoTotalCurso,
+      observation,
+      payment_method: metodo,
+      payment_place: lugar,
+      paid_amount: paidAmount,
+      created: fecha.toISOString(),
+      category: 'Escuela',
+      sub_category: 'Intermedios',
+    };
+
+    try {
+      await api.post('/class_courses.php', courseData, {
+        params: { method: 'post' },
+      });
+      onClose();
+      onSuccess?.();
+      // Reset campos
+      setMonto('');
+      setClases('');
+      setTotal('');
+      setLugar('Escuela');
+      setDetalle('');
+      setMetodo('💵 Efectivo');
+      setTipoNuevo(false);
+      setFecha(new Date());
+      setShowMetodoOptions(false);
+      setShowLugarOptions(false);
+    } catch (error: any) {
+      alert(error.message || 'Error al crear el curso y registrar el pago');
+    }
+  };
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
-    setShowDatePicker(Platform.OS === 'ios')
-    if (selectedDate) setFecha(selectedDate)
-  }
+    setShowDatePicker(Platform.OS === 'ios');
+    if (selectedDate) setFecha(selectedDate);
+  };
+
+  const { width } = Dimensions.get('window');
 
   return (
-    <Modal isVisible={visible} onBackdropPress={onClose}>
-      <View style={styles.modalContainer}>
-        <Text style={styles.title}>Nuevo Pago</Text>
+    <Modal
+      isVisible={visible}
+      onBackdropPress={onClose}
+      style={{ justifyContent: 'center', alignItems: 'center' }}
+      avoidKeyboard={true}
+    >
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={{ width: '100%', alignItems: 'center' }}
+      >
+        <View style={[styles.modalContainer, { width: width * 0.95 }]}>
+          <Text style={styles.title}>Nuevo Pago</Text>
 
-        {/* Fecha */}
-        <TouchableOpacity
-          onPress={() => setShowDatePicker(true)}
-          style={[styles.input, { marginBottom: 10 }]}
-        >
-          <Text>{fecha.toLocaleDateString()}</Text>
-        </TouchableOpacity>
-        {showDatePicker && (
-          <DateTimePicker
-            value={fecha}
-            mode="date"
-            display="default"
-            onChange={handleDateChange}
-          />
-        )}
-
-        {/* Renglon: Monto | Clases | Lugar */}
-        <View style={styles.row}>
-          <TextInput
-            style={[styles.input, styles.rowItem]}
-            placeholder="Monto"
-            keyboardType="numeric"
-            value={monto}
-            onChangeText={setMonto}
-          />
-          <TextInput
-            style={[styles.input, styles.rowItem]}
-            placeholder="Clases"
-            keyboardType="numeric"
-            value={clases}
-            onChangeText={setClases}
-          />
-          <TextInput
-            style={[styles.input, styles.rowItem]}
-            placeholder="Lugar"
-            value={lugar}
-            onChangeText={setLugar}
-          />
-        </View>
-
-        {/* Método de pago simplificado */}
-        <View style={styles.metodoContainer}>
-          {['💵', '🏦', '📱'].map((m) => (
-            <TouchableOpacity
-              key={m}
-              style={[
-                styles.metodoButton,
-                metodo === m && styles.metodoButtonSelected,
-              ]}
-              onPress={() => setMetodo(m as '💵' | '🏦' | '📱')}
-            >
-              <Text
-                style={[
-                  styles.metodoText,
-                  metodo === m && styles.metodoTextSelected,
-                ]}
+          <ScrollView
+            style={{ width: '100%' }}
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
+          >
+            {/* Fecha y Lugar */}
+            <View style={styles.row}>
+              <TouchableOpacity
+                style={[styles.input, { flex: 1, marginRight: 8 }]}
+                onPress={() => setShowDatePicker(true)}
               >
-                {m}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+                <Text>{fecha.toLocaleDateString()}</Text>
+              </TouchableOpacity>
 
-        {/* Detalle */}
-        <TextInput
-          style={[styles.input, { height: 60 }]}
-          placeholder="Detalle"
-          multiline
-          value={detalle}
-          onChangeText={setDetalle}
-        />
+              <TouchableOpacity
+                style={[styles.input, { flex: 1 }]}
+                onPress={() => setShowLugarOptions(!showLugarOptions)}
+              >
+                <Text>{lugar}</Text>
+              </TouchableOpacity>
 
-        {/* Botones */}
-        <View style={styles.buttonsRow}>
-          <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-            <Text style={styles.buttonText}>Cancelar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-            <Text style={styles.buttonText}>Guardar</Text>
-          </TouchableOpacity>
+              {showLugarOptions && (
+                <View style={[styles.dropdown, { top: 55, right: 0 }]}>
+                  {lugares.map((l) => (
+                    <TouchableOpacity
+                      key={l}
+                      style={styles.dropdownItem}
+                      onPress={() => {
+                        setLugar(l);
+                        setShowLugarOptions(false);
+                      }}
+                    >
+                      <Text>{l}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            </View>
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={fecha}
+                mode="date"
+                display="calendar"
+                onChange={handleDateChange}
+              />
+            )}
+
+            {/* Switch Nuevo */}
+            <View style={styles.switchRow}>
+              <Text style={styles.label}>¿Es nuevo curso?</Text>
+              <Switch value={tipoNuevo} onValueChange={setTipoNuevo} />
+            </View>
+
+            {/* Monto y método de pago */}
+            <View style={styles.row}>
+              <TextInput
+                style={[styles.input, { flex: 1, marginRight: 8 }]}
+                placeholder="Monto"
+                keyboardType="numeric"
+                value={monto}
+                onChangeText={setMonto}
+              />
+
+              <TouchableOpacity
+                style={[styles.input, { flex: 1 }]}
+                onPress={() => setShowMetodoOptions(!showMetodoOptions)}
+              >
+                <Text>{metodo}</Text>
+              </TouchableOpacity>
+
+              {showMetodoOptions && (
+                <View style={[styles.dropdown, { top: 55, right: 0 }]}>
+                  {medios.map((m) => (
+                    <TouchableOpacity
+                      key={m}
+                      style={styles.dropdownItem}
+                      onPress={() => {
+                        setMetodo(m);
+                        setShowMetodoOptions(false);
+                      }}
+                    >
+                      <Text>{m}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            </View>
+
+            {/* Clases y total del curso */}
+            {tipoNuevo && (
+              <View style={styles.row}>
+                <TextInput
+                  style={[styles.inputNoBorder, { flex: 1, marginRight: 8 }]}
+                  placeholder="Cantidad de clases"
+                  keyboardType="numeric"
+                  value={clases}
+                  onChangeText={setClases}
+                />
+                <TextInput
+                  style={[styles.inputNoBorder, { flex: 1 }]}
+                  placeholder="Valor total del curso"
+                  keyboardType="numeric"
+                  value={total}
+                  onChangeText={setTotal}
+                />
+              </View>
+            )}
+
+            <TextInput
+              style={[styles.input, { height: 50 }]}
+              placeholder="Observación"
+              multiline
+              value={detalle}
+              onChangeText={setDetalle}
+            />
+
+            {/* Botones */}
+            <View style={styles.buttonsRow}>
+              <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                <Text style={styles.buttonText}>Cancelar</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                <Text style={styles.buttonText}>Guardar</Text>
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   modalContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 20,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 8,
+    padding: 16,
+    elevation: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
-  title: { fontSize: 18, fontWeight: 'bold', marginBottom: 12 },
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
   input: {
-    borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
-    padding: 10,
-    marginBottom: 12,
+    backgroundColor: '#fff',
+    fontSize: 16,
+    marginVertical: 2,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    height: 40,
+    justifyContent: 'center',
+  },
+  inputNoBorder: {
+    backgroundColor: '#f9f9f9',
+    fontSize: 16,
+    marginVertical: 2,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    height: 40,
+    justifyContent: 'center',
   },
   row: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 12,
+    alignItems: 'center',
+    marginVertical: 6,
   },
-  rowItem: {
-    flex: 1,
-    marginHorizontal: 4,
+  dropdown: {
+    position: 'absolute',
+    width: '100%',
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    zIndex: 10,
+    elevation: 5,
   },
-  metodoContainer: {
+  dropdownItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  switchRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 12,
-  },
-  metodoButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: COLORS.primary,
-    borderRadius: 8,
-    padding: 10,
-    marginHorizontal: 4,
+    marginVertical: 6,
     alignItems: 'center',
   },
-  metodoButtonSelected: {
-    backgroundColor: COLORS.primary,
-  },
-  metodoText: {
-    color: COLORS.primary,
-    fontWeight: 'bold',
-  },
-  metodoTextSelected: {
-    color: '#fff',
-  },
+  label: { fontSize: 16 },
   buttonsRow: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
@@ -204,19 +320,16 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingVertical: 10,
     marginRight: 10,
     backgroundColor: '#ccc',
     borderRadius: 8,
   },
   submitButton: {
     paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingVertical: 10,
     backgroundColor: COLORS.primary,
     borderRadius: 8,
   },
-  buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-})
+  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+});

@@ -1,5 +1,5 @@
 import React from 'react';
-import api from './axiosClient';
+import api from '../../../core/services/axiosClient';
 import axios from 'axios';
 import { Alert } from 'react-native';
 

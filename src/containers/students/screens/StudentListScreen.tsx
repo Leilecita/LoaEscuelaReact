@@ -5,12 +5,15 @@ import {
   Text,
   ActivityIndicator,
   StyleSheet,
+  TouchableOpacity,
+  Button
 } from 'react-native'
 import { Category, RootStackParamList, Subcategoria } from 'types'
 import { useAllStudents } from '../../../core/hooks/useAllStudents'
 import type { Student } from '../services/studentService'
 import { addStudentToAssist } from '../services/studentService'
 import { ItemStudentView } from '../components/ItemStudentView'
+import { ItemStudentAddToAssistView } from '../components/ItemStudentAddToAssistView'
 import { ItemStudentAddPaymentView } from '../components/ItemStudentAddPaymentView'
 import { FilterBar } from 'core/components/FilterToolbar' 
 import { FAB } from 'react-native-paper'
@@ -19,6 +22,10 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import type { RouteProp } from '@react-navigation/native'
 import { COLORS } from '@core'
 import { PaymentModal } from '../../../core/components/PaymentModal'
+import { DateHeader } from '../../../core/components/DateHeader';
+import { SurfPriceBottomSheet } from 'core/components/SurfPriceBottomSheet'
+
+import Modal from 'react-native-modal'; // importa al inicio del archivo
 
 
 type StudentListScreenNavigationProp = NativeStackNavigationProp<
@@ -49,6 +56,7 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
 
   const navigation = useNavigation<StudentListScreenNavigationProp>()
   
+  const [showSurfPriceSheet, setShowSurfPriceSheet] = useState(false);
 
   const handleAgregar = async (alumno_id: number) => {
     if (!planilla_id) {
@@ -178,8 +186,8 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
               )
             }
             renderSectionHeader={({ section: { title } }) => (
-              <View style={styles.sectionHeader}>
-                <Text style={styles.sectionHeaderText}>{title}</Text>
+              <View style={{ marginHorizontal: 10 }}>
+                <DateHeader date={title} />
               </View>
             )}
             stickySectionHeadersEnabled={true}
@@ -189,11 +197,30 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
             contentContainerStyle={{ paddingBottom: 20 }}
           />
 
-        <PaymentModal
+          <PaymentModal
             visible={modalVisible}
             onClose={() => setModalVisible(false)}
             onSubmit={handleSubmitPago}
           />
+          {modo === 'cargarPago' && (
+            <SurfPriceBottomSheet
+              visible={showSurfPriceSheet}
+              onClose={() => setShowSurfPriceSheet(false)}
+              price={5000} // o lo que quieras pasar dinámicamente
+            />
+          )}
+
+          {modo === 'cargarPago' && (
+            <TouchableOpacity
+              style={styles.surfPriceButton}
+              onPress={() => setShowSurfPriceSheet(true)}
+            >
+              <Text style={styles.surfPriceButtonText}>
+                Ver valor de las clases de surf
+              </Text>
+            </TouchableOpacity>
+          )}
+
   
           <FAB
             icon="plus"
@@ -244,14 +271,32 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowRadius: 2,
   },
-  sectionHeaderText: {
-    color: COLORS.buttonClearLetter,
-    fontSize: 14,
-  },
   fab: {
     position: 'absolute',
     right: 16,
     bottom: 16,
     backgroundColor: '#6200ee',
+  },
+  surfPriceButton: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: COLORS.white,
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5, // para Android
+  },
+  surfPriceButtonText: {
+    color: COLORS.primary,
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 })

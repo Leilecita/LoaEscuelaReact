@@ -14,6 +14,7 @@ import { MenuHeader } from '../../../src/core/components/MenuHeader'
 import { AppTabs } from './AppTabs'  
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 import { PaymentStudentListScreen } from 'containers/students/screens/PaymentStudentListScreen';
+import IncomesListScreen from 'containers/incomes/screens/IncomesListScreen';
 
 const hideHeader = { headerShown: false };
 
@@ -87,6 +88,11 @@ export function NavigationApp() {
             name="ListaDeAlumnos"
             component={StudentListScreen}
             options={{ title: 'Todos los alumnos' }}
+          />
+           <RootStack.Screen
+            name="ListaDePagos"
+            component={IncomesListScreen}
+            options={{ title: 'Lista de pagos' }}
           />
            <RootStack.Screen
               name="PaymentStudentList"

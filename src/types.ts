@@ -5,6 +5,7 @@ export type RootStackParamList = {
     Asistencias: undefined; 
     CreateStudent: undefined;
     CargarPago : undefined;
+    ListaDePagos: undefined;
     
     ListaDeAlumnos: { category: string; subcategoria: string; shouldReload?: boolean;  modo?: 'lista' | 'asistencias' | 'cargarPago'; planilla_id?: number | null }
     StudentListScreen: undefined; // <-- no recibe params

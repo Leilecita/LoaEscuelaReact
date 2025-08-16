@@ -3,7 +3,8 @@ import { StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button, Input } from '@core';
 
-import axios from 'axios';
+import axiosClient from '../../../core/services/axiosClient';
+
 import { AuthContext } from '../../../contexts/AuthContext'; 
 
 export const LoginScreen = () => {
@@ -19,13 +20,23 @@ export const LoginScreen = () => {
     const passwordPlain = password;
 
     try {
-      const response = await axios.get('http://192.168.5.33/loa_school/login.php', {
+
+      const response = await axiosClient.get('/login.php', {
         params: {
           name: name,
           hash_password: passwordPlain,
           method: 'login',
         },
       });
+
+
+     /* const response = await axios.get('http://192.168.5.33/loa_school/login.php', {
+        params: {
+          name: name,
+          hash_password: passwordPlain,
+          method: 'login',
+        },
+      }); */
 
       console.log('Respuesta del backend:', response.data);
 
