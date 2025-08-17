@@ -1,11 +1,15 @@
 import React from 'react'
-import { View, Text, Linking, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import type { Student } from '../services/studentService'
 import { ContactRow } from '../../../core/components/ContactRow'
 import { InitialAvatar } from '../../../core/components/InitialAvatar'
 import { COLORS } from 'core/constants'
-import { TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootStackParamList } from 'types'
+
+// 👈 Navigation tipado hacia InformationStudent
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'InformationStudent'>
 
 type Props = {
   student: Student
@@ -18,11 +22,11 @@ export const ItemStudentView: React.FC<Props> = ({
   isExpanded,
   onToggleExpand,
 }) => {
+  const navigation = useNavigation<NavigationProp>()
 
-  const navigation = useNavigation()
   return (
     <View style={styles.itemContainer}>
-       <View style={styles.topRow}>
+      <View style={styles.topRow}>
         <InitialAvatar letra={student.nombre.charAt(0)} />
         <View style={styles.leftColumn}>
           <Text style={styles.name} onPress={onToggleExpand}>
@@ -34,6 +38,7 @@ export const ItemStudentView: React.FC<Props> = ({
           )}
         </View>
       </View>
+
       {isExpanded && (
         <View style={styles.extraInfo}>
           {student.tel_adulto && (
@@ -42,21 +47,18 @@ export const ItemStudentView: React.FC<Props> = ({
           {student.nombre_mama && (
             <ContactRow name={student.nombre_mama} phone={student.tel_mama} />
           )}
-
           {student.nombre_papa && (
             <ContactRow name={student.nombre_papa} phone={student.tel_papa} />
           )}
 
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate('PagosYClases', { studentId: student.id })
+              navigation.navigate('InformationStudent', { studentId: student.id })
             }
           >
             <Text style={styles.masInfoText}>Más info</Text>
           </TouchableOpacity>
         </View>
-
-        
       )}
     </View>
   )
@@ -67,36 +69,32 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginHorizontal: 8,
     marginVertical: 2,
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop:8,
-    paddingBottom:8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 2, // para Android
+    elevation: 2,
   },
-
- leftColumn: {
-  flex: 1,
-  flexDirection: 'column',
-  justifyContent: 'center',
- },
+  leftColumn: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
   topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 0,
-   },
+  },
   name: {
-    fontFamily:'OpenSans-Regular',
+    fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
     fontSize: 18,
   },
   dni: {
-    fontFamily:'OpenSans-Light',
+    fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter,
     fontSize: 16,
   },
@@ -113,5 +111,4 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     fontSize: 14,
   },
-  
 })

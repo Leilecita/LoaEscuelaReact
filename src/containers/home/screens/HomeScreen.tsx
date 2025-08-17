@@ -34,6 +34,10 @@ export const HomeScreen = () => {
           })
         }
       />
+      <Button
+      title="Ver pagos del alumno"
+      onPress={() => navigation.navigate('InformationStudent', { studentId: 872 })}
+    />
       <Button title="Ver pagos" onPress={() => navigation.navigate('ListaDePagos')} />
     </View>
   );

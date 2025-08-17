@@ -31,3 +31,19 @@ export async function fetchIncomes(
     throw new Error(response.data.message || 'Error al obtener pagos');
   }
 }
+
+export async function fetchIncomesByStudent(studentId: number, page: number): Promise<Income[]> {
+  const params = {
+    method: 'getIncomesByStudent',
+    student_id: studentId,
+    page, // así lo recibe usePaginatedFetch
+  };
+
+  const response = await api.get('/class_courses.php', { params });
+
+  if (response.data.result === 'success') {
+    return response.data.data as Income[];
+  } else {
+    throw new Error(response.data.message || 'Error al obtener pagos');
+  }
+}

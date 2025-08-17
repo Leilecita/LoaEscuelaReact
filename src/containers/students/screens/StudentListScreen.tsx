@@ -196,9 +196,9 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
             ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
             contentContainerStyle={{ paddingBottom: 20 }}
           />
-
           <PaymentModal
             visible={modalVisible}
+            studentId={selectedStudentId} // <-- así lo recibe
             onClose={() => setModalVisible(false)}
             onSubmit={handleSubmitPago}
           />

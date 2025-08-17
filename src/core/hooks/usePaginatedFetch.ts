@@ -1,3 +1,4 @@
+
 import { useCallback, useEffect, useState } from 'react'
 
 export function usePaginatedFetch<T>(
@@ -17,10 +18,12 @@ export function usePaginatedFetch<T>(
       if (reset) {
         setHasMore(true)
         setData([])
-        setLoading(true)
-      } else {
-        setLoadingMore(true)
       }
+
+      if (!hasMore && !reset) return
+
+      if (reset) setLoading(true)
+      else setLoadingMore(true)
 
       try {
         const result = await fetchFn(pageToLoad)
@@ -34,12 +37,13 @@ export function usePaginatedFetch<T>(
       } finally {
         setLoading(false)
         setLoadingMore(false)
+        if (reset) setRefreshing(false)
       }
     },
     [fetchFn, hasMore]
   )
 
-  // Carga inicial o cuando cambian dependencias
+  // Carga inicial o cuando cambian las dependencias
   useEffect(() => {
     setPage(0)
     load(0, true)
@@ -52,10 +56,11 @@ export function usePaginatedFetch<T>(
   }, [page, load])
 
   // Pull-to-refresh
-  const reload = () => {
-    setHasMore(true)
+  const reload = async () => {
     setRefreshing(true)
-    load(0, true).finally(() => setRefreshing(false))
+    setPage(0)
+    await load(0, true)
+    setRefreshing(false)
   }
 
   const loadMore = () => {
@@ -76,7 +81,6 @@ export function usePaginatedFetch<T>(
     setPage,
   }
 }
-
 
 /*import { useCallback, useEffect, useState } from 'react'
 

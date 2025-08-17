@@ -38,22 +38,25 @@ export default function IncomesListScreen() {
       ListFooterComponent={
         loadingMore ? <ActivityIndicator size="small" /> : null
       }
-      renderItem={({ item, index }) => (
-        <ItemIncomeView
-          income_created={item.income_created}
-          description={item.description}
-          payment_method={item.payment_method}
-          category={item.category || ''}
-          detail={item.detail.toString()}
-          amount={item.amount}
-          income_id={item.income_id}
-          showDateHeader={
-            index === 0 ||
-            item.income_created.split('T')[0] !==
-              incomes[index - 1].income_created.split('T')[0]
-          }
-        />
-      )}
+      renderItem={({ item, index }) => {
+        const currentDate = new Date(item.income_created).toISOString().substring(0, 10);
+        const previousDate = index > 0
+          ? new Date(incomes[index - 1].income_created).toISOString().substring(0, 10)
+          : null;
+      
+        return (
+          <ItemIncomeView
+            income_created={item.income_created}
+            description={item.description}
+            payment_method={item.payment_method}
+            category={item.category || ''}
+            detail={item.detail.toString()}
+            amount={item.amount}
+            income_id={item.income_id}
+            showDateHeader={index === 0 || currentDate !== previousDate}
+          />
+        )
+      }}
     />
   )
 }
