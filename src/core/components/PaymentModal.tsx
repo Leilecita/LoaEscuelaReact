@@ -20,6 +20,8 @@ type PaymentModalProps = {
   visible: boolean;
   onClose: () => void;
   studentId: number | null;
+  firstName: string;   
+  lastName: string;  
   onSuccess?: () => void;
   onSubmit?: (data: {
     fecha: Date;
@@ -33,6 +35,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   visible,
   onClose,
   studentId,
+  firstName,
+  lastName,
   onSuccess,
   onSubmit,
 }) => {

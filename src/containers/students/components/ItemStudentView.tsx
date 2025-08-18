@@ -53,7 +53,9 @@ export const ItemStudentView: React.FC<Props> = ({
 
           <TouchableOpacity
             onPress={() =>
-              navigation.navigate('InformationStudent', { studentId: student.id })
+              navigation.navigate('InformationStudent', {  studentId: student.id,
+                firstName: student.nombre,   
+                lastName: student.apellido,  })
             }
           >
             <Text style={styles.masInfoText}>Más info</Text>

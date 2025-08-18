@@ -11,7 +11,9 @@ export type RootStackParamList = {
     StudentListScreen: undefined; // <-- no recibe params
     PaymentStudentList: { category: string; subcategoria: string; date: string }; 
 
-    InformationStudent: { studentId: number }; // 👈 nuevo
+    InformationStudent: {  studentId: number;
+      firstName: string;
+      lastName: string; }; 
     //PagosYClases: { studentId: number };
 
   };

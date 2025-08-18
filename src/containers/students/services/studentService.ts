@@ -11,6 +11,11 @@ export type ReportSeasonPresent = {
   tot_paid_amount: number;
 };
 
+export type ReportPresent = {
+  planilla: string;
+  fecha_presente: number;
+};
+
 export type ReportStudent = {
   student_id: number;
   nombre: string;
@@ -47,6 +52,40 @@ export type Student = {
   
   created: string;
   updated_date: string;
+}
+
+export async function getResumenStudent(
+  student_id: number
+): Promise<ReportSeasonPresent[]> {
+  const response = await api.get('/seasons.php', {
+    params: {
+      method: 'getResumInfoByStudent',
+      student_id,
+    },
+  })
+
+  if (response.data.result === 'success') {
+    return response.data.data 
+  } else {
+    throw new Error(response.data.message || 'Error al obtener estudiantes')
+  }
+}
+
+export async function getPresentsStudent(
+  student_id: number
+): Promise<ReportPresent[]> {
+  const response = await api.get('/planillas_presentes.php', {
+    params: {
+      method: 'getPresentsByStudent',
+      id: student_id,
+    },
+  })
+
+  if (response.data.result === 'success') {
+    return response.data.data 
+  } else {
+    throw new Error(response.data.message || 'Error al obtener estudiantes')
+  }
 }
 
 export async function fetchStudentsForPayment(

@@ -12,6 +12,17 @@ export type Income = {
   category: string;
 };
 
+export type IncomeStudent = {
+  income_id: number;
+  student_id: number;
+  amount: number;
+  description: string;
+  created: string;
+  detail: string;
+  payment_method: string;
+  category: string;
+};
+
 export async function fetchIncomes(
   page: number,
   payment_place = ''
@@ -32,7 +43,7 @@ export async function fetchIncomes(
   }
 }
 
-export async function fetchIncomesByStudent(studentId: number, page: number): Promise<Income[]> {
+export async function fetchIncomesByStudent(studentId: number, page: number): Promise<IncomeStudent[]> {
   const params = {
     method: 'getIncomesByStudent',
     student_id: studentId,
@@ -42,7 +53,7 @@ export async function fetchIncomesByStudent(studentId: number, page: number): Pr
   const response = await api.get('/class_courses.php', { params });
 
   if (response.data.result === 'success') {
-    return response.data.data as Income[];
+    return response.data.data as IncomeStudent[];
   } else {
     throw new Error(response.data.message || 'Error al obtener pagos');
   }

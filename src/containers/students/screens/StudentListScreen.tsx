@@ -116,6 +116,7 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
   const [modalVisible, setModalVisible] = useState(false)
   const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null)
 
+
   const openCargarPagoModal = (studentId: number) => {
     setSelectedStudentId(studentId)
     setModalVisible(true)
@@ -198,7 +199,7 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
           />
           <PaymentModal
             visible={modalVisible}
-            studentId={selectedStudentId} // <-- así lo recibe
+            studentId={selectedStudentId} 
             onClose={() => setModalVisible(false)}
             onSubmit={handleSubmitPago}
           />

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { usePaginatedFetch } from '../../../core/hooks/usePaginatedFetch';
-import { fetchIncomesByStudent, Income } from '../services/incomeService';
+import { fetchIncomesByStudent, Income, IncomeStudent } from '../services/incomeService';
 
 type UseIncomesByStudentProps = {
   studentId: number;
@@ -13,7 +13,7 @@ export function useIncomesByStudent({ studentId }: UseIncomesByStudentProps) {
   );
 
   const { data, loading, loadingMore, error, loadMore, reload } =
-    usePaginatedFetch<Income>(fetchFn, [studentId]);
+    usePaginatedFetch<IncomeStudent>(fetchFn, [studentId]);
 
   return { incomes: data, loading, loadingMore, error, loadMore, reload };
 }
