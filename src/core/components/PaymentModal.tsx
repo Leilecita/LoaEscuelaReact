@@ -132,6 +132,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   };
 
   const { width } = Dimensions.get('window');
+  const [tipoCurso, setTipoCurso] = useState<'nuevo' | 'cta' | null>(null);
+  
 
   return (
     <Modal isVisible={visible} onBackdropPress={onClose} style={{ justifyContent: 'center', alignItems: 'center' }} avoidKeyboard>
@@ -163,15 +165,66 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
             {showDatePicker && <DateTimePicker value={fecha} mode="date" display="calendar" onChange={handleDateChange} />}
 
-            {/* Switch Nuevo */}
+            {/* Switch Nuevo 
             <View style={styles.switchRow}>
               <Text style={styles.label}>¿Es nuevo curso?</Text>
               <Switch value={tipoNuevo} onValueChange={setTipoNuevo} />
+            </View>*/}
+            
+
+            {/* Opciones Curso */}
+            <View style={[styles.row, { justifyContent: 'flex-start', marginVertical: 10 }]}>
+              <TouchableOpacity
+                style={styles.checkboxContainer}
+                onPress={() => setTipoCurso('nuevo')}
+              >
+                <View style={[styles.checkbox, tipoCurso === 'nuevo' && styles.checked]} />
+                <Text style={styles.checkboxLabel}>Curso nuevo</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.checkboxContainer, { marginLeft: 20 }]} // separacion entre opciones
+                onPress={() => {
+                  setTipoCurso('cta');
+                  setClases('');
+                  setTotal('');
+                }}
+              >
+                <View style={[styles.checkbox, tipoCurso === 'cta' && styles.checked]} />
+                <Text style={styles.checkboxLabel}>A cta</Text>
+              </TouchableOpacity>
             </View>
+            {tipoCurso === 'nuevo' && (
+                <View style={styles.row}>
+                  <TextInput
+                    style={[styles.input, { flex: 1, marginRight: 8 }]}
+                    placeholder="Cantidad de clases"
+                    placeholderTextColor=" #333"
+                    keyboardType="numeric"
+                    value={clases}
+                    onChangeText={setClases}
+                  />
+                  <TextInput
+                    style={[styles.input, { flex: 1 }]}
+                    placeholder="Valor total del curso"
+                    placeholderTextColor="#333"
+                    keyboardType="numeric"
+                    value={total}
+                    onChangeText={setTotal}
+                  />
+                </View>
+              )}
+             {/* Clases y total del curso 
+             {tipoNuevo && (
+              <View style={styles.row}>
+                <TextInput style={[styles.input, { flex: 1, marginRight: 8 }]} placeholder="Cantidad de clases" keyboardType="numeric" value={clases} onChangeText={setClases} />
+                <TextInput style={[styles.input, { flex: 1 }]} placeholder="Valor total del curso" keyboardType="numeric" value={total} onChangeText={setTotal} />
+              </View>
+            )} */}
 
             {/* Monto y método de pago */}
             <View style={styles.row}>
-              <TextInput style={[styles.input, { flex: 1, marginRight: 8 }]} placeholder="Monto" keyboardType="numeric" value={monto} onChangeText={setMonto} />
+              <TextInput style={[styles.input, { flex: 1, marginRight: 8 }]} placeholder="monto"  placeholderTextColor="#333" keyboardType="numeric" value={monto} onChangeText={setMonto} />
 
               <TouchableOpacity style={[styles.input, { flex: 1 }]} onPress={() => setShowMetodoOptions(!showMetodoOptions)}>
                 <Text>{metodo}</Text>
@@ -188,15 +241,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               )}
             </View>
 
-            {/* Clases y total del curso */}
-            {tipoNuevo && (
-              <View style={styles.row}>
-                <TextInput style={[styles.inputNoBorder, { flex: 1, marginRight: 8 }]} placeholder="Cantidad de clases" keyboardType="numeric" value={clases} onChangeText={setClases} />
-                <TextInput style={[styles.inputNoBorder, { flex: 1 }]} placeholder="Valor total del curso" keyboardType="numeric" value={total} onChangeText={setTotal} />
-              </View>
-            )}
+           
 
-            <TextInput style={[styles.input, { height: 50 }]} placeholder="Observación" multiline value={detalle} onChangeText={setDetalle} />
+            <TextInput style={[styles.input, { height: 50 }]}  placeholderTextColor="#333" placeholder="observación" multiline value={detalle} onChangeText={setDetalle} />
 
             {/* Botones */}
             <View style={styles.buttonsRow}>
@@ -217,16 +264,30 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 // Mantener tus estilos
 const styles = StyleSheet.create({
   modalContainer: { backgroundColor: '#f9f9f9', borderRadius: 8, padding: 16, elevation: 5, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.25, shadowRadius: 3.84 },
-  title: { fontSize: 18, fontWeight: 'bold', marginBottom: 12, textAlign: 'center' },
-  input: { borderColor: '#ccc', borderRadius: 8, backgroundColor: '#fff', fontSize: 16, marginVertical: 2, paddingHorizontal: 12, paddingVertical: 6, height: 40, justifyContent: 'center' },
+  title: { fontSize: 16, fontFamily: 'OpenSans-Light', color: COLORS.darkLetter3, marginBottom: 12, textAlign: 'center' },
+  input: { borderColor: '#ccc', fontFamily: 'OpenSans-Light',borderRadius: 8, backgroundColor: '#fff', fontSize: 16, marginVertical: 2, paddingHorizontal: 12, paddingVertical: 6, height: 40, justifyContent: 'center' },
   inputNoBorder: { backgroundColor: '#f9f9f9', fontSize: 16, marginVertical: 2, paddingHorizontal: 12, paddingVertical: 6, height: 40, justifyContent: 'center' },
   row: { flexDirection: 'row', alignItems: 'center', marginVertical: 6 },
-  dropdown: { position: 'absolute', width: '100%', backgroundColor: '#fff', borderWidth: 1, borderColor: '#ccc', borderRadius: 8, zIndex: 10, elevation: 5 },
+  dropdown: { position: 'absolute', width: '100%', backgroundColor: '#fff',borderWidth: 1, borderColor: '#ccc', borderRadius: 8, zIndex: 10, elevation: 5 },
   dropdownItem: { padding: 12, borderBottomWidth: 1, borderBottomColor: '#eee' },
   switchRow: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 6, alignItems: 'center' },
   label: { fontSize: 16 },
-  buttonsRow: { flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12 },
-  cancelButton: { paddingHorizontal: 14, paddingVertical: 10, marginRight: 10, backgroundColor: '#ccc', borderRadius: 8 },
-  submitButton: { paddingHorizontal: 14, paddingVertical: 10, backgroundColor: COLORS.primary, borderRadius: 8 },
-  buttonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  buttonsRow: { flexDirection: 'row', justifyContent: 'flex-end', marginTop: 16 },
+  cancelButton: { paddingHorizontal: 14, paddingVertical: 10, marginRight: 10, borderRadius: 8 },
+  submitButton: { paddingHorizontal: 14, paddingVertical: 10, backgroundColor: COLORS.buttonClear, borderRadius: 8 },
+  buttonText: { color: COLORS.buttonClearLetter, fontSize: 14 },
+  checkboxContainer: { flexDirection: 'row', alignItems: 'center' },
+  checkbox: {
+    width: 25,
+    height: 25,
+    borderWidth: 2,
+    borderColor: COLORS.buttonClear, // borde violeta
+    borderRadius: 4,
+    marginRight: 6,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checked: { backgroundColor: COLORS.buttonClear }, // relleno violeta al seleccionar
+  checkboxLabel: { fontSize: 16, color: COLORS.buttonClearLetter }, // texto violeta
+  
 });

@@ -7,7 +7,8 @@ export const COLORS = {
     complementary: '#EAEFEF',
     white: '#FFFFFF',
 
-    darkLetter: ' #4f426b',
+    darkLetter: 'rgb(70, 56, 98)',
+    darkLetter_ant: ' #4f426b',
     darkLetter2: ' #5C4D7C',
     darkLetter3: ' #6C5F8A',
   

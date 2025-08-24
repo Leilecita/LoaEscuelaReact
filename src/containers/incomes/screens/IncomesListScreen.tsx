@@ -27,6 +27,7 @@ export default function IncomesListScreen() {
   }
 
   return (
+    <View style={{ flex: 1,backgroundColor: 'rgb(239, 241, 202)'}}>
     <FlatList
       data={incomes}
       keyExtractor={(item) => item.income_id.toString()}
@@ -58,5 +59,6 @@ export default function IncomesListScreen() {
         )
       }}
     />
+    </View>
   )
 }

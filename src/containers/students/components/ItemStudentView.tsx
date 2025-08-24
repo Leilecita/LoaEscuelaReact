@@ -58,7 +58,7 @@ export const ItemStudentView: React.FC<Props> = ({
                 lastName: student.apellido,  })
             }
           >
-            <Text style={styles.masInfoText}>Más info</Text>
+            <Text style={styles.masInfoText}>+ info</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -109,8 +109,12 @@ const styles = StyleSheet.create({
   },
   masInfoText: {
     marginTop: 8,
-    color: 'blue',
-    textDecorationLine: 'underline',
-    fontSize: 14,
+    marginBottom:6,
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 16,
+    marginRight: 14,
+    color: COLORS.buttonClearLetter, 
+    textDecorationLine: 'none', // 👈 sin subrayado
+    textAlign: 'right',          // 👈 alineado a la izquierda
   },
 })

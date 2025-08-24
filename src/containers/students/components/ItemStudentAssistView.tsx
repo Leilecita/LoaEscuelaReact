@@ -1,12 +1,16 @@
 import React from 'react'
-import { View, Text, Linking, StyleSheet } from 'react-native'
+import { View, Text, Linking, StyleSheet, TouchableOpacity } from 'react-native'
 import { Checkbox, IconButton } from 'react-native-paper'
 import type { ReportStudent } from '../services/studentService'
 import { ContactRow } from '../../../core/components/ContactRow'
 import { InformationRow } from '../../../core/components/InformationRow'
 import { InitialAvatar } from '../../../core/components/InitialAvatar'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { RootStackParamList } from 'types'
 import { COLORS } from 'core/constants'
+import { useNavigation } from '@react-navigation/native'
 
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'InformationStudent'>
 type Props = {
   student: ReportStudent
   isExpanded: boolean
@@ -25,6 +29,8 @@ export const ItemStudentAssistView: React.FC<Props> = ({
   selectedDate
   
 }) => {
+  const navigation = useNavigation<NavigationProp>()
+
   const totalClasesTomadas = student.taken_classes?.[0]?.cant_presents || 0
   const isToday = selectedDate.toDateString() === new Date().toDateString()
   return (
@@ -44,6 +50,25 @@ export const ItemStudentAssistView: React.FC<Props> = ({
         <Text style={{ marginRight: 8, color: '#666', fontSize: 12 }}>
           {totalClasesTomadas}
         </Text>
+        
+          <TouchableOpacity
+  onPress={() => {
+    if (!isToday) return;
+    student.presente === 'si'
+      ? eliminarPresente(student)
+      : togglePresente(student);
+  }}
+  style={[
+    styles.checkbox,
+    student.presente === 'si' && styles.checked,
+    { borderColor: COLORS.buttonClear, backgroundColor: student.presente === 'si' ? COLORS.buttonClear : 'transparent' },
+  ]}
+  disabled={!isToday}
+>
+  {student.presente === 'si' && <Text style={styles.checkMark}>✓</Text>}
+</TouchableOpacity>
+
+             {/* Línea separadora 
         <View style={[
             styles.rightBox,
             {
@@ -66,8 +91,8 @@ export const ItemStudentAssistView: React.FC<Props> = ({
             color={isToday ? 'black' : '#b39ddb'} // violeta suave
             uncheckedColor="transparent"
             disabled={!isToday}
-          />
-        </View>
+          /> 
+        </View>*/}
       </View>
 
       {isExpanded && (
@@ -75,7 +100,6 @@ export const ItemStudentAssistView: React.FC<Props> = ({
            <View style={styles.infoSection}>
               <InformationRow texto="clases tomadas"  numero={student.taken_classes[0].cant_presents ?? 0} />
               <InformationRow texto="deuda"  numero={`$ ${student.taken_classes[0].tot_amount ?? 0}`} />
-              <InformationRow texto="pago"  numero={`$ ${student.taken_classes[0].tot_paid_amount ?? 0}`} />
             </View>
   
             {/* Línea separadora */}
@@ -90,6 +114,16 @@ export const ItemStudentAssistView: React.FC<Props> = ({
           {student.nombre_papa && (
             <ContactRow name={student.nombre_papa} phone={student.tel_papa} />
           )}
+
+           <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('InformationStudent', {  studentId: student.student_id,
+                  firstName: student.nombre,   
+                  lastName: student.apellido,  })
+              }
+            >
+              <Text style={styles.masInfoText}>+ info</Text>
+            </TouchableOpacity>
         </View>
       )}
     </View>
@@ -164,4 +198,34 @@ const styles = StyleSheet.create({
     backgroundColor: '#ccc',
     marginVertical: 8,
   },
+  masInfoText: {
+    marginTop: 8,
+    marginBottom:6,
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 18,
+    marginRight: 14,
+    color: COLORS.buttonClearLetter, 
+    textDecorationLine: 'none', // 👈 sin subrayado
+    textAlign: 'right',          // 👈 alineado a la izquierda
+  },
+  checkbox: {
+    width: 44,        
+    height: 38,       
+    borderWidth: 4,
+    borderColor: COLORS.buttonClear,
+    borderRadius: 6,   
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkMark: {
+    color: '#fff',
+    fontSize: 24,      // antes 18
+    fontWeight: 'bold',
+  },
+  
+  checked: {
+    // relleno cuando está seleccionado
+  },
+ 
+  
 })

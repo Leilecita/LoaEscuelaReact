@@ -38,7 +38,7 @@ export const ItemStudentAddPaymentView: React.FC<Props> = ({
               style={styles.button}
               onPress={() => onCargarPago(student.id)}
             >
-              <Text style={styles.buttonText}>Cargar{'\n'}Pago</Text>
+              <Text style={styles.buttonText}>cargar{'\n'}pago</Text>
             </Pressable>
           </View>
         )}

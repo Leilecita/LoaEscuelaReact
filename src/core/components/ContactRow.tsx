@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
   contactRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 4,
-    paddingBottom: 4,
+    paddingVertical: 3,
+    paddingBottom: 3,
   },
   contactName: {
     flex: 1, // Ocupa espacio proporcional

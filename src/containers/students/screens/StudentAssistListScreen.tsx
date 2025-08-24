@@ -167,7 +167,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
 
 
   return (
-    <View style={{ flex: 1, overflow: 'visible' }}>
+    <View style={{ flex: 1, overflow: 'visible', backgroundColor: 'rgb(239, 241, 202)' }}>
       <FilterBar
         date={selectedDate}
         onDateChange={setSelectedDate}

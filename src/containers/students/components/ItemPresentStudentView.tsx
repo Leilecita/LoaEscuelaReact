@@ -1,3 +1,4 @@
+import { COLORS } from '@core';
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text as PaperText } from 'react-native-paper';
@@ -39,13 +40,21 @@ export const ItemPresentStudentView: React.FC<ItemPresentViewProps> = ({
       )}
 
       <View style={styles.row}>
-        <View style={styles.dateContainer}>
+        {/* Día y número a la izquierda */}
           <PaperText style={styles.day}>{day}</PaperText>
           <PaperText style={styles.number}>{number}</PaperText>
+
+        {/* Mes centrado */}
+        <View style={styles.monthContainer}>
+          <PaperText style={styles.month}>
+            {month.charAt(0).toUpperCase() + month.slice(1)}
+          </PaperText>
         </View>
-        <PaperText style={styles.info}>
-          {month.charAt(0).toUpperCase() + month.slice(1)} - {item.planilla}
-        </PaperText>
+
+        {/* Categoría a la derecha */}
+        <View style={styles.categoryContainer}>
+          <PaperText style={styles.category}>{item.planilla}</PaperText>
+        </View>
       </View>
     </View>
   );
@@ -53,19 +62,18 @@ export const ItemPresentStudentView: React.FC<ItemPresentViewProps> = ({
 
 const styles = StyleSheet.create({
   yearHeader: {
-    backgroundColor: '#f8bbd0',
+    backgroundColor: COLORS.buttonClear,
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 8,
     marginTop: 8,
+    alignSelf: 'flex-start', // 👈 solo abarca el año
   },
   yearText: {
-    fontWeight: 'bold',
-    color: '#444',
+    color: COLORS.buttonClearLetter,
   },
   row: {
     flexDirection: 'row',
-    backgroundColor: '#f2f863', // amarillo similar a la foto
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderBottomWidth: 1,
@@ -77,13 +85,25 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   day: {
-    fontWeight: 'bold',
+   width:50,
   },
   number: {
     fontSize: 14,
   },
-  info: {
+  monthContainer: {
     flex: 1,
-    marginLeft: 12,
+    alignItems: 'center', // 👈 centrado horizontal
+  },
+  month: {
+   fontFamily: 'OpenSans-Regular',
+  },
+  categoryContainer: {
+    minWidth: 100,
+    alignItems: 'flex-end',
+  },
+  category: {
+    fontStyle: 'italic',
+    fontFamily: 'OpenSans-Regular',
+    marginRight: 8,
   },
 });

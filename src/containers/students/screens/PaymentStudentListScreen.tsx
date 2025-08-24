@@ -51,7 +51,7 @@ export const PaymentStudentListScreen: React.FC<Props> = ({ category, subcategor
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1,backgroundColor: 'rgb(239, 241, 202)'}}>
       <FilterBar
         searchText={searchInput}
         onSearchTextChange={setSearchInput}
