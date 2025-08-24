@@ -25,8 +25,6 @@ import { PaymentModal } from '../../../core/components/PaymentModal'
 import { DateHeader } from '../../../core/components/DateHeader';
 import { SurfPriceBottomSheet } from 'core/components/SurfPriceBottomSheet'
 
-import Modal from 'react-native-modal'; // importa al inicio del archivo
-
 
 type StudentListScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,

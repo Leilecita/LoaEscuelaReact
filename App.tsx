@@ -31,7 +31,7 @@ export default function App() {
     <PaperProvider>
       <AuthProvider>
         {/* 🎨 Barra superior */}
-        <StatusBar style="light" backgroundColor="rgb(103, 68, 165)" />
+        <StatusBar style="light" backgroundColor="rgb(130, 94, 193)" />
 
         {/* Contenedor principal con fondo de barra inferior */}
         <View style={styles.container}>

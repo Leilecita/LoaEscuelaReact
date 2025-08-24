@@ -1,10 +1,10 @@
-// src/containers/home/screens/HomeScreen.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { RootStackParamList } from '../../../../src/types';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import api from '../../../core/services/axiosClient';
+import { DateHeader } from '../../../core/components/DateHeader';
 
 type RootStackNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -27,28 +27,28 @@ export const HomeScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const [resumen, setResumen] = useState<ReportResumAsist | null>(null);
 
-  useEffect(() => {
-    const fetchResumen = async () => {
-      try {
-        const response = await api.get('/planillas_presentes.php', {
-          params: { method: 'getDayResumPresents', page: 0 },
-        });
-  
-        // La data real está en response.data.data
-        const dataArray = response.data.data;
-  
-        if (Array.isArray(dataArray) && dataArray.length > 0) {
-          setResumen(dataArray[0]); // tomamos el primer día
-        }
-      } catch (error) {
-        console.log('Error al cargar resumen', error);
+  const fetchResumen = async () => {
+    try {
+      const response = await api.get('/planillas_presentes.php', {
+        params: { method: 'getDayResumPresents', page: 0 },
+      });
+
+      const dataArray = response.data.data;
+
+      if (Array.isArray(dataArray) && dataArray.length > 0) {
+        setResumen(dataArray[0]); // tomamos el primer día
       }
-    };
-  
-    fetchResumen();
-  }, []);
-  
-  
+    } catch (error) {
+      console.log('Error al cargar resumen', error);
+    }
+  };
+
+  // 🔹 Se ejecuta cada vez que HomeScreen recibe foco
+  useFocusEffect(
+    useCallback(() => {
+      fetchResumen();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
@@ -111,13 +111,14 @@ export const HomeScreen = () => {
       {/* recuadro transparente abajo */}
       <ScrollView
         style={{ width: '100%' }}
-        contentContainerStyle={{ alignItems: 'center', paddingBottom: 10 }}
+        contentContainerStyle={{ alignItems: 'center'}}
       >
         <View style={styles.transparentBox}>
           {resumen ? (
             <>
-              <Text style={styles.boxText}>{resumen.day}</Text>
-
+              <View style={{ marginHorizontal: -5}}>
+                <DateHeader date={resumen.day} />
+              </View>
 
               <View style={styles.columnsContainer}>
                 {resumen.planillas?.map((p) => (
@@ -135,76 +136,30 @@ export const HomeScreen = () => {
           )}
         </View>
       </ScrollView>
-
-
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    backgroundColor: '#d8e219',
-    paddingTop: 40,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '80%',
-    marginVertical: 20,
-  },
-  button: {
-    flex: 1,
-    alignItems: 'center',
-    marginHorizontal: 10,
-  },
-  bigButton: {
-    alignItems: 'center',
-    marginVertical: 20,
-  },
-  icon: {
-    width: 120,
-    height: 120,
-    resizeMode: 'contain',
-  },
-  bigIcon: {
-    width: 140,
-    height: 140,
-    resizeMode: 'contain',
-  },
-  center: {
-    alignItems: 'center',
-  },
+  container: { flex: 1, justifyContent: 'flex-start', alignItems: 'center', backgroundColor: 'rgb(232, 237, 189)', paddingTop: 90 },
+  row: { flexDirection: 'row', justifyContent: 'space-between', width: '80%', marginVertical: 20 },
+  button: { flex: 1, alignItems: 'center', marginHorizontal: 10 },
+  bigButton: { alignItems: 'center', marginVertical: 5 },
+  icon: { width: 120, height: 120, resizeMode: 'contain' },
+  bigIcon: { width: 140, height: 140, resizeMode: 'contain' },
+  center: { alignItems: 'center' },
   transparentBox: {
-    bottom: 20,
-    top: 20,
     width: '90%',
     backgroundColor: 'rgba(255,255,255,0.3)',
     borderRadius: 15,
-    padding: 15,
+    paddingLeft: 16,
+    paddingRight: 16,
     alignItems: 'flex-start',
+    marginVertical: 30,
+    marginBottom: 0,  // opcional, para que no haya margen
   },
-  boxText: {
-    color: '#000',
-    fontFamily: 'OpenSans-Light',
-    fontSize: 16,
-  },
-  columnsContainer: {
-    flexDirection: 'row',
-    marginVertical: 13,
-    flexWrap: 'wrap',
-  },
-  columnItem: {
-    width: '50%', // dos columnas
-    paddingRight: 10,
-  },
-  rowItem: {
-    flexDirection: 'row',
-    marginVertical: 5,
-    
-    justifyContent: 'space-between',
-  },
-
+  boxText: { color: '#000', fontFamily: 'OpenSans-Light', fontSize: 16 },
+  columnsContainer: { flexDirection: 'row', marginVertical: 13, flexWrap: 'wrap' },
+  columnItem: { width: '50%', paddingRight: 10 },
+  rowItem: { flexDirection: 'row', marginVertical: 5, justifyContent: 'space-between' },
 });

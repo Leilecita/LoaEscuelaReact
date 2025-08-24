@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import {
   View,
   StyleSheet,
@@ -11,7 +11,7 @@ import { Chip, TextInput } from 'react-native-paper'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { CustomDatePicker } from './DatePickerCustom'
 import { COLORS } from 'core/constants'
-
+import { TextInput as PaperInput } from "react-native-paper";
 type FilterBarProps = {
   date?: Date
   onDateChange?: (date: Date) => void
@@ -46,7 +46,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   enableRefresh = false,
 }) => {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false)
-
+  const inputRef = useRef(null);
+  const [isFocused, setIsFocused] = useState(false);
+  
   useEffect(() => {
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
       setKeyboardVisible(true)
@@ -62,40 +64,91 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   }, [])
 
   const handleClear = () => {
-    onSearchTextChange('')
-    Keyboard.dismiss()
-  }
+    if (searchText) {
+      onSearchTextChange(""); // 👈 limpia si hay texto
+    }
+    Keyboard.dismiss();       // 👈 siempre oculta el teclado
+    setIsFocused(false);      
+  };
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.container}
     >
+       {/* Botones 
       <TextInput
-        value={searchText}
-        onChangeText={onSearchTextChange}
-        placeholder="Buscar..."
+        ref={inputRef}
+        label="Buscar..."
         mode="flat"
-        style={styles.searchInput}
-        left={<TextInput.Icon icon="magnify" color="#666" />}
-        right={
-          isKeyboardVisible ? (
-            <TextInput.Icon icon="close" color="#666" onPress={handleClear} />
-          ) : null
-        }
-        placeholderTextColor="#888"
-        underlineColor="transparent"
-        activeUnderlineColor="transparent"
-        blurOnSubmit={false}
+        cursorColor="#6200ee"
         theme={{
           colors: {
-            background: '#ede7f6',
-            text: '#333',
-            primary: '#6200ee',
-            placeholder: '#888',
+            primary: "#6200ee",
+            onSurfaceVariant: "#6200ee",
           },
         }}
       />
+    <TextInput
+  value={searchText}
+  onChangeText={onSearchTextChange}
+  placeholder="Buscar..."
+  mode="flat"
+  style={styles.searchInput}
+  left={<TextInput.Icon icon="magnify" color="#666" />}
+  right={
+    isKeyboardVisible ? (
+      <TextInput.Icon icon="close" color="#666" onPress={handleClear} />
+    ) : null
+  }
+  placeholderTextColor="#888"
+  underlineColor="transparent"
+  activeUnderlineColor="transparent"
+  blurOnSubmit={false}
+  cursorColor="#6200ee"        // color del cursor
+  selectionColor="#b39ddb"     // color del highlight al seleccionar texto
+  theme={{
+    colors: {
+      primary: "#6200ee",       // 👈 esto asegura que el input quede en foco bien
+      onSurfaceVariant: "#6200ee",
+      text: "#333",
+      placeholder: "#888",
+      background: "#ede7f6",
+    },
+  }}
+/> */}
+
+        <PaperInput
+          value={searchText}
+          onChangeText={onSearchTextChange}
+          placeholder="Buscar..."
+          mode="flat"
+          style={styles.searchInput}
+          left={<PaperInput.Icon icon="magnify" color="#666" />}
+          right={
+            (isFocused || searchText) ? ( // 👈 aparece si está enfocado o hay texto
+              <PaperInput.Icon icon="close" color="#666" onPress={handleClear} />
+            ) : null
+          }
+          placeholderTextColor="#888"
+          underlineColor="transparent"
+          activeUnderlineColor="transparent"
+          blurOnSubmit={false}
+          cursorColor="#6200ee"
+          selectionColor="#b39ddb"
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          theme={{
+            colors: {
+              primary: "#6200ee",
+              onSurfaceVariant: "#6200ee",
+              text: "#333",
+              placeholder: "#888",
+              background: "#ede7f6",
+            },
+          }}
+        />
+
 
       <View style={styles.row}>
         <ScrollView

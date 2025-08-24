@@ -52,21 +52,21 @@ export const ItemStudentAssistView: React.FC<Props> = ({
         </Text>
         
           <TouchableOpacity
-  onPress={() => {
-    if (!isToday) return;
-    student.presente === 'si'
-      ? eliminarPresente(student)
-      : togglePresente(student);
-  }}
-  style={[
-    styles.checkbox,
-    student.presente === 'si' && styles.checked,
-    { borderColor: COLORS.buttonClear, backgroundColor: student.presente === 'si' ? COLORS.buttonClear : 'transparent' },
-  ]}
-  disabled={!isToday}
->
-  {student.presente === 'si' && <Text style={styles.checkMark}>✓</Text>}
-</TouchableOpacity>
+            onPress={() => {
+              if (!isToday) return;
+              student.presente === 'si'
+                ? eliminarPresente(student)
+                : togglePresente(student);
+            }}
+            style={[
+              styles.checkbox,
+              student.presente === 'si' && styles.checked,
+              { borderColor: COLORS.button, backgroundColor: student.presente === 'si' ? COLORS.button : 'transparent' },
+            ]}
+            disabled={!isToday}
+          >
+            {student.presente === 'si' && <Text style={styles.checkMark}>✓</Text>}
+          </TouchableOpacity>
 
              {/* Línea separadora 
         <View style={[
@@ -98,8 +98,13 @@ export const ItemStudentAssistView: React.FC<Props> = ({
       {isExpanded && (
         <View style={styles.extraInfo}>
            <View style={styles.infoSection}>
-              <InformationRow texto="clases tomadas"  numero={student.taken_classes[0].cant_presents ?? 0} />
-              <InformationRow texto="deuda"  numero={`$ ${student.taken_classes[0].tot_amount ?? 0}`} />
+           <InformationRow 
+  texto="clases tomadas" 
+  numero={`${student.taken_classes[0].cant_presents ?? 0} de ${student.taken_classes[0].cant_buyed_classes ?? 0}`}
+/>
+
+              <InformationRow texto="deuda" numero={`$ ${ (student.taken_classes[0].tot_amount ?? 0) - (student.taken_classes[0].tot_paid_amount ?? 0) }`} />
+
             </View>
   
             {/* Línea separadora */}
@@ -114,12 +119,14 @@ export const ItemStudentAssistView: React.FC<Props> = ({
           {student.nombre_papa && (
             <ContactRow name={student.nombre_papa} phone={student.tel_papa} />
           )}
+           
 
            <TouchableOpacity
               onPress={() =>
                 navigation.navigate('InformationStudent', {  studentId: student.student_id,
                   firstName: student.nombre,   
-                  lastName: student.apellido,  })
+                  lastName: student.apellido,
+                  category: student.category })
               }
             >
               <Text style={styles.masInfoText}>+ info</Text>
@@ -212,7 +219,7 @@ const styles = StyleSheet.create({
     width: 44,        
     height: 38,       
     borderWidth: 4,
-    borderColor: COLORS.buttonClear,
+    borderColor: COLORS.button,
     borderRadius: 6,   
     justifyContent: 'center',
     alignItems: 'center',

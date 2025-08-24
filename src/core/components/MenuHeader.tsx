@@ -3,7 +3,11 @@ import React, { useState, useContext } from 'react'
 import { Menu, IconButton } from 'react-native-paper'
 import { AuthContext } from '../../../src/contexts/AuthContext'
 
-export const MenuHeader = () => {
+type MenuHeaderProps = {
+  iconColor?: string; // opcional, default blanco
+};
+
+export const MenuHeader: React.FC<MenuHeaderProps> = ({ iconColor = '#fff' }) => {
   const [visible, setVisible] = useState(false)
   const { signOut } = useContext(AuthContext)
 
@@ -14,7 +18,13 @@ export const MenuHeader = () => {
     <Menu
       visible={visible}
       onDismiss={closeMenu}
-      anchor={<IconButton icon="dots-vertical" onPress={openMenu} />}
+      anchor={
+        <IconButton
+          icon="dots-vertical"
+          onPress={openMenu}
+          iconColor={iconColor} // ← aquí va iconColor, no color
+        />
+      }
     >
       <Menu.Item onPress={signOut} title="Cerrar sesión" />
     </Menu>

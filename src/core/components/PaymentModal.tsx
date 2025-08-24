@@ -63,23 +63,24 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   };
 
   const handleSubmit = async () => {
-    const cantidadClases = tipoNuevo ? parseInt(clases) || 0 : 0;
-    const montoTotalCurso = tipoNuevo ? parseFloat(total) || 0 : 0;
+    const esNuevoCurso = tipoCurso === 'nuevo';
+    const cantidadClases = esNuevoCurso ? parseInt(clases) || 0 : 0;
+    const montoTotalCurso = esNuevoCurso ? parseFloat(total) || 0 : 0;
     const paidAmount = parseFloat(monto) || 0;
-    
-    const observation = tipoNuevo
-    ? `${detalle} nuevo ${cantidadClases}cl`
-    : `${detalle} a cta`;
   
-    if (tipoNuevo && (!clases || !total || !monto)) {
+    if (esNuevoCurso && (!clases || !total || !monto)) {
       alert('Complete todos los campos obligatorios del curso y pago.');
       return;
     }
   
-    if (!tipoNuevo && !monto) {
+    if (!esNuevoCurso && !monto) {
       alert('Complete el monto del pago.');
       return;
     }
+  
+    const observation = esNuevoCurso
+    ? `${detalle ? detalle + ' - ' : ''}Nuevo curso (${cantidadClases} clases)`
+    : `${detalle ? detalle + ' - ' : ''}A cuenta`;
   
     // Limpiar emojis del método de pago
     const metodoSinEmoji = metodo.replace(/[\u{1F300}-\u{1FAFF}]/gu, '').trim();
@@ -104,11 +105,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     };
   
     try {
-      await api.post('/class_courses.php', courseData, {
-        params: { method: 'post' },
-      });
+      await api.post('/class_courses.php', courseData, { params: { method: 'post' } });
       onClose();
       onSuccess?.();
+  
       // Reset campos
       setMonto('');
       setClases('');
@@ -116,7 +116,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       setLugar('escuela');
       setDetalle('');
       setMetodo('💵 efectivo');
-      setTipoNuevo(false);
+      setTipoCurso(null);
       setFecha(new Date());
       setShowMetodoOptions(false);
       setShowLugarOptions(false);
@@ -124,7 +124,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       alert(error.message || 'Error al crear el curso y registrar el pago');
     }
   };
-  
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
     setShowDatePicker(Platform.OS === 'ios');

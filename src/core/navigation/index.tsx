@@ -2,20 +2,24 @@ import * as React from 'react';
 import { StyleSheet, ImageBackground } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import { HomeScreen, LoginScreen, ProfileScreen, RegisterScreen, StudentListScreen } from '@containers';
 import CreateStudentScreen from '../../../src/containers/students/screens/CreateStudentScreen';
 import InformationStudentScreen from '../../../src/containers/students/screens/InformationStudentScreen';
+import { PaymentStudentListScreen } from 'containers/students/screens/PaymentStudentListScreen';
+import IncomesListScreen from 'containers/incomes/screens/IncomesListScreen';
 
 import { AuthContext } from '../../contexts/AuthContext';
 import type { AuthStackParamList, RootStackParamList } from '../../types';
 import { MenuHeader } from '../../../src/core/components/MenuHeader';
 import { AppTabs } from './AppTabs';
-import { PaymentStudentListScreen } from 'containers/students/screens/PaymentStudentListScreen';
-import IncomesListScreen from 'containers/incomes/screens/IncomesListScreen';
+import { StatusBar } from 'expo-status-bar';
+import { COLORS } from 'core/constants';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const AuthStackNav = createNativeStackNavigator<AuthStackParamList>();
+const Drawer = createDrawerNavigator();
 
 // 🎨 Tema con fondo transparente
 const MyTheme = {
@@ -26,6 +30,7 @@ const MyTheme = {
   },
 };
 
+// --- Auth stack ---
 function AuthStack() {
   return (
     <AuthStackNav.Navigator screenOptions={{ headerShown: false }}>
@@ -35,35 +40,38 @@ function AuthStack() {
   );
 }
 
-function MainApp() {
+// --- Drawer Main App ---
+function MainDrawer() {
   return (
-    <RootStack.Navigator
+    <Drawer.Navigator
       screenOptions={{
-        headerStyle: { backgroundColor: '#c48edc' }, // 💜 violeta claro
-        headerTintColor: '#fff', // texto de la barra en blanco
-        headerTitleStyle: { fontWeight: 'bold' },
+        headerStyle: { backgroundColor: COLORS.button },
+        headerTintColor: '#fff',
+        headerTitleStyle: { fontFamily: 'OpenSans-Regular' },
       }}
     >
-      <RootStack.Screen
+      <Drawer.Screen
         name="Home"
         component={HomeScreen}
         options={{
-          title: 'Inicio',
-          headerRight: () => <MenuHeader />,
+          title: 'Loa Escuela',
+          headerRight: () => <MenuHeader iconColor="#fff" />, // blanco
         }}
       />
-      <RootStack.Screen
+      <Drawer.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
           title: 'Perfil',
-          headerRight: () => <MenuHeader />,
+          headerRight: () => <MenuHeader iconColor="#fff" />, // blanco
         }}
       />
-    </RootStack.Navigator>
+      {/* Agregá más pantallas si querés */}
+    </Drawer.Navigator>
   );
 }
 
+// --- Root App ---
 export function NavigationApp() {
   const { userToken } = React.useContext(AuthContext);
 
@@ -72,18 +80,19 @@ export function NavigationApp() {
       source={require('../../../assets/fondo.jpg')}
       style={styles.background}
     >
+      <StatusBar style="light" backgroundColor={COLORS.button} />
       <NavigationContainer theme={MyTheme}>
         {userToken ? (
           <RootStack.Navigator
             screenOptions={{
-              headerStyle: { backgroundColor: '#c48edc' },
+              headerStyle: { backgroundColor: COLORS.button },
               headerTintColor: '#fff',
-              headerTitleStyle: { fontWeight: 'bold' },
+              headerTitleStyle: { fontFamily: 'OpenSans-Regular' },
             }}
           >
             <RootStack.Screen
               name="MainApp"
-              component={MainApp}
+              component={MainDrawer}
               options={{ headerShown: false }}
             />
             <RootStack.Screen
@@ -92,29 +101,33 @@ export function NavigationApp() {
               options={{
                 title: 'Asistencias',
                 headerBackTitle: 'Volver',
-                headerRight: () => <MenuHeader />,
+                headerRight: () => <MenuHeader iconColor="#fff" />,
               }}
             />
             <RootStack.Screen
               name="ListaDeAlumnos"
               component={StudentListScreen}
-              options={{ title: 'Todos los alumnos' }}
+              options={{ title: 'Todos los alumnos', headerRight: () => <MenuHeader iconColor="#fff" /> }}
             />
             <RootStack.Screen
               name="ListaDePagos"
               component={IncomesListScreen}
-              options={{ title: 'Lista de pagos' }}
+              options={{ title: 'Lista de pagos', headerRight: () => <MenuHeader iconColor="#fff" /> }}
             />
             <RootStack.Screen
               name="PaymentStudentList"
               component={PaymentStudentListScreen}
-              options={{ title: 'Alumnos' }}
+              options={{ title: 'Alumnos', headerRight: () => <MenuHeader iconColor="#fff" /> }}
             />
-            <RootStack.Screen name="CreateStudent" component={CreateStudentScreen} />
+            <RootStack.Screen
+              name="CreateStudent"
+              component={CreateStudentScreen}
+              options={{ headerRight: () => <MenuHeader iconColor="#fff" /> }}
+            />
             <RootStack.Screen
               name="InformationStudent"
               component={InformationStudentScreen}
-              options={{ title: 'Pagos y Clases' }}
+              options={{ title: 'Pagos y Clases', headerRight: () => <MenuHeader iconColor="#fff" /> }}
             />
           </RootStack.Navigator>
         ) : (

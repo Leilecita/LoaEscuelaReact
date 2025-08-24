@@ -55,7 +55,8 @@ export const ItemStudentView: React.FC<Props> = ({
             onPress={() =>
               navigation.navigate('InformationStudent', {  studentId: student.id,
                 firstName: student.nombre,   
-                lastName: student.apellido,  })
+                lastName: student.apellido,
+                category: student.category,  })
             }
           >
             <Text style={styles.masInfoText}>+ info</Text>
@@ -111,7 +112,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom:6,
     fontFamily: 'OpenSans-Regular',
-    fontSize: 16,
+    fontSize: 18,
     marginRight: 14,
     color: COLORS.buttonClearLetter, 
     textDecorationLine: 'none', // 👈 sin subrayado

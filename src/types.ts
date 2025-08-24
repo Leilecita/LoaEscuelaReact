@@ -13,7 +13,8 @@ export type RootStackParamList = {
 
     InformationStudent: {  studentId: number;
       firstName: string;
-      lastName: string; }; 
+      lastName: string;
+      category: string; }; 
     //PagosYClases: { studentId: number };
 
   };
