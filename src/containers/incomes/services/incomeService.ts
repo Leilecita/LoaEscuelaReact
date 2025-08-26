@@ -9,6 +9,8 @@ export type Income = {
   income_created: string;
   detail: string | number;
   payment_method: string;
+  payment_place: string;
+
   category: string;
 };
 

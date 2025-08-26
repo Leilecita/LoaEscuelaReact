@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
   dni: {
     fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter,
+    fontSize: 16,
   },
   button: {
     backgroundColor: COLORS.buttonClear,

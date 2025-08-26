@@ -47,6 +47,16 @@ export default function InformationStudentScreen({ route }: Props) {
     fetchResumen(); // Llamada inicial
   }, [studentId]);
 
+  const today = new Date();
+  const formattedDate = today.toLocaleDateString('es-AR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  });
+
+  const formattedDateCapital = formattedDate.replace(/(\d{2}) de (\w{3}) de (\d{4})/, (_, d, m, y) => `${d} de ${m.charAt(0).toUpperCase() + m.slice(1)} ${y}`);
+
+
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.container}>
@@ -62,9 +72,13 @@ export default function InformationStudentScreen({ route }: Props) {
         </View>
 
         {/* Resumen */}
+        <View style={styles.headerResum}>
+          <Text style={styles.headerText}>Resumen al {formattedDate}</Text>
+        </View>
         <View style={styles.resumenContainer}>
           {loadingResumen ? <ActivityIndicator size="small" /> : resumen ? (
             <>
+              
               <View style={styles.rowResumen}>
                 <PaperText style={styles.label}>Total clases compradas</PaperText>
                 <PaperText style={styles.value}>{resumen.cant_buyed_classes}</PaperText>
@@ -90,7 +104,9 @@ export default function InformationStudentScreen({ route }: Props) {
 
         {/* Clases tomadas */}
         <View style={{ marginHorizontal: 8, marginTop: 16, flex: 1 }}>
-          <PaperText style={{ fontWeight: 'bold', marginBottom: 8 }}>Clases tomadas</PaperText>
+          <View style={styles.headerTitle}>
+            <Text style={{  marginLeft: 16 }}>Clases tomadas</Text>
+          </View>
           {loadingPresents && presents.length === 0 ? <ActivityIndicator size="large" /> : (
             <FlatList
               data={presents}
@@ -110,7 +126,9 @@ export default function InformationStudentScreen({ route }: Props) {
 
         {/* Pagos realizados */}
         <View style={{ marginHorizontal: 8, marginTop: 16, flex: 1 }}>
-          <PaperText style={{ fontWeight: 'bold', marginBottom: 8 }}>Pagos realizados</PaperText>
+        <View style={styles.headerTitle}>
+            <Text style={{  marginLeft: 16 }}>Pagos realizados</Text>
+          </View>
           {loading && incomes.length === 0 ? <ActivityIndicator size="large" /> : (
             <FlatList
               data={incomes}
@@ -174,8 +192,9 @@ const styles = StyleSheet.create({
   },
  
   category: {
-    fontSize: 14,
-    color: '#000', // color más claro
+    fontSize: 16,
+    color: COLORS.buttonClearLetter, // color más claro
+    fontFamily: 'OpenSans-Light',
   },
   name: { fontFamily: 'OpenSans-Light', fontSize: 20, fontWeight: 'bold', color: '#000' },
   resumenContainer: { backgroundColor: '#f8bbd0', padding: 16 },
@@ -204,5 +223,25 @@ const styles = StyleSheet.create({
     color: COLORS.buttonClearLetter,
     textAlign: 'center',
     fontSize: 14,
+  },
+  headerText: { fontFamily: 'OpenSans-Regular', fontSize: 16, color: '#ffff' },
+  headerResum: {
+    flexDirection: 'row', // avatar y texto al lado
+    alignItems: 'center', // centra verticalmente
+    backgroundColor:   'rgb(204, 98, 135)',
+    paddingLeft: 16,
+    paddingBottom: 6,
+    paddingTop: 6,
+    marginTop:4,
+  },
+
+  headerTitle: {
+    flexDirection: 'row', // avatar y texto al lado
+    alignItems: 'center', // centra verticalmente
+    backgroundColor:   'rgb(208, 222, 190)',
+    paddingBottom: 6,
+    paddingTop: 6,
+    marginHorizontal:-8,
+    marginTop:4,
   },
 });

@@ -17,11 +17,14 @@ export type RootStackParamList = {
       category: string; }; 
     //PagosYClases: { studentId: number };
 
+    DailySummaryScreen: undefined
+
   };
   
   export type AuthStackParamList = {
     Login: undefined;
     Register: undefined;
+    
   };
   
   export type MainAppTabParamList = {

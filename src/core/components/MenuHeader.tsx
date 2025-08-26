@@ -2,17 +2,26 @@
 import React, { useState, useContext } from 'react'
 import { Menu, IconButton } from 'react-native-paper'
 import { AuthContext } from '../../../src/contexts/AuthContext'
+import { useNavigation } from '@react-navigation/native'
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import type { RootStackParamList } from '../../types' // Ajustá según tu tipo de stack
 
 type MenuHeaderProps = {
-  iconColor?: string; // opcional, default blanco
-};
+  iconColor?: string
+}
 
 export const MenuHeader: React.FC<MenuHeaderProps> = ({ iconColor = '#fff' }) => {
   const [visible, setVisible] = useState(false)
   const { signOut } = useContext(AuthContext)
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>()
 
   const openMenu = () => setVisible(true)
   const closeMenu = () => setVisible(false)
+
+  const goToDailySummary = () => {
+    closeMenu()
+    navigation.navigate('DailySummaryScreen') // <- nombre de la pantalla nueva
+  }
 
   return (
     <Menu
@@ -22,11 +31,12 @@ export const MenuHeader: React.FC<MenuHeaderProps> = ({ iconColor = '#fff' }) =>
         <IconButton
           icon="dots-vertical"
           onPress={openMenu}
-          iconColor={iconColor} // ← aquí va iconColor, no color
+          iconColor={iconColor} 
         />
       }
     >
       <Menu.Item onPress={signOut} title="Cerrar sesión" />
+      <Menu.Item onPress={goToDailySummary} title="Daily Summary" />
     </Menu>
   )
 }

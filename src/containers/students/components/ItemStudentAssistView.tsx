@@ -97,15 +97,10 @@ export const ItemStudentAssistView: React.FC<Props> = ({
 
       {isExpanded && (
         <View style={styles.extraInfo}>
-           <View style={styles.infoSection}>
-           <InformationRow 
-  texto="clases tomadas" 
-  numero={`${student.taken_classes[0].cant_presents ?? 0} de ${student.taken_classes[0].cant_buyed_classes ?? 0}`}
-/>
-
-              <InformationRow texto="deuda" numero={`$ ${ (student.taken_classes[0].tot_amount ?? 0) - (student.taken_classes[0].tot_paid_amount ?? 0) }`} />
-
-            </View>
+          <View style={styles.infoSection}>
+            <InformationRow texto="clases tomadas" numero={`${student.taken_classes[0].cant_presents ?? 0} de ${student.taken_classes[0].cant_buyed_classes ?? 0}`}/>
+            <InformationRow texto="deuda" numero={`$ ${ (student.taken_classes[0].tot_amount ?? 0) - (student.taken_classes[0].tot_paid_amount ?? 0) }`} />
+          </View>
   
             {/* Línea separadora */}
             <View style={styles.separator} />

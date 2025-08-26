@@ -13,6 +13,8 @@ import IncomesListScreen from 'containers/incomes/screens/IncomesListScreen';
 import { AuthContext } from '../../contexts/AuthContext';
 import type { AuthStackParamList, RootStackParamList } from '../../types';
 import { MenuHeader } from '../../../src/core/components/MenuHeader';
+import { CustomDrawerContent } from '../../../src/core/components/CustomDrawerContent';
+import { DailySummaryScreen } from '../../../src/core/screens/DailySummaryScreen';
 import { AppTabs } from './AppTabs';
 import { StatusBar } from 'expo-status-bar';
 import { COLORS } from 'core/constants';
@@ -43,7 +45,40 @@ function AuthStack() {
 // --- Drawer Main App ---
 function MainDrawer() {
   return (
+    
     <Drawer.Navigator
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
+      screenOptions={{ headerShown: true, headerStyle: { backgroundColor: COLORS.button },
+      drawerStyle: {
+        width: 200,                   // ancho del drawer
+        backgroundColor: 'transparent', // fondo transparente
+      },
+      overlayColor: 'rgba(0,0,0,0.5)', // sombra sobre la pantalla
+      headerTintColor: '#fff',
+      headerTitleStyle: { fontFamily: 'OpenSans-Regular' }, }}
+    >
+     <Drawer.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          title: 'Loa Escuela',
+          headerRight: () => <MenuHeader iconColor="#fff" />, // blanco
+        }}
+      />
+      <Drawer.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          title: 'Perfil',
+          headerRight: () => <MenuHeader iconColor="#fff" />, // blanco
+        }}
+      />
+    </Drawer.Navigator>
+        
+      );
+}
+ {/*
+<Drawer.Navigator
       screenOptions={{
         headerStyle: { backgroundColor: COLORS.button },
         headerTintColor: '#fff',
@@ -66,12 +101,8 @@ function MainDrawer() {
           headerRight: () => <MenuHeader iconColor="#fff" />, // blanco
         }}
       />
-      {/* Agregá más pantallas si querés */}
-    </Drawer.Navigator>
-  );
-}
-
-// --- Root App ---
+      Agregá más pantallas si querés 
+    </Drawer.Navigator>*/}
 export function NavigationApp() {
   const { userToken } = React.useContext(AuthContext);
 
@@ -129,6 +160,11 @@ export function NavigationApp() {
               component={InformationStudentScreen}
               options={{ title: 'Pagos y Clases', headerRight: () => <MenuHeader iconColor="#fff" /> }}
             />
+             <RootStack.Screen
+                name="DailySummaryScreen"
+                component={DailySummaryScreen}
+                options={{ title: 'Daily Summary' }}
+              />
           </RootStack.Navigator>
         ) : (
           <RootStack.Navigator screenOptions={{ headerShown: false }}>

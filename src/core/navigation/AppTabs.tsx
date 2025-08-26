@@ -5,6 +5,7 @@ import { StudentListScreen } from '../../containers/students/screens/StudentList
 import { StudentAssistListScreen } from '../../containers/students/screens/StudentAssistListScreen'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Category, Subcategoria } from 'types'
+import { COLORS } from 'core/constants'
 
 
 const Tab = createBottomTabNavigator()
@@ -24,6 +25,11 @@ export const AppTabs = () => {
       headerShown: false,
       tabBarActiveTintColor: ICON_COLOR,
       tabBarInactiveTintColor: '#aaa',
+      tabBarStyle: {
+        backgroundColor: COLORS.buttonClear,        // 👈 Fondo de la barra
+        borderTopColor: COLORS.buttonClear,           // Borde superior
+        height: 80,                        // Altura del tab bar
+      },
       tabBarIcon: ({ color, size }) => {
         const tab = tabs.find(t => t.title === route.name)
         const iconName = tab?.iconName || 'help-circle'

@@ -19,6 +19,7 @@ export function useIncomes(payment_place: string) {
     reload,
     setData,
   } = usePaginatedFetch<Income>(fetchFn, [fetchFn])
+  console.log("📦 incomes recibidos:", incomes);
 
   return {
     incomes,

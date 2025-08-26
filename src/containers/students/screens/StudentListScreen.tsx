@@ -261,8 +261,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.headerDate,
     paddingVertical: 4,
     paddingHorizontal: 12,
-    marginTop: 6,
-    marginBottom:6,
     marginHorizontal: 12,
     borderRadius: 8,
     alignSelf: 'flex-start', // Hace que se ajuste solo al contenido
