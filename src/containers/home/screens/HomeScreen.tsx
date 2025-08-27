@@ -109,39 +109,40 @@ export const HomeScreen = () => {
       </View>
 
       {/* recuadro transparente abajo */}
-      <ScrollView
-        style={{ width: '100%' }}
-        contentContainerStyle={{ alignItems: 'center'}}
-      >
-        <View style={styles.transparentBox}>
-          {resumen ? (
-            <>
-              <View style={{ marginHorizontal: -5}}>
-                <DateHeader date={resumen.day} />
-              </View>
+      <View style={styles.transparentBox}>
+        {resumen ? (
+          <>
+            <View style={{ marginHorizontal: -5, marginTop:-18 }}>
+              <DateHeader 
+                date={
+                  resumen.day.includes('T')
+                    ? resumen.day
+                    : resumen.day + 'T00:00:00'
+                }
+              />
+            </View>
 
-              <View style={styles.columnsContainer}>
-                {resumen.planillas?.map((p) => (
-                  <View key={p.nombre_planilla} style={styles.columnItem}>
-                    <View style={styles.rowItem}>
-                      <Text style={styles.boxText}>{p.nombre_planilla}</Text>
-                      <Text style={styles.boxText}>{p.cant_presentes}</Text>
-                    </View>
+            <View style={styles.columnsContainer}>
+              {resumen.planillas?.map((p) => (
+                <View key={p.nombre_planilla} style={styles.columnItem}>
+                  <View style={styles.rowItem}>
+                    <Text style={styles.boxText}>{p.nombre_planilla}</Text>
+                    <Text style={styles.boxText}>{p.cant_presentes}</Text>
                   </View>
-                ))}
-              </View>
-            </>
-          ) : (
-            <Text style={styles.boxText}>Cargando resumen...</Text>
-          )}
-        </View>
-      </ScrollView>
+                </View>
+              ))}
+            </View>
+          </>
+        ) : (
+          <Text style={styles.boxText}>Cargando resumen...</Text>
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'flex-start', alignItems: 'center', backgroundColor: 'rgb(232, 237, 189)', paddingTop: 90 },
+  container: { flex: 1, justifyContent: 'flex-start', alignItems: 'center', backgroundColor: 'rgb(232, 237, 189)', paddingTop: 40 },
   row: { flexDirection: 'row', justifyContent: 'space-between', width: '80%', marginVertical: 20 },
   button: { flex: 1, alignItems: 'center', marginHorizontal: 10 },
   bigButton: { alignItems: 'center', marginVertical: 5 },
@@ -149,17 +150,16 @@ const styles = StyleSheet.create({
   bigIcon: { width: 140, height: 140, resizeMode: 'contain' },
   center: { alignItems: 'center' },
   transparentBox: {
+    position: 'absolute',
+    bottom: 30,            // 🔹 fijo abajo
     width: '90%',
     backgroundColor: 'rgba(255,255,255,0.3)',
     borderRadius: 15,
-    paddingLeft: 16,
-    paddingRight: 16,
+    padding: 20,           // 🔹 padding uniforme
     alignItems: 'flex-start',
-    marginVertical: 30,
-    marginBottom: 0,  // opcional, para que no haya margen
   },
   boxText: { color: '#000', fontFamily: 'OpenSans-Light', fontSize: 16 },
-  columnsContainer: { flexDirection: 'row', marginVertical: 13, flexWrap: 'wrap' },
+  columnsContainer: { flexDirection: 'row', marginVertical: 1, flexWrap: 'wrap' },
   columnItem: { width: '50%', paddingRight: 10 },
   rowItem: { flexDirection: 'row', marginVertical: 5, justifyContent: 'space-between' },
 });

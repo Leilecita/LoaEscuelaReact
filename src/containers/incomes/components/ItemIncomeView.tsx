@@ -93,7 +93,7 @@ export default function ItemIncomeView({
 }
 
 const styles = StyleSheet.create({
-  container: { paddingHorizontal: 12, borderBottomWidth: 0.5,
+  container: { paddingHorizontal: 16, borderBottomWidth: 0.5,
     borderColor: '#ccc', },
   row: {
     flexDirection: 'row',
@@ -111,13 +111,13 @@ const styles = StyleSheet.create({
   extraInfo: {
     paddingLeft: 10,
     borderTopColor: '#ddd',
+    
     paddingTop: 4,
   },
   masInfoText: {
     marginBottom: 8,
-    fontFamily: 'OpenSans-Light',
+    fontFamily: 'OpenSans-Regular',
     fontSize: 18,
-    marginRight: 4,
     color: COLORS.darkLetter3,
     textAlign: 'right',
 

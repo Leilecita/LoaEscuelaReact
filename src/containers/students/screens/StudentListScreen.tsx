@@ -112,13 +112,19 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
   }, [filteredStudents])
 
   const [modalVisible, setModalVisible] = useState(false)
-  const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null)
+  //const [selectedStudentId, setSelectedStudentId] = useState<number | null>(null)
+  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
 
-
-  const openCargarPagoModal = (studentId: number) => {
-    setSelectedStudentId(studentId)
+  const openCargarPagoModal = (student: Student) => {
+    console.log('Alumno seleccionado:', student)
+    setSelectedStudent(student)
     setModalVisible(true)
   }
+
+  /*const openCargarPagoModal = (studentId: number) => {
+    setSelectedStudentId(studentId)
+    setModalVisible(true)
+  }*/
 
   const handleSubmitPago = (data: {
     fecha: Date
@@ -126,7 +132,7 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
     metodo: 'efectivo' | 'transferencia' | 'mp'
     detalle: string
   }) => {
-    console.log('Pago guardado para alumno', selectedStudentId, data)
+    console.log('Pago guardado para alumno', selectedStudent, data)
     // Aquí llamar al backend para guardar el pago
     setModalVisible(false)
   }
@@ -173,8 +179,8 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
                   student={item}
                   isExpanded={expandedStudentId === item.id} // usar student_id
                   onToggleExpand={() => toggleExpand(item.id)}
-                  onCargarPago={openCargarPagoModal}
-                />
+                  onCargarPago={(studentId: number) => openCargarPagoModal(students.find(s => s.id === studentId)!)}
+                  />
 
               ) : (
                 <ItemStudentView
@@ -197,7 +203,10 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
           />
           <PaymentModal
             visible={modalVisible}
-            studentId={selectedStudentId} 
+            studentId={selectedStudent?.id ?? null}
+            firstName={selectedStudent?.nombre ?? ''}
+            lastName={selectedStudent?.apellido ?? ''}
+            category={selectedStudent?.category ?? ''} 
             onClose={() => setModalVisible(false)}
             onSubmit={handleSubmitPago}
           />

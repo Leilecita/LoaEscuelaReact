@@ -166,6 +166,7 @@ export default function InformationStudentScreen({ route }: Props) {
         onClose={() => setModalVisible(false)}
         studentId={studentId}
         firstName={firstName}
+        category={category}
         lastName={lastName}
         onSuccess={() => {
           reload();        // recargar pagos
