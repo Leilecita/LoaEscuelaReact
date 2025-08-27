@@ -11,6 +11,8 @@ export const COLORS = {
     darkLetter_ant: ' #4f426b',
     darkLetter2: ' #5C4D7C',
     darkLetter3: ' #6C5F8A',
+
+    ligthLetter: 'rgb(219, 209, 234)',
   
 
     //botones
@@ -22,6 +24,7 @@ export const COLORS = {
     buttonClearLetter: 'rgb(119, 94, 157)',
 
     background: 'rgb(230, 226, 238)',
+    backgroundVioletClear: 'rgb(238, 236, 242)',
     backgroundApp: 'rgb(217, 203, 244)',
 
     escuela: '#90CAF9',

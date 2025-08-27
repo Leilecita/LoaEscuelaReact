@@ -56,6 +56,7 @@ export type Student = {
   category: string;
 }
 
+
 export async function getResumenStudent(
   student_id: number
 ): Promise<ReportSeasonPresent[]> {

@@ -116,7 +116,7 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
 
   const openCargarPagoModal = (student: Student) => {
-    console.log('Alumno seleccionado:', student)
+    
     setSelectedStudent(student)
     setModalVisible(true)
   }

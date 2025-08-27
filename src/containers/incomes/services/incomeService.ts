@@ -4,6 +4,7 @@ import api from '../../../core/services/axiosClient';
 export type Income = {
   income_id: number;
   student_id: number;
+  class_course_id: number;
   amount: number;
   description: string;
   income_created: string;
@@ -12,10 +13,12 @@ export type Income = {
   payment_place: string;
 
   category: string;
+  sub_category: string;
 };
 
 export type IncomeStudent = {
   income_id: number;
+  class_course_id: number;
   student_id: number;
   amount: number;
   description: string;

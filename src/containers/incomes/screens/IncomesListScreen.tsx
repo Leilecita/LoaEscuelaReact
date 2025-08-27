@@ -10,6 +10,7 @@ import {
 import { useIncomes } from "../hooks/useIncomes";
 import ItemIncomeView from "../components/ItemIncomeView";
 import { IncomesFilterBar } from "../components/IncomesFilterBar";
+import { EditIncomeModal } from "../components/EditIncomeModal"; // 👈 ahora con export nombrado
 
 // 🔹 equivalencias entre UI y servidor
 const FILTER_MAP: Record<string, string> = {
@@ -18,8 +19,24 @@ const FILTER_MAP: Record<string, string> = {
   Negocio: "negocio",
 };
 
+type FilterOption = "Todos" | "Playa" | "Negocio";
+
 export default function IncomesListScreen() {
   const [paymentPlace, setPaymentPlace] = useState<FilterOption>("Todos");
+
+  const [editingIncome, setEditingIncome] = useState<
+    | {
+        income_id: number;
+        amount: number;
+        payment_method: string;
+        payment_place: string;
+        detail: string;
+        class_course_id: number;
+        category: string;
+        sub_category: string;
+      }
+    | null
+  >(null);
 
   const {
     incomes,
@@ -50,7 +67,7 @@ export default function IncomesListScreen() {
         <IncomesFilterBar filter={paymentPlace} onChangeFilter={setPaymentPlace} />
       </View>
 
-      {/* 🔹 Lista de pagos con paddingTop para que no tape la barra */}
+      {/* 🔹 Lista de pagos */}
       {incomes.length === 0 ? (
         <Text style={{ textAlign: "center", marginTop: 20 }}>
           No hay pagos disponibles
@@ -67,7 +84,7 @@ export default function IncomesListScreen() {
           ListFooterComponent={
             loadingMore ? <ActivityIndicator size="small" /> : null
           }
-          contentContainerStyle={{ paddingTop: 70 }} // <-- espacio para la barra
+          contentContainerStyle={{ paddingTop: 70 }}
           renderItem={({ item, index }) => {
             const currentDate = new Date(item.income_created)
               .toISOString()
@@ -85,17 +102,31 @@ export default function IncomesListScreen() {
                 description={item.description}
                 payment_method={item.payment_method}
                 category={item.category || ""}
+                sub_category={item.sub_category || ""}
                 detail={item.detail.toString()}
                 amount={item.amount}
                 income_id={item.income_id}
                 student_id={item.student_id}
+                class_course_id={item.class_course_id}
                 payment_place={item.payment_place}
                 showDateHeader={index === 0 || currentDate !== previousDate}
+                onEdit={(income) => setEditingIncome(income)}
               />
             );
           }}
         />
       )}
+
+      {/* 🔹 Modal de edición */}
+      <EditIncomeModal
+        visible={!!editingIncome}
+        income={editingIncome}
+        onClose={() => setEditingIncome(null)}
+        onSuccess={() => {
+          setEditingIncome(null);
+          reload(); // recarga la lista después de guardar
+        }}
+      />
     </View>
   );
 }

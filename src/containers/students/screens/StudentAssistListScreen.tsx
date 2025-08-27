@@ -203,6 +203,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
             ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
             contentContainerStyle={{ paddingBottom: 40 }}
             renderItem={({ item }) => (
+              
               <ItemStudentAssistView
                 student={item}
                 isExpanded={expandedStudentId === item.student_id}
