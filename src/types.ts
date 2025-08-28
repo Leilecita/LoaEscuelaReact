@@ -14,8 +14,8 @@ export type RootStackParamList = {
     InformationStudent: {  studentId: number;
       firstName: string;
       lastName: string;
-      category: string; }; 
-    //PagosYClases: { studentId: number };
+      category: string;
+      sub_category: string; }; 
 
     DailySummaryScreen: undefined
 

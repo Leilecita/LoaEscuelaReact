@@ -1,13 +1,16 @@
-// src/features/incomes/hooks/useIncomes.ts
-import { useCallback } from 'react'
-import { Income, fetchIncomes } from '../services/incomeService'
-import { usePaginatedFetch } from '../../../core/hooks/usePaginatedFetch'
+import { useCallback } from 'react';
+import { Income, fetchIncomes } from '../services/incomeService';
+import { usePaginatedFetch } from '../../../core/hooks/usePaginatedFetch';
 
-export function useIncomes(payment_place: string) {
+export function useIncomes(
+  payment_place: string,
+  category: string = '',
+  payment_method: string = ''
+) {
   const fetchFn = useCallback(
-    (page: number) => fetchIncomes(page, payment_place),
-    [payment_place]
-  )
+    (page: number) => fetchIncomes(page, payment_place, category, payment_method),
+    [payment_place, category, payment_method] // 👈 agregamos los 3 filtros como dependencias
+  );
 
   const {
     data: incomes,
@@ -18,7 +21,8 @@ export function useIncomes(payment_place: string) {
     refreshing,
     reload,
     setData,
-  } = usePaginatedFetch<Income>(fetchFn, [fetchFn])
+  } = usePaginatedFetch<Income>(fetchFn, [fetchFn]);
+
   return {
     incomes,
     loading,
@@ -28,5 +32,5 @@ export function useIncomes(payment_place: string) {
     refreshing,
     reload,
     setData,
-  }
+  };
 }

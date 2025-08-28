@@ -88,7 +88,7 @@ export default function ItemIncomeView({
         </View>
         <View style={styles.center}>
           <Text style={styles.concept}>{detail}</Text>
-          <Text style={styles.location}>{category}</Text>
+          <Text style={styles.location}>{category}-{sub_category}</Text>
         </View>
 
         
@@ -140,6 +140,7 @@ export default function ItemIncomeView({
                 firstName,
                 lastName,
                 category,
+                sub_category
               })
             }
           >

@@ -34,6 +34,7 @@ export type ReportStudent = {
   updated_date: string;
   student_observation: string;
   category: string;
+  sub_category: string;
 
 };
 
@@ -54,6 +55,7 @@ export type Student = {
   created: string;
   updated_date: string;
   category: string;
+  sub_category: string;
 }
 
 

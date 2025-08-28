@@ -1,17 +1,18 @@
 import React, { useState, useRef } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, Animated, Easing } from "react-native";
+import { View, Text, TouchableOpacity, Animated, Easing, StyleSheet } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS } from "core/constants";
 
+type FilterOption = "Todos" | "Escuela" | "Colonia" | "Highschool";
+
 type Props = {
-  filter: "Todos" | "Playa" | "Negocio";
-  onChangeFilter: (value: "Todos" | "Playa" | "Negocio") => void;
+  filter: FilterOption;
+  onChangeFilter: (value: FilterOption) => void;
 };
 
-export const IncomesFilterBar: React.FC<Props> = ({ filter, onChangeFilter }) => {
-  const options: ("Todos" | "Playa" | "Negocio")[] = ["Todos", "Playa", "Negocio"];
+export const CategoryFilter: React.FC<Props> = ({ filter, onChangeFilter }) => {
+  const options: FilterOption[] = ["Todos", "Escuela", "Colonia", "Highschool"];
   const [open, setOpen] = useState(false);
-  
   const animation = useRef(new Animated.Value(0)).current;
 
   const toggleDropdown = () => {
@@ -24,25 +25,31 @@ export const IncomesFilterBar: React.FC<Props> = ({ filter, onChangeFilter }) =>
     setOpen(!open);
   };
 
-  const handleSelect = (value: "Todos" | "Playa" | "Negocio") => {
+  const handleSelect = (value: FilterOption) => {
     onChangeFilter(value);
     toggleDropdown();
   };
 
   const dropdownHeight = animation.interpolate({
     inputRange: [0, 1],
-    outputRange: [0, options.length * 40], // 40 px por item
+    outputRange: [0, options.length * 40],
   });
 
-  const getIcon = (option: string) => {
-    if (option === "Playa") return "beach";
-    if (option === "Negocio") return "store";
-    return "filter";
+  const getIcon = (option: FilterOption) => {
+    switch (option) {
+      case "Escuela":
+        return "school";
+      case "Colonia":
+        return "home-city";
+      case "Highschool":
+        return "school-outline";
+      default:
+        return "filter";
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* Chip principal */}
       <TouchableOpacity style={styles.chip} onPress={toggleDropdown}>
         <MaterialCommunityIcons name={getIcon(filter)} size={20} color={COLORS.darkLetter} />
         <Text style={styles.chipText}>{filter}</Text>
@@ -53,7 +60,6 @@ export const IncomesFilterBar: React.FC<Props> = ({ filter, onChangeFilter }) =>
         />
       </TouchableOpacity>
 
-      {/* Desplegable */}
       <Animated.View style={[styles.dropdown, { height: dropdownHeight }]}>
         {options.map((option) => (
           <TouchableOpacity
@@ -71,39 +77,18 @@ export const IncomesFilterBar: React.FC<Props> = ({ filter, onChangeFilter }) =>
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: 150, // ancho fijo para poder poner otros filtros al lado
-    marginRight: 8,
-  },
+  container: { width: 145, marginRight: 8 },
   chip: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: "#ede7f6",
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     paddingVertical: 8,
     borderRadius: 20,
   },
-  chipText: {
-    color: COLORS.darkLetter,
-    fontSize: 16,
-    marginHorizontal: 6,
-  },
-  dropdown: {
-    overflow: "hidden",
-    backgroundColor: "#ede7f6",
-    borderRadius: 12,
-    marginTop: 4,
-  },
-  dropdownItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    height: 40,
-  },
-  dropdownText: {
-    fontSize: 16,
-    color: COLORS.darkLetter,
-    marginLeft: 6,
-  },
+  chipText: { color: COLORS.darkLetter, fontSize: 16, marginHorizontal: 4 },
+  dropdown: { overflow: "hidden", backgroundColor: "#ede7f6", borderRadius: 12, marginTop: 4 },
+  dropdownItem: { flexDirection: "row", alignItems: "center", paddingHorizontal: 12, height: 40 },
+  dropdownText: { fontSize: 16, color: COLORS.darkLetter, marginLeft: 6 },
 });

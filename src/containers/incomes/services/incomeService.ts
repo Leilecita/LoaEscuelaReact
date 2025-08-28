@@ -26,17 +26,27 @@ export type IncomeStudent = {
   detail: string;
   payment_method: string;
   category: string;
+
 };
 
 export async function fetchIncomes(
   page: number,
-  payment_place = ''
+  payment_place = '',
+  category = '',
+  payment_method = ''
 ): Promise<Income[]> {
   const params: any = { method: 'getAllIncomes', page };
-  
-  // Solo agregar filtro si payment_place no está vacío
+
   if (payment_place) {
     params.payment_place = payment_place;
+  }
+
+  if (category) {
+    params.category = category;
+  }
+
+  if (payment_method) {
+    params.payment_method = payment_method;
   }
 
   const response = await api.get('/incomes.php', { params });
@@ -47,6 +57,8 @@ export async function fetchIncomes(
     throw new Error(response.data.message || 'Error al obtener pagos');
   }
 }
+
+
 
 export async function fetchIncomesByStudent(studentId: number, page: number): Promise<IncomeStudent[]> {
   const params = {

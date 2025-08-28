@@ -6,37 +6,45 @@ import {
   Text,
   ActivityIndicator,
   RefreshControl,
+  ScrollView,
 } from "react-native";
 import { useIncomes } from "../hooks/useIncomes";
 import ItemIncomeView from "../components/ItemIncomeView";
 import { IncomesFilterBar } from "../components/IncomesFilterBar";
-import { EditIncomeModal } from "../components/EditIncomeModal"; // 👈 ahora con export nombrado
+import { CategoryFilter } from "../components/CategoryFilter";
+import { PaymentMethodFilter } from "../components/PaymentMethodFilter";
+import { EditIncomeModal } from "../components/EditIncomeModal";
 
-// 🔹 equivalencias entre UI y servidor
+// 🔹 Mapeos de filtros para enviar al backend
 const FILTER_MAP: Record<string, string> = {
   Todos: "",
   Playa: "escuela",
   Negocio: "negocio",
 };
 
+const CATEGORY_FILTER_MAP: Record<string, string> = {
+  Todos: "",
+  Escuela: "Escuela",
+  Colonia: "Colonia",
+  Highschool: "Highschool",
+};
+
+const PAYMENT_METHOD_MAP: Record<string, string> = {
+  Todos: "",
+  Efectivo: "efectivo",
+  MP: "mp",
+  Transferencia: "transferencia",
+};
+
 type FilterOption = "Todos" | "Playa" | "Negocio";
+type CategoryFilterOption = "Todos" | "Escuela" | "Colonia" | "Highschool";
+type PaymentMethodOption = "Todos" | "Efectivo" | "MP" | "Transferencia";
 
 export default function IncomesListScreen() {
-  const [paymentPlace, setPaymentPlace] = useState<FilterOption>("Todos");
-
-  const [editingIncome, setEditingIncome] = useState<
-    | {
-        income_id: number;
-        amount: number;
-        payment_method: string;
-        payment_place: string;
-        detail: string;
-        class_course_id: number;
-        category: string;
-        sub_category: string;
-      }
-    | null
-  >(null);
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilterOption>("Escuela");
+  const [paymentPlace, setPaymentPlace] = useState<FilterOption>("Playa");
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState<PaymentMethodOption>("Todos");
+  const [editingIncome, setEditingIncome] = useState<any>(null);
 
   const {
     incomes,
@@ -46,7 +54,11 @@ export default function IncomesListScreen() {
     loadMore,
     reload,
     error,
-  } = useIncomes(FILTER_MAP[paymentPlace]);
+  } = useIncomes(
+    FILTER_MAP[paymentPlace],
+    CATEGORY_FILTER_MAP[categoryFilter],
+    PAYMENT_METHOD_MAP[paymentMethodFilter]
+  );
 
   if (loading && incomes.length === 0) {
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -62,9 +74,18 @@ export default function IncomesListScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: "rgb(239, 241, 202)" }}>
-      {/* 🔹 Barra de filtros flotante */}
+      
+      {/* 🔹 Barra de filtros horizontal */}
       <View style={styles.filterWrapper}>
-        <IncomesFilterBar filter={paymentPlace} onChangeFilter={setPaymentPlace} />
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContainer}
+        >
+          <IncomesFilterBar filter={paymentPlace} onChangeFilter={setPaymentPlace} />
+          <CategoryFilter filter={categoryFilter} onChangeFilter={setCategoryFilter} />
+          <PaymentMethodFilter filter={paymentMethodFilter} onChangeFilter={setPaymentMethodFilter} />
+        </ScrollView>
       </View>
 
       {/* 🔹 Lista de pagos */}
@@ -78,23 +99,12 @@ export default function IncomesListScreen() {
           keyExtractor={(item) => item.income_id.toString()}
           onEndReached={loadMore}
           onEndReachedThreshold={0.5}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={reload} />
-          }
-          ListFooterComponent={
-            loadingMore ? <ActivityIndicator size="small" /> : null
-          }
-          contentContainerStyle={{ paddingTop: 70 }}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reload} />}
+          ListFooterComponent={loadingMore ? <ActivityIndicator size="small" /> : null}
+          contentContainerStyle={{ paddingTop: 80 }}
           renderItem={({ item, index }) => {
-            const currentDate = new Date(item.income_created)
-              .toISOString()
-              .substring(0, 10);
-            const previousDate =
-              index > 0
-                ? new Date(incomes[index - 1].income_created)
-                    .toISOString()
-                    .substring(0, 10)
-                : null;
+            const currentDate = new Date(item.income_created).toISOString().substring(0, 10);
+            const previousDate = index > 0 ? new Date(incomes[index - 1].income_created).toISOString().substring(0, 10) : null;
 
             return (
               <ItemIncomeView
@@ -122,10 +132,7 @@ export default function IncomesListScreen() {
         visible={!!editingIncome}
         income={editingIncome}
         onClose={() => setEditingIncome(null)}
-        onSuccess={() => {
-          setEditingIncome(null);
-          reload(); // recarga la lista después de guardar
-        }}
+        onSuccess={() => { setEditingIncome(null); reload(); }}
       />
     </View>
   );
@@ -142,5 +149,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 12,
+  },
+  scrollContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });

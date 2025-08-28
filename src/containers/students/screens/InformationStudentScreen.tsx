@@ -22,7 +22,8 @@ type Resumen = {
 };
 
 export default function InformationStudentScreen({ route }: Props) {
-  const { studentId, firstName, lastName, category } = route.params || {};
+  
+  const { studentId, firstName, lastName, category, sub_category } = route.params || {};
   const [resumen, setResumen] = useState<Resumen | null>(null);
   const [loadingResumen, setLoadingResumen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -167,12 +168,14 @@ export default function InformationStudentScreen({ route }: Props) {
         studentId={studentId}
         firstName={firstName}
         category={category}
+        sub_category={sub_category}
         lastName={lastName}
         onSuccess={() => {
           reload();        // recargar pagos
           reloadPresents(); // recargar presentes
           fetchResumen();  // recargar resumen
         }}
+        
       />
     </View>
   );

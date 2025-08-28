@@ -207,6 +207,7 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
             firstName={selectedStudent?.nombre ?? ''}
             lastName={selectedStudent?.apellido ?? ''}
             category={selectedStudent?.category ?? ''} 
+            sub_category={selectedStudent?.sub_category ?? ''} 
             onClose={() => setModalVisible(false)}
             onSubmit={handleSubmitPago}
           />

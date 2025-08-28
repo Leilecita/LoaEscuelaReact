@@ -121,7 +121,8 @@ export const ItemStudentAssistView: React.FC<Props> = ({
                 navigation.navigate('InformationStudent', {  studentId: student.student_id,
                   firstName: student.nombre,   
                   lastName: student.apellido,
-                  category: student.category })
+                  category: student.category,
+                  sub_category: student.sub_category })
               }
             >
               <Text style={styles.masInfoText}>+ info</Text>

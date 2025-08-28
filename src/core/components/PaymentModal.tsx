@@ -22,7 +22,9 @@ type PaymentModalProps = {
   firstName: string;
   lastName: string;
   category: string;
+  sub_category: string;
   onSuccess?: () => void;
+
 };
 
 export const PaymentModal: React.FC<PaymentModalProps> = ({
@@ -32,8 +34,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   firstName,
   lastName,
   category,
+  sub_category,
   onSuccess,
 }) => {
+  console.log('📌 PaymentModal props:', { studentId, firstName, lastName, category, sub_category });
   const [fecha, setFecha] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [monto, setMonto] = useState('');
@@ -45,18 +49,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [showMetodoOptions, setShowMetodoOptions] = useState(false);
   const [showLugarOptions, setShowLugarOptions] = useState(false);
   const [tipoCurso, setTipoCurso] = useState<'nuevo' | 'cta'>('cta');
-  const [selectedCategory, setSelectedCategory] = useState('');
-const [selectedSubCategory, setSelectedSubCategory] = useState(''); // ✅ esto faltaba
-const [showCategoryOptions, setShowCategoryOptions] = useState(false);
-const [showSubCategoryOptions, setShowSubCategoryOptions] = useState(false);
+ 
 
   const violetPlaceholder = '#bcb0e4'
   const violetButton = COLORS.button
 
   const medios = ['efectivo', 'mp', 'transferencia'];
   const lugares = ['escuela', 'negocio'];
-  const categories = ['escuela', 'colonia', 'highschool'];
-  const subCategories = ['intermedios', 'adultos', 'mini', 'kids', 'highshchool'];
+
   const { width } = Dimensions.get('window');
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
@@ -98,10 +98,8 @@ const [showSubCategoryOptions, setShowSubCategoryOptions] = useState(false);
       payment_place: lugar,
       paid_amount: paidAmount,
       created: fechaFormateada,
-     // category,
-      //sub_category: 'intermedios',
-      category: selectedCategory,
-sub_category: selectedSubCategory,
+      category,
+      sub_category,
     };
 
     try {
@@ -169,6 +167,8 @@ sub_category: selectedSubCategory,
               </TouchableOpacity>
             </View>
 
+
+            {/* Tipo de pago 
             <View style={styles.row}>
               <TouchableOpacity onPress={() => setShowCategoryOptions(!showCategoryOptions)} style={{ flex: 1, marginRight: 8 }}>
                 <TextInput
@@ -193,7 +193,7 @@ sub_category: selectedSubCategory,
                   activeOutlineColor={violetButton}
                 />
               </TouchableOpacity>
-            </View>
+            </View> 
 
             {showCategoryOptions && (
                 <View style={styles.dropdown}>
@@ -219,7 +219,7 @@ sub_category: selectedSubCategory,
                     </TouchableOpacity>
                   ))}
                 </View>
-              )}
+              )}*/}
 
 
             {/* Fecha y Lugar */}
