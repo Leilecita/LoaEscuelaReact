@@ -124,13 +124,13 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           placeholder="Buscar..."
           mode="flat"
           style={styles.searchInput}
-          left={<PaperInput.Icon icon="magnify" color="#666" />}
+          left={<PaperInput.Icon icon="magnify" color="#fff" />}
           right={
             (isFocused || searchText) ? ( // 👈 aparece si está enfocado o hay texto
-              <PaperInput.Icon icon="close" color="#666" onPress={handleClear} />
+              <PaperInput.Icon icon="close" color="#fff" onPress={handleClear} />
             ) : null
           }
-          placeholderTextColor="#888"
+          placeholderTextColor="#fff"
           underlineColor="transparent"
           activeUnderlineColor="transparent"
           blurOnSubmit={false}
@@ -170,7 +170,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 styles.chip,
                 showOnlyPresent
                   ? { backgroundColor: COLORS.buttonClear } // violeta oscuro cuando está seleccionado
-                  : { backgroundColor: '#ede7f6' } // violeta claro cuando NO está seleccionado
+                  : { backgroundColor: COLORS.greenClearChip } // violeta claro cuando NO está seleccionado
               ]}
               textStyle={{
                 color: showOnlyPresent ? COLORS.darkLetter : COLORS.darkLetter, 
@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   searchInput: {
-    backgroundColor: '#ede7f6',
+    backgroundColor: COLORS.greenClear,
     borderRadius: 8,
     marginHorizontal: 0,
     marginBottom: 8,
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     paddingLeft: 2,
     marginBottom: 8,
-    backgroundColor: '#ede7f6',
+    backgroundColor: COLORS.greenClearChip,
     borderRadius: 8,
   },
 })

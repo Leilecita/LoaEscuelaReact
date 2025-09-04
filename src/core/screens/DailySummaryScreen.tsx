@@ -1,5 +1,5 @@
 // src/containers/dailySummary/DailySummaryScreen.tsx
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -16,9 +16,49 @@ import { DateHeader } from '../../core/components/DateHeader';
 import { usePaginatedFetch } from '../../core/hooks/usePaginatedFetch';
 import { Chip } from 'react-native-paper';
 import { COLORS } from 'core/constants';
+import { IncomesFilterBar } from "../../containers/incomes/components/IncomesFilterBar";
+import { CategoryFilter } from "../../containers/incomes/components/CategoryFilter";
+import { PaymentMethodFilter } from "../../containers/incomes/components/PaymentMethodFilter";
 
 // ----------------------
-// Tipos
+// Nuevo filtro de periodo
+// ----------------------
+type PeriodFilterProps = {
+  filter: PeriodFilterOption;
+  onChangeFilter: (val: PeriodFilterOption) => void;
+};
+
+const PeriodFilter: React.FC<PeriodFilterProps> = ({ filter, onChangeFilter }) => {
+  return (
+    <View style={{ flexDirection: "row", marginRight: 8 }}>
+      {(["Dia", "Mes"] as PeriodFilterOption[]).map((option) => (
+        <Chip
+          key={option}
+          style={styles.chip}
+          mode="outlined"
+          selected={filter === option}
+          selectedColor={COLORS.primary}
+          onPress={() => onChangeFilter(option)}
+        >
+          {option}
+        </Chip>
+      ))}
+    </View>
+  );
+};
+
+const FILTER_MAP: Record<string, string> = {
+  Todos: "",
+  Playa: "escuela",
+  Negocio: "negocio",
+};
+
+type FilterOption = 'Todos' | 'Playa' | 'Negocio';
+type PeriodFilterOption = "Dia" | "Mes" ;
+type PaymentMethodOption = "Todos" | "Efectivo" | "MP" | "Transferencia";
+
+// ----------------------
+// Tipos de reportes
 // ----------------------
 type ReportResumPlanilla = {
   cant_presentes: number;
@@ -27,6 +67,8 @@ type ReportResumPlanilla = {
 
 export type ReportResumAsist = {
   tot_incomes: number;
+  tot_incomes_ef: number;
+  tot_incomes_transf: number;
   tot_incomes_playa: number;
   tot_incomes_negocio: number;
   tot_incomes_escuela: number;
@@ -37,14 +79,16 @@ export type ReportResumAsist = {
   planillas: ReportResumPlanilla[];
 };
 
-type FilterOption = 'Todos' | 'Playa' | 'Negocio' | 'Presentes';
-
 // ----------------------
 // API
 // ----------------------
-async function fetchResumenes(page: number): Promise<ReportResumAsist[]> {
+async function fetchResumenes(page: number, period: PeriodFilterOption): Promise<ReportResumAsist[]> {
   const response = await api.get('/planillas_presentes.php', {
-    params: { method: 'getDayResumPresents', page },
+    params: { 
+      method: 'getDayResumPresents',
+      page,
+      period, // <-- enviamos el periodFilter al backend
+    },
   });
 
   const dataArray = response.data.data;
@@ -60,6 +104,15 @@ async function fetchResumenes(page: number): Promise<ReportResumAsist[]> {
 export const DailySummaryScreen: React.FC = () => {
   const [expandedDay, setExpandedDay] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterOption>('Todos');
+  const [periodFilter, setPeriodFilter] = useState<PeriodFilterOption>("Dia");
+  const [paymentPlace, setPaymentPlace] = useState<FilterOption>("Playa");
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState<PaymentMethodOption>("Todos");
+
+  // <-- función memorizada para evitar recarga infinita
+  const fetchResumenesWithPeriod = useCallback(
+    (page: number) => fetchResumenes(page, periodFilter),
+    [periodFilter]
+  );
 
   const {
     data: resumenes,
@@ -69,7 +122,13 @@ export const DailySummaryScreen: React.FC = () => {
     error,
     reload,
     loadMore,
-  } = usePaginatedFetch<ReportResumAsist>(fetchResumenes, []);
+  } = usePaginatedFetch<ReportResumAsist>(fetchResumenesWithPeriod, []);
+
+  // Maneja cambio de período y recarga
+  const handlePeriodChange = (newPeriod: PeriodFilterOption) => {
+    setPeriodFilter(newPeriod);
+    reload();
+  };
 
   // renderItem tipado
   const renderItem: ListRenderItem<ReportResumAsist> = ({ item }) => {
@@ -79,22 +138,17 @@ export const DailySummaryScreen: React.FC = () => {
     const totalColoniaGroup = totalHigh + totalColonia;
     const isExpanded = expandedDay === item.day;
 
-      // Para cajas Playa/Negocio
-      const showNegocio = filter === 'Todos' || filter === 'Negocio';
-      const showPlaya = filter === 'Todos' || filter === 'Playa';
-      const bothBoxes = showNegocio && showPlaya && filter === 'Todos';
+    // Para cajas Playa/Negocio
+    const showNegocio = paymentPlace === 'Todos' || paymentPlace === 'Negocio';
+    const showPlaya = paymentPlace === 'Todos' || paymentPlace === 'Playa';
+    const bothBoxes = showNegocio && showPlaya && filter === 'Todos';
 
     return (
       <View>
-       
-       <DateHeader
-         date={item.day.includes('T') ? item.day : item.day + 'T00:00:00'}
-       />
+        <DateHeader date={item.day.includes('T') ? item.day : item.day + 'T00:00:00'} />
 
         <View style={styles.card}>
-
-         {/* Contenedor horizontal para Playa y Negocio */}
-         {(showNegocio || showPlaya) && (
+          {(showNegocio || showPlaya) && (
             <View style={styles.totalRow}>
               {showNegocio && (
                 <View style={[styles.totalBox, bothBoxes ? styles.totalBoxHalf : styles.totalBoxFull]}>
@@ -102,7 +156,6 @@ export const DailySummaryScreen: React.FC = () => {
                   <Text style={styles.totalValue}>${item.tot_incomes_negocio}</Text>
                 </View>
               )}
-
               {showPlaya && (
                 <View style={[styles.totalBox, bothBoxes ? styles.totalBoxHalf : styles.totalBoxFull]}>
                   <Text style={styles.totalLabel}>caja playa</Text>
@@ -111,64 +164,51 @@ export const DailySummaryScreen: React.FC = () => {
               )}
             </View>
           )}
-          {/* Mostrar/Ocultar según filtro 
-          {(filter === 'Todos' || filter === 'Negocio') && (
-            <View style={styles.totalBox}>
-              <Text style={styles.totalLabel}>caja negocio</Text>
-              <Text style={styles.totalValue}>${item.tot_incomes_negocio}</Text>
-            </View>
-          )}
 
-          {(filter === 'Todos' || filter === 'Playa') && (
-            <View style={styles.totalBox}>
-              <Text style={styles.totalLabel}>caja playa</Text>
-              <Text style={styles.totalValue}>${item.tot_incomes_playa}</Text>
-            </View>
-          )}*/}
-
-          {/* caja total solo en Todos */}
           {filter === 'Todos' && (
             <View style={styles.totalBox}>
               <Text style={styles.totalLabel}>caja total</Text>
               <Text style={styles.totalValue}>${item.tot_incomes}</Text>
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Efectivo</Text>
+                <Text style={styles.detailValue}>${item.tot_incomes_ef}</Text>
+              </View>
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Tarjeta</Text>
+                <Text style={styles.detailValue}>${item.tot_incomes_transf}</Text>
+              </View>
             </View>
           )}
 
-          {/* Detalle sectorizado solo en Todos */}
           {filter === 'Todos' && (
             <View style={styles.detailBox}>
-            {/* Escuela */}
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Escuela</Text>
-              <Text style={styles.detailValue}>${totalEscuela}</Text>
-            </View>
-          
-            {/* Colonia con expand/collapse */}
-            <TouchableOpacity onPress={() => setExpandedDay(isExpanded ? null : item.day)}>
               <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Colonia</Text>
-                <Text style={styles.detailValue}>${totalColoniaGroup}</Text>
+                <Text style={styles.detailLabel}>Escuela</Text>
+                <Text style={styles.detailValue}>${totalEscuela}</Text>
               </View>
-            </TouchableOpacity>
-          
-            {/* Subdetalles */}
-            {isExpanded && (
-              <View style={styles.subDetailBox}>
+
+              <TouchableOpacity onPress={() => setExpandedDay(isExpanded ? null : item.day)}>
                 <View style={styles.detailRow}>
-                  <Text style={styles.subDetailLabel}>Highschool</Text>
-                  <Text style={styles.subDetailValue}>${totalHigh}</Text>
+                  <Text style={styles.detailLabel}>Colonia</Text>
+                  <Text style={styles.detailValue}>${totalColoniaGroup}</Text>
                 </View>
-                <View style={styles.detailRow}>
-                  <Text style={styles.subDetailLabel}>Colonia</Text>
-                  <Text style={styles.subDetailValue}>${totalColonia}</Text>
+              </TouchableOpacity>
+
+              {isExpanded && (
+                <View style={styles.subDetailBox}>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.subDetailLabel}>Highschool</Text>
+                    <Text style={styles.subDetailValue}>${totalHigh}</Text>
+                  </View>
+                  <View style={styles.detailRow}>
+                    <Text style={styles.subDetailLabel}>Colonia</Text>
+                    <Text style={styles.subDetailValue}>${totalColonia}</Text>
+                  </View>
                 </View>
-              </View>
-            )}
-          </View>
-          
+              )}
+            </View>
           )}
 
-          {/* Presentes solo si filtro = Todos o Presentes */}
           {(filter === 'Todos' || filter === 'Presentes') && (
             <View style={styles.totalBox}>
               <Text style={styles.totalLabel}>Presentes</Text>
@@ -176,7 +216,6 @@ export const DailySummaryScreen: React.FC = () => {
             </View>
           )}
 
-          {/* Planillas solo si filtro = Todos o Presentes */}
           {(filter === 'Todos' || filter === 'Presentes') && (
             <View style={styles.columnsContainer}>
               {item.planillas?.map((p) => (
@@ -208,49 +247,17 @@ export const DailySummaryScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* Barra de filtros */}
       <View style={styles.filterWrapper}>
-      <ScrollView
-         horizontal
-         showsHorizontalScrollIndicator={false}
-         contentContainerStyle={styles.filterContainer}
-       >
-         {(['Todos', 'Playa', 'Negocio', 'Presentes'] as FilterOption[]).map(
-           (option) => (
-             <Chip
-               key={option}
-               mode="flat"
-               selected={filter === option}
-               onPress={() => setFilter(option)}
-               icon={
-                 option === 'Playa'
-                   ? 'beach'
-                   : option === 'Negocio'
-                   ? 'store'
-                   : option === 'Presentes'
-                   ? 'account-group'
-                   : 'filter'
-               }
-               style={[
-                 styles.chip,
-                 filter === option
-                   ? { backgroundColor: COLORS.buttonClear }
-                   : { backgroundColor: '#ede7f6' },
-               ]}
-               textStyle={{
-                 color: COLORS.darkLetter,
-                 fontFamily: 'OpenSans-Light',
-                 fontSize: 16,
-               }}
-             >
-               {option}
-             </Chip>
-           )
-         )}
-       </ScrollView>
-       </View>
-
-
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.filterContainer}
+        >
+          <PeriodFilter filter={periodFilter} onChangeFilter={handlePeriodChange} />
+          <IncomesFilterBar filter={paymentPlace} onChangeFilter={setPaymentPlace} />
+          <PaymentMethodFilter filter={paymentMethodFilter} onChangeFilter={setPaymentMethodFilter} />
+        </ScrollView>
+      </View>
 
       {resumenes.length === 0 ? (
         <Text style={styles.loadingText}>No hay datos disponibles</Text>
@@ -269,9 +276,7 @@ export const DailySummaryScreen: React.FC = () => {
               tintColor="#6200ee"
             />
           }
-          ListFooterComponent={
-            loadingMore ? <ActivityIndicator size="small" /> : null
-          }
+          ListFooterComponent={loadingMore ? <ActivityIndicator size="small" /> : null}
           contentContainerStyle={styles.flatListContent}
         />
       )}
@@ -368,5 +373,4 @@ const styles = StyleSheet.create({
    marginVertical: 4,
  },
  loadingText: { textAlign: 'center', marginTop: 20, fontSize: 16 },
- 
 });

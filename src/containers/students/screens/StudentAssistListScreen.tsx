@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react'
-import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, Keyboard } from 'react-native'
+import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, ImageBackground } from 'react-native'
 import { useStudents } from '../../../core/hooks/useStudents'
 import type { ReportStudent } from '../services/studentService'
 import { savePresent, usePresentCount, removePresent } from '../services/studentService'
@@ -167,71 +167,77 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
 
 
   return (
-    <View style={{ flex: 1, overflow: 'visible', backgroundColor: 'rgb(239, 241, 202)' }}>
-      <FilterBar
-        date={selectedDate}
-        onDateChange={setSelectedDate}
-        showOnlyPresent={showOnlyPresent}
-        onTogglePresent={() => setShowOnlyPresent((prev) => !prev)}
-        sortOrder={sortOrder}
-        onToggleSortOrder={() => setSortOrder((prev) => (prev === 'alf' ? '' : 'alf'))}
-        onRefresh={handleRefresh}
-        searchText={searchInput}
-        onSearchTextChange={setSearchInput}
-        countPresentes={countPresentes}
-        enableDatePicker={true}
-        enablePresentFilter={true}
-        enableSortOrder={true}
-        enableRefresh={true}
-      />
-  
-      {loading ? (
-        <ActivityIndicator style={styles.center} size="large" />
-      ) : error ? (
-        <View style={styles.center}>
-          <Text style={{ marginBottom: 10 }}>{error}</Text>
-          <Button title="Reintentar" onPress={reload} />
-        </View>
-      ) : (
-        <>
-          <FlatList
-            data={students}
-            keyExtractor={(item, index) => `${item.planilla_alumno_id}-${item.student_id}-${index}`}
-            keyboardShouldPersistTaps="handled"
-            onEndReached={loadMore}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
-            contentContainerStyle={{ paddingBottom: 40 }}
-            renderItem={({ item }) => (
-              
-              <ItemStudentAssistView
-                student={item}
-                isExpanded={expandedStudentId === item.student_id}
-                onToggleExpand={() => toggleExpand(item.student_id)}
-                togglePresente={togglePresente}
-                eliminarPresente={eliminarPresente}
-                selectedDate={selectedDate}
-              />
-            )}
-          />
-          
-          <FAB
-              icon="plus"
-              style={{
-                position: 'absolute',
-                bottom: 30,
-                right: 30,
-              }}
-              onPress={() => navigation.navigate('ListaDeAlumnos', {
-                category: 'category',
-                subcategoria: 'subcategoria',
-                modo: 'asistencias',
-                planilla_id: planillaId
-              })}
+    <ImageBackground
+      source={require('../../../../assets/fondo.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <View style={{ flex: 1, overflow: 'visible'}}>
+        <FilterBar
+          date={selectedDate}
+          onDateChange={setSelectedDate}
+          showOnlyPresent={showOnlyPresent}
+          onTogglePresent={() => setShowOnlyPresent((prev) => !prev)}
+          sortOrder={sortOrder}
+          onToggleSortOrder={() => setSortOrder((prev) => (prev === 'alf' ? '' : 'alf'))}
+          onRefresh={handleRefresh}
+          searchText={searchInput}
+          onSearchTextChange={setSearchInput}
+          countPresentes={countPresentes}
+          enableDatePicker={true}
+          enablePresentFilter={true}
+          enableSortOrder={true}
+          enableRefresh={true}
+        />
+    
+        {loading ? (
+          <ActivityIndicator style={styles.center} size="large" />
+        ) : error ? (
+          <View style={styles.center}>
+            <Text style={{ marginBottom: 10 }}>{error}</Text>
+            <Button title="Reintentar" onPress={reload} />
+          </View>
+        ) : (
+          <>
+            <FlatList
+              data={students}
+              keyExtractor={(item, index) => `${item.planilla_alumno_id}-${item.student_id}-${index}`}
+              keyboardShouldPersistTaps="handled"
+              onEndReached={loadMore}
+              onEndReachedThreshold={0.5}
+              ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
+              contentContainerStyle={{ paddingBottom: 40 }}
+              renderItem={({ item }) => (
+                
+                <ItemStudentAssistView
+                  student={item}
+                  isExpanded={expandedStudentId === item.student_id}
+                  onToggleExpand={() => toggleExpand(item.student_id)}
+                  togglePresente={togglePresente}
+                  eliminarPresente={eliminarPresente}
+                  selectedDate={selectedDate}
+                />
+              )}
             />
-        </>
-      )}
-    </View>
+            
+            <FAB
+                icon="plus"
+                style={{
+                  position: 'absolute',
+                  bottom: 30,
+                  right: 30,
+                }}
+                onPress={() => navigation.navigate('ListaDeAlumnos', {
+                  category: 'category',
+                  subcategoria: 'subcategoria',
+                  modo: 'asistencias',
+                  planilla_id: planillaId
+                })}
+              />
+          </>
+        )}
+      </View>
+    </ImageBackground>
   );
   
 }
@@ -242,5 +248,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+  },
+  background: {
+    flex: 1,
   },
 })

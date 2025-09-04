@@ -142,7 +142,7 @@ export const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'flex-start', alignItems: 'center', backgroundColor: 'rgb(232, 237, 189)', paddingTop: 40 },
+  container: { flex: 1, justifyContent: 'flex-start', alignItems: 'center',  paddingTop: 40 },
   row: { flexDirection: 'row', justifyContent: 'space-between', width: '80%', marginVertical: 20 },
   button: { flex: 1, alignItems: 'center', marginHorizontal: 10 },
   bigButton: { alignItems: 'center', marginVertical: 5 },

@@ -77,39 +77,15 @@ function MainDrawer() {
         
       );
 }
- {/*
-<Drawer.Navigator
-      screenOptions={{
-        headerStyle: { backgroundColor: COLORS.button },
-        headerTintColor: '#fff',
-        headerTitleStyle: { fontFamily: 'OpenSans-Regular' },
-      }}
-    >
-      <Drawer.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          title: 'Loa Escuela',
-          headerRight: () => <MenuHeader iconColor="#fff" />, // blanco
-        }}
-      />
-      <Drawer.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          title: 'Perfil',
-          headerRight: () => <MenuHeader iconColor="#fff" />, // blanco
-        }}
-      />
-      Agregá más pantallas si querés 
-    </Drawer.Navigator>*/}
+ 
 export function NavigationApp() {
   const { userToken } = React.useContext(AuthContext);
 
   return (
     <ImageBackground
-      source={require('../../../assets/fondo.jpg')}
+      source={require('../../../assets/fondo.png')}
       style={styles.background}
+      resizeMode="cover"
     >
       <StatusBar style="light" backgroundColor={COLORS.button} />
       <NavigationContainer theme={MyTheme}>
@@ -179,6 +155,7 @@ export function NavigationApp() {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    resizeMode: 'cover',
+    width: '100%',
+    height: '100%',
   },
 });

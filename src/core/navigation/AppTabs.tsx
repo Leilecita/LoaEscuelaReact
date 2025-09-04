@@ -9,7 +9,7 @@ import { COLORS } from 'core/constants'
 
 
 const Tab = createBottomTabNavigator()
-const ICON_COLOR = '#9161d4'
+const ICON_COLOR = '#3a875b'
 const tabs = [
   { title: 'Adultos', category: 'escuela' as Category, subcategoria: 'adultos' as Subcategoria, iconName: 'account' },
   { title: 'Intermedios', category: 'Escuela' as Category, subcategoria: 'intermedios' as Subcategoria, iconName: 'human' },
@@ -24,7 +24,7 @@ export const AppTabs = () => {
     screenOptions={({ route }) => ({
       headerShown: false,
       tabBarActiveTintColor: ICON_COLOR,
-      tabBarInactiveTintColor: '#aaa',
+      tabBarInactiveTintColor: 'rgb(251, 251, 251)',
       tabBarStyle: {
         backgroundColor: COLORS.buttonClear,        // 👈 Fondo de la barra
         borderTopColor: COLORS.buttonClear,           // Borde superior

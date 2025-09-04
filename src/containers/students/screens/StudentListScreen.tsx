@@ -6,7 +6,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   TouchableOpacity,
-  Button
+  Button, ImageBackground
 } from 'react-native'
 import { Category, RootStackParamList, Subcategoria } from 'types'
 import { useAllStudents } from '../../../core/hooks/useAllStudents'
@@ -139,7 +139,12 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
 
 
   return (
-    <View style={{ flex: 1, backgroundColor: 'rgb(239, 241, 202)' }}>
+    <ImageBackground
+    source={require('../../../../assets/fondo.png')}
+    style={styles.background}
+    resizeMode="cover"
+  >
+    <View style={{ flex: 1}}>
       <FilterBar
         searchText={searchInput}
         onSearchTextChange={setSearchInput}
@@ -243,6 +248,7 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
         </>
       )}
     </View>
+    </ImageBackground>
   )
 }
 
@@ -305,5 +311,8 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  background: {
+    flex: 1,
   },
 })
