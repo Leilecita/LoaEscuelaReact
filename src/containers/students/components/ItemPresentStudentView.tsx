@@ -76,8 +76,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderBottomWidth: 1,
-    borderColor: '#ddd',
+    borderBottomWidth: 0.3,
+    borderColor: COLORS.ligthLetter,
     alignItems: 'center',
   },
   dateContainer: {
@@ -86,24 +86,32 @@ const styles = StyleSheet.create({
   },
   day: {
    width:50,
+   fontFamily: 'OpenSans-Light',
+   color: COLORS.darkLetter,
   },
   number: {
     fontSize: 14,
+    fontFamily: 'OpenSans-Light',
+    color: COLORS.darkLetter,
   },
   monthContainer: {
     flex: 1,
+    
     alignItems: 'center', // 👈 centrado horizontal
   },
   month: {
    fontFamily: 'OpenSans-Regular',
+   color: COLORS.darkLetter,
   },
   categoryContainer: {
     minWidth: 100,
     alignItems: 'flex-end',
+
   },
   category: {
     fontStyle: 'italic',
     fontFamily: 'OpenSans-Regular',
+    color: COLORS.darkLetter,
     marginRight: 8,
   },
 });

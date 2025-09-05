@@ -25,7 +25,9 @@ export type IncomeStudent = {
   created: string;
   detail: string;
   payment_method: string;
+  payment_place: string;
   category: string;
+  sub_category: string;
 
 };
 

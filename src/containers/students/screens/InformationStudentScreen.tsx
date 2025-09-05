@@ -3,6 +3,8 @@ import { View, StyleSheet, FlatList, ActivityIndicator, Pressable, Text, ImageBa
 import { Avatar, Divider, Text as PaperText } from 'react-native-paper';
 import { useIncomesByStudent } from '../../incomes/hooks/useIncomesByStudent';
 import ItemIncomeStudentView from '../../../containers/incomes/components/ItemIncomeStudentView';
+import ItemIncomeView from '../../../containers/incomes/components/ItemIncomeView';
+import Icon from 'react-native-vector-icons/MaterialIcons'; 
 import { RootStackParamList } from '../../../types';
 import { RouteProp } from '@react-navigation/native';
 import { getResumenStudent } from '../../students/services/studentService'; 
@@ -27,6 +29,8 @@ export default function InformationStudentScreen({ route }: Props) {
   const [resumen, setResumen] = useState<Resumen | null>(null);
   const [loadingResumen, setLoadingResumen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [expandedClases, setExpandedClases] = useState(false); // 👈 controla el colapsado
+
 
   if (!studentId) return <PaperText>Estudiante no definido</PaperText>;
 
@@ -109,25 +113,33 @@ export default function InformationStudentScreen({ route }: Props) {
           </View>
 
           {/* Clases tomadas */}
-          <View style={{ marginHorizontal: 8, marginTop: 16, flex: 1 }}>
-            <View style={styles.headerTitle}>
-              <Text style={{  marginLeft: 16,  fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter }}>Clases tomadas</Text>
-            </View>
-            {loadingPresents && presents.length === 0 ? <ActivityIndicator size="large" /> : (
+          <View style={{ marginHorizontal: 8, marginTop: 16,  }}>
+            <Pressable style={styles.headerTitle} onPress={() => setExpandedClases(!expandedClases)}>
+              <Text style={styles.headerTitleText}>Clases tomadas</Text>
+              <Icon 
+                name={expandedClases ? "keyboard-arrow-up" : "keyboard-arrow-down"} 
+                size={24} 
+                color={COLORS.darkLetter} 
+                style={{ marginRight: 12 }}
+              />
+            </Pressable>
+            {expandedClases && (
               <View style={styles.resumenContainerClases}>
-              <FlatList
-                data={presents}
-                keyExtractor={(item, index) => (item.present_id ?? index).toString()}
-                renderItem={({ item, index }) => (
-                  <ItemPresentStudentView
-                    item={item}
-                    index={index}
-                    previousItem={presents[index - 1]}
+                {loadingPresents && presents.length === 0 ? <ActivityIndicator size="large" /> : (
+                  <FlatList
+                    data={presents}
+                    keyExtractor={(item, index) => (item.present_id ?? index).toString()}
+                    renderItem={({ item, index }) => (
+                      <ItemPresentStudentView
+                        item={item}
+                        index={index}
+                        previousItem={presents[index - 1]}
+                      />
+                    )}
+                    refreshing={loadingPresents}
+                    onRefresh={reloadPresents}
                   />
                 )}
-                refreshing={loadingPresents}
-                onRefresh={reloadPresents}
-              />
               </View>
             )}
           </View>
@@ -143,7 +155,22 @@ export default function InformationStudentScreen({ route }: Props) {
                 data={incomes}
                 keyExtractor={(item, index) => (item.income_id ?? index).toString()}
                 renderItem={({ item, index }) => (
-                  <ItemIncomeStudentView
+                   <ItemIncomeView
+                      income_created={item.created ?? ''}
+                      description={item.created ?? ''}
+                      payment_method={item.payment_method ?? ''}
+                      category={item.category || ""}
+                      sub_category={item.sub_category ?? ''}
+                      detail={item.detail ? item.detail.toString() : ''}
+                      amount={item.amount}
+                      income_id={item.income_id}
+                      student_id={item.student_id}
+                      class_course_id={item.class_course_id}
+                      payment_place={item.payment_place ?? ''}
+                      fromPayments={true} 
+
+                    />
+                 /* <ItemIncomeStudentView
                     income_created={item.created ?? ''}
                     description={item.detail ?? ''}
                     payment_method={item.payment_method ?? ''}
@@ -152,7 +179,7 @@ export default function InformationStudentScreen({ route }: Props) {
                     amount={item.amount ?? 0}
                     income_id={item.income_id ?? index}
                     showDateHeader={index === 0 || (item.created?.split('T')[0] ?? '') !== (incomes[index - 1]?.created?.split('T')[0] ?? '')}
-                  />
+                  />*/
                 )}
                 onEndReached={loadMore}
                 onEndReachedThreshold={0.5}
@@ -211,10 +238,10 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Light',
   },
   name: { fontFamily: 'OpenSans-Light', fontSize: 20, fontWeight: 'bold', color: '#000' },
-  resumenContainer: { backgroundColor: 'rgba(173, 209, 181, 0.37)', padding: 16 },
+  resumenContainer: { backgroundColor: 'rgba(197, 216, 187, 0.59)', padding: 16 },
 
   resumenContainerClases: 
-  { backgroundColor:'rgba(218, 227, 138, 0.43)',  height: 280 },
+  { backgroundColor: 'rgba(235, 245, 177, 0.42)',  height: 280 },
 
   rowResumen: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 2 },
   label: { fontFamily: 'OpenSans-Regular', fontSize: 15, color: COLORS.darkLetter2 },
@@ -242,27 +269,12 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 14,
   },
-  headerText: { fontFamily: 'OpenSans-Regular', fontSize: 16, color: '#ffff' },
-  headerResum: {
-    flexDirection: 'row', // avatar y texto al lado
-    alignItems: 'center', // centra verticalmente
-    backgroundColor:   '#88bfb9',
-    paddingLeft: 16,
-    paddingBottom: 6,
-    paddingTop: 6,
-    marginTop:4,
-  },
-
-  headerTitle: {
-    flexDirection: 'row', // avatar y texto al lado
-    alignItems: 'center', // centra verticalmente
-    backgroundColor:   'rgba(226,223,50,255)',
-    paddingBottom: 6,
-    paddingTop: 6,
-    marginHorizontal:-8,
-    marginTop:4,
-  },
+  
   background: {
     flex: 1,
   },
+  headerText: { fontFamily: 'OpenSans-Regular', fontSize: 16, color: '#ffff' },
+  headerResum: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#93aba2', paddingLeft: 16, paddingVertical: 6, marginTop: 4 },
+  headerTitle: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#dfed47', paddingVertical: 6, justifyContent: 'space-between', marginHorizontal: -8, marginTop: 4 },
+  headerTitleText: { marginLeft: 16, fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter },
 });

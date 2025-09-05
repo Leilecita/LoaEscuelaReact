@@ -6,6 +6,8 @@ import { DateHeader } from '../../../core/components/DateHeader';
 import { RootStackParamList } from 'types';
 import { COLORS } from '@core';
 import { Icon } from 'react-native-paper';
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale'
 
 type NavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -25,6 +27,7 @@ type ItemIncomeProps = {
   class_course_id: number;
   student_id: number;
   showDateHeader?: boolean;
+  fromPayments?: boolean;
 
   
   // 👇 callback para abrir modal de edición
@@ -53,6 +56,7 @@ export default function ItemIncomeView({
   class_course_id,
   sub_category,
   showDateHeader = false,
+  fromPayments = false, 
   onEdit,
 }: ItemIncomeProps) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -82,16 +86,56 @@ export default function ItemIncomeView({
         }
         delayLongPress={400} // medio segundito
       >
-        <View style={styles.left}>
-          <Text style={styles.name}>{firstName}</Text>
-          <Text style={styles.lastName}>{lastName}</Text>
-        </View>
-        <View style={styles.center}>
-          <Text style={styles.concept}>{detail}</Text>
-          <Text style={styles.location}>{category}-{sub_category}</Text>
+       <View style={styles.left}>
+          {fromPayments ? (
+            <>
+              <Text style={styles.day}>
+                {format(new Date(income_created), 'd', { locale: es })} {/* día */}
+              </Text>
+              <Text style={styles.month}>
+                {format(new Date(income_created), 'MMM', { locale: es })} {/* mes */}
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text style={styles.name}>{firstName}</Text>
+              <Text style={styles.lastName}>{lastName}</Text>
+            </>
+          )}
         </View>
 
-        
+
+        <View style={styles.center}>
+          <Text style={styles.concept}>{detail}</Text>
+
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+            {category === 'escuela' && (
+              <Icon
+                source="human"
+                color={COLORS.darkLetter3}
+                size={16}
+              />
+            )}
+            {category === 'colonia' && (
+              <Icon
+                source="baby-face-outline"
+                color={COLORS.darkLetter3}
+                size={16}
+              />
+            )}
+            {category === 'highschool' && (
+              <Icon
+                source="school"
+                color={COLORS.darkLetter3}
+                size={16}
+              />
+            )}
+
+            {/* Subcategory al lado del ícono */}
+            <Text style={styles.location}>{sub_category}</Text>
+          </View>
+        </View>
+
         <View style={styles.right}>
           <Text style={styles.amount}>
             ${amount.toLocaleString('es-AR')}
@@ -102,7 +146,7 @@ export default function ItemIncomeView({
               <View style={{ marginRight: 8, marginTop:2 }}>
                 <Icon
                   source="credit-card-outline"
-                  color={COLORS.darkLetter}
+                  color={COLORS.darkLetter3}
                   size={16}
                 />
               </View>
@@ -110,24 +154,19 @@ export default function ItemIncomeView({
 
             {/* ícono de lugar de pago */}
             {(payment_place === 'escuela' || payment_place === 'negocio') && (
-              <Icon
-                source={payment_place === 'escuela' ? 'beach' : 'store'}
-                color={COLORS.darkLetter}
-                size={16}
-              />
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Icon
+                  source={payment_place === 'escuela' ? 'beach' : 'store'}
+                  color={COLORS.darkLetter3}
+                  
+                  size={16}
+                />
+                <Text style={ styles.location }>
+                  {payment_place === 'escuela' ? 'playa' : 'negocio'}
+                </Text>
+              </View>
             )}
           </View>
-
-
-         {/* {(payment_place === 'escuela' || payment_place === 'negocio') && (
-            <View style={styles.badge}>
-              <Icon
-                source={payment_place === 'escuela' ? 'beach' : 'store'}
-                color={COLORS.darkLetter}
-                size={16}
-              />
-            </View>
-          )}*/}
         </View>
       </TouchableOpacity>
 
@@ -155,8 +194,9 @@ export default function ItemIncomeView({
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
-    borderBottomWidth: 0.5,
-    borderColor: '#ccc',
+    borderBottomWidth: 0.3, 
+
+    borderColor: COLORS.ligthLetter, 
   },
   row: {
     flexDirection: 'row',
@@ -167,14 +207,15 @@ const styles = StyleSheet.create({
   center: { flex: 2 },
   right: { flex: 2, alignItems: 'flex-end' },
   name: {
-    fontSize: 16,
+    fontSize: 17,
     fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
   },
   lastName: {
-    fontSize: 16,
+    fontSize: 15,
+    marginTop: 6, 
     fontFamily: 'OpenSans-Light',
-    color: COLORS.darkLetter,
+    color: COLORS.darkLetter3,
   },
   concept: {
     fontSize: 16,
@@ -185,10 +226,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter3,
+    marginLeft: 6, 
   },
   amount: {
     fontSize: 16,
-    fontFamily: 'OpenSans-Light',
+    fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
   },
   extraInfo: {
@@ -206,4 +248,14 @@ const styles = StyleSheet.create({
   badge: {
     // opcional: estilo de fondo del ícono
   },
+  day: {
+    width:50,
+    fontFamily: 'OpenSans-Light',
+    color: COLORS.darkLetter,
+   },
+
+   month: {
+    fontFamily: 'OpenSans-Regular',
+    color: COLORS.darkLetter,
+   },
 });

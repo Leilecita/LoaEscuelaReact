@@ -15,6 +15,7 @@ import { IncomesFilterBar } from "../components/IncomesFilterBar";
 import { CategoryFilter } from "../components/CategoryFilter";
 import { PaymentMethodFilter } from "../components/PaymentMethodFilter";
 import { EditIncomeModal } from "../components/EditIncomeModal";
+import { COLORS } from "@core";
 
 // 🔹 Mapeos de filtros para enviar al backend
 const FILTER_MAP: Record<string, string> = {
@@ -79,7 +80,7 @@ export default function IncomesListScreen() {
       style={styles.background}
       resizeMode="cover"
     >
-      <View style={{ flex: 1}}>
+      <View style={{ flex: 1, backgroundColor: COLORS.transparentGreenColor}}>
         
         {/* 🔹 Barra de filtros horizontal */}
         <View style={styles.filterWrapper}>

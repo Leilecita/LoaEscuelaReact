@@ -5,6 +5,7 @@ import type { RootStackParamList } from '../../../../src/types';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import api from '../../../core/services/axiosClient';
 import { DateHeader } from '../../../core/components/DateHeader';
+import { COLORS } from '@core';
 
 type RootStackNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -158,7 +159,7 @@ const styles = StyleSheet.create({
     padding: 20,           // 🔹 padding uniforme
     alignItems: 'flex-start',
   },
-  boxText: { color: '#000', fontFamily: 'OpenSans-Light', fontSize: 16 },
+  boxText: { color: COLORS.darkLetter, fontFamily: 'OpenSans-Light', fontSize: 16 },
   columnsContainer: { flexDirection: 'row', marginVertical: 1, flexWrap: 'wrap' },
   columnItem: { width: '50%', paddingRight: 10 },
   rowItem: { flexDirection: 'row', marginVertical: 5, justifyContent: 'space-between' },

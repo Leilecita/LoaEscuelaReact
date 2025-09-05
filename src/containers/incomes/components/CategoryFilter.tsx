@@ -38,11 +38,11 @@ export const CategoryFilter: React.FC<Props> = ({ filter, onChangeFilter }) => {
   const getIcon = (option: FilterOption) => {
     switch (option) {
       case "Escuela":
-        return "school";
+        return "human";
       case "Colonia":
-        return "home-city";
+        return "baby-face-outline";
       case "Highschool":
-        return "school-outline";
+        return "school";
       default:
         return "filter";
     }
@@ -51,12 +51,12 @@ export const CategoryFilter: React.FC<Props> = ({ filter, onChangeFilter }) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.chip} onPress={toggleDropdown}>
-        <MaterialCommunityIcons name={getIcon(filter)} size={20} color={COLORS.darkLetter} />
+        <MaterialCommunityIcons name={getIcon(filter)} size={18} color={COLORS.darkLetter} />
         <Text style={styles.chipText}>{filter}</Text>
         <MaterialCommunityIcons
           name={open ? "chevron-up" : "chevron-down"}
-          size={20}
-          color={COLORS.darkLetter}
+          size={18}
+          color={COLORS.darkLetter2}
         />
       </TouchableOpacity>
 
@@ -67,7 +67,7 @@ export const CategoryFilter: React.FC<Props> = ({ filter, onChangeFilter }) => {
             style={styles.dropdownItem}
             onPress={() => handleSelect(option)}
           >
-            <MaterialCommunityIcons name={getIcon(option)} size={18} color={COLORS.darkLetter} />
+            <MaterialCommunityIcons name={getIcon(option)} size={16} color={COLORS.darkLetter} />
             <Text style={styles.dropdownText}>{option}</Text>
           </TouchableOpacity>
         ))}
@@ -84,11 +84,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: COLORS.chipGreenColor,
     paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingVertical: 5,
+    borderRadius: 10,
   },
-  chipText: { color: COLORS.darkLetter, fontSize: 16, marginHorizontal: 4 },
+  chipText: { color: COLORS.darkLetter2, fontSize: 16, marginHorizontal: 4, fontFamily: 'OpenSans-Light' },
   dropdown: { overflow: "hidden", backgroundColor: COLORS.chipGreenColor, borderRadius: 12, marginTop: 4 },
   dropdownItem: { flexDirection: "row", alignItems: "center", paddingHorizontal: 12, height: 40 },
-  dropdownText: { fontSize: 16, color: COLORS.darkLetter, marginLeft: 6 },
+  dropdownText: { fontSize: 16, color: COLORS.darkLetter2, marginLeft: 6 },
 });

@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native'
+import React, { useState, useRef, useEffect } from 'react'
+import { View, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, } from 'react-native'
 import { TextInput, IconButton } from 'react-native-paper'
 import { COLORS } from 'core/constants'
 import { TouchableRipple } from 'react-native-paper'
+import { TextInput as PaperInput } from "react-native-paper";
 
 type SimpleFilterBarProps = {
   searchText: string
@@ -15,33 +16,68 @@ export const SimpleFilterToolbar: React.FC<SimpleFilterBarProps> = ({
   onSearchTextChange,
   onRefresh,
 }) => {
+    const [isKeyboardVisible, setKeyboardVisible] = useState(false)
+    const inputRef = useRef(null);
+    const [isFocused, setIsFocused] = useState(false);
+    
+    useEffect(() => {
+      const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
+        setKeyboardVisible(true)
+      })
+      const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
+        setKeyboardVisible(false)
+      })
+  
+      return () => {
+        showSubscription.remove()
+        hideSubscription.remove()
+      }
+    }, [])
+  
+    const handleClear = () => {
+      if (searchText) {
+        onSearchTextChange(""); // 👈 limpia si hay texto
+      }
+      Keyboard.dismiss();       // 👈 siempre oculta el teclado
+      setIsFocused(false);      
+    };
+
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}
-    >
-      <TextInput
+    behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    style={styles.container}
+  >
+      <PaperInput
         value={searchText}
         onChangeText={onSearchTextChange}
         placeholder="Buscar..."
         mode="flat"
         style={styles.searchInput}
-        left={<TextInput.Icon icon="magnify" color="#666" />}
-        placeholderTextColor="#888"
+        left={<PaperInput.Icon icon="magnify" color="#fff" />}
+        right={
+          (isFocused || searchText) ? ( // 👈 aparece si está enfocado o hay texto
+            <PaperInput.Icon icon="close" color="#fff" onPress={handleClear} />
+          ) : null
+        }
+        placeholderTextColor="#fff"
         underlineColor="transparent"
         activeUnderlineColor="transparent"
         blurOnSubmit={false}
+        cursorColor="#6200ee"
+        selectionColor="#b39ddb"
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
         theme={{
           colors: {
-            background: '#ede7f6',
-            text: '#333',
-            primary: '#6200ee',
-            placeholder: '#888',
+            primary: "#6200ee",
+            onSurfaceVariant: "#6200ee",
+            text: "#333",
+            placeholder: "#888",
+            background: "#ede7f6",
           },
         }}
       />
-
-      <TouchableRipple
+       <TouchableRipple
         borderless
         onPress={onRefresh}
         style={styles.fabButton}
@@ -50,31 +86,32 @@ export const SimpleFilterToolbar: React.FC<SimpleFilterBarProps> = ({
         <IconButton
           icon="refresh"
           size={24}
-          iconColor={COLORS.darkLetter}
+          iconColor={COLORS.white}
           accessibilityLabel="Refrescar"
         />
       </TouchableRipple>
-    </KeyboardAvoidingView>
+   
+  </KeyboardAvoidingView>
+   
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
     marginHorizontal: 4,
     marginTop: 12,
-    marginBottom: 8,
-    borderRadius: 12,
-
-    padding: 8,
+    marginBottom: 16,
     backgroundColor: 'transparent',
+    borderRadius: 12,
+    flexDirection: 'row',
+    padding: 8,
   },
+ 
   fabButton: {
-   backgroundColor: '#ede7f6', // fondo tipo botón, podés usar algún color o var
    borderRadius: 8,           // círculo (medio del tamaño del botón)
    width: 48,
-   height: 48,
+   height: 40,
+   backgroundColor:  COLORS.transparentGreenColor,
    justifyContent: 'center',
    alignItems: 'center',
    shadowOffset: { width: 0, height: 2 },
@@ -83,7 +120,7 @@ const styles = StyleSheet.create({
 
   searchInput: {
     flex: 1,
-    backgroundColor: '#ede7f6',
+    backgroundColor:  COLORS.transparentGreenColor,
     borderRadius: 8,
     height: 40,
     fontSize: 14,

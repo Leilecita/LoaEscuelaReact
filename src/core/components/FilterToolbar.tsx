@@ -108,8 +108,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             },
           }}
         />
-
-
       <View style={styles.row}>
         <ScrollView
           horizontal

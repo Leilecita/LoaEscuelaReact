@@ -24,6 +24,7 @@ import { COLORS } from '@core'
 import { PaymentModal } from '../../../core/components/PaymentModal'
 import { DateHeader } from '../../../core/components/DateHeader';
 import { SurfPriceBottomSheet } from 'core/components/SurfPriceBottomSheet'
+import { SimpleFilterToolbar } from 'core/components/SimpleFilterToolbar'
 
 
 type StudentListScreenNavigationProp = NativeStackNavigationProp<
@@ -145,16 +146,13 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
     resizeMode="cover"
   >
     <View style={{ flex: 1}}>
-      <FilterBar
+      <SimpleFilterToolbar
         searchText={searchInput}
         onSearchTextChange={setSearchInput}
         onRefresh={reload}
-        countPresentes={students.length}
-        enableRefresh={false}
-        enableDatePicker={false}
-        enablePresentFilter={false}
-        enableSortOrder={false}
       />
+
+     
   
       {loading ? (
         <ActivityIndicator style={styles.center} size="large" />

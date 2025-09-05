@@ -44,7 +44,7 @@ export const IncomesFilterBar: React.FC<Props> = ({ filter, onChangeFilter }) =>
     <View style={styles.container}>
       {/* Chip principal */}
       <TouchableOpacity style={styles.chip} onPress={toggleDropdown}>
-        <MaterialCommunityIcons name={getIcon(filter)} size={20} color={COLORS.darkLetter} />
+        <MaterialCommunityIcons name={getIcon(filter)} size={18} color={COLORS.darkLetter2} />
         <Text style={styles.chipText}>{filter}</Text>
         <MaterialCommunityIcons
           name={open ? "chevron-up" : "chevron-down"}
@@ -81,13 +81,14 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor:  COLORS.chipGreenColor,
     paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 20,
+    paddingVertical: 5,
+    borderRadius: 10,
   },
   chipText: {
     color: COLORS.darkLetter,
     fontSize: 16,
     marginHorizontal: 6,
+    fontFamily: 'OpenSans-Light'
   },
   dropdown: {
     overflow: "hidden",
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
   },
   dropdownText: {
     fontSize: 16,
-    color: COLORS.darkLetter,
+    color: COLORS.darkLetter2,
     marginLeft: 6,
   },
 });
