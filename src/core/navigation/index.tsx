@@ -46,9 +46,10 @@ function AuthStack() {
 function MainDrawer() {
   return (
     
+    
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
-      screenOptions={{ headerShown: true, headerStyle: { backgroundColor: COLORS.button },
+      screenOptions={{ headerShown: true, headerStyle: { backgroundColor: COLORS.mediumGreenColor },
       drawerStyle: {
         width: 200,                   // ancho del drawer
         backgroundColor: 'transparent', // fondo transparente
@@ -87,12 +88,12 @@ export function NavigationApp() {
       style={styles.background}
       resizeMode="cover"
     >
-      <StatusBar style="light" backgroundColor={COLORS.button} />
+      <StatusBar style="light" backgroundColor={COLORS.mediumGreenColor} />
       <NavigationContainer theme={MyTheme}>
         {userToken ? (
           <RootStack.Navigator
             screenOptions={{
-              headerStyle: { backgroundColor: COLORS.button },
+              headerStyle: { backgroundColor: COLORS.mediumGreenColor },
               headerTintColor: '#fff',
               headerTitleStyle: { fontFamily: 'OpenSans-Regular' },
             }}

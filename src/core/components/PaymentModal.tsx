@@ -429,10 +429,10 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 17,
   },
   title: {
-    fontSize: 14,
+    fontSize: 15,
     color: COLORS.darkLetter3,
     fontFamily: 'OpenSans-Light'
   },

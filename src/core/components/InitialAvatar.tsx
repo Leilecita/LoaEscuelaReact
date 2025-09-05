@@ -18,7 +18,7 @@ export const InitialAvatar: React.FC<Props> = ({ letra, size = 40 }) => {
 
 const styles = StyleSheet.create({
   avatarCircle: {
-    backgroundColor: COLORS.escuela,
+    backgroundColor: COLORS.lightGreenColor,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,

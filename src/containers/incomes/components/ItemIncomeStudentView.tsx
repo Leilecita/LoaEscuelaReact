@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12, // margen izquierdo y derecho para todo
   },
   dateHeader: {
-    backgroundColor: '#f8dfe8',
+    backgroundColor:  COLORS.chipGreenColor,
     alignSelf: 'flex-start',
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontFamily: 'OpenSans-Light',
-    color: 'rgb(100, 39, 60)',
+    color: COLORS.darkLetter,
   },
   row: {
     flexDirection: 'row',

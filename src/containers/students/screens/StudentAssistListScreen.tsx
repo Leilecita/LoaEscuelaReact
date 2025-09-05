@@ -13,6 +13,7 @@ import { FAB } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from 'types'
+import { COLORS } from '@core'
 
 
 
@@ -206,7 +207,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
               onEndReached={loadMore}
               onEndReachedThreshold={0.5}
               ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
-              contentContainerStyle={{ paddingBottom: 40 }}
+              contentContainerStyle={{ paddingBottom: 100 }}
               renderItem={({ item }) => (
                 
                 <ItemStudentAssistView
@@ -222,12 +223,15 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
             
             <FAB
                 icon="plus"
+                color= "#6c8a35"
                 style={{
                   position: 'absolute',
                   bottom: 30,
                   right: 30,
+                  backgroundColor: COLORS.lightGreenColor,
                 }}
                 onPress={() => navigation.navigate('ListaDeAlumnos', {
+                  
                   category: 'category',
                   subcategoria: 'subcategoria',
                   modo: 'asistencias',

@@ -1,4 +1,5 @@
 import { Button } from "react-native-paper";
+import { transparent } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 
 export const COLORS = {
     primary: '#333446',
@@ -7,31 +8,42 @@ export const COLORS = {
     complementary: '#EAEFEF',
     white: '#FFFFFF',
 
-    darkLetter: 'rgb(16, 46, 19)',
-    darkLetter_ant: ' #4f426b',
-    darkLetter2: ' #5C4D7C',
-    darkLetter3: ' #6C5F8A',
 
-    ligthLetter: 'rgb(219, 209, 234)',
-  
+
+    //nuevos
+
+    darkLetter: 'rgb(16, 46, 19)',
+    darkLetter2: 'rgb(28, 67, 32)',
+    darkLetter3: 'rgb(62, 105, 66)',
+
+    ligthLetter: 'rgb(151, 180, 154)',
+
+    darkGreenColor: '#6c8a35',
+    mediumGreenColor: '#88ae40',
+    lightGreenColor: '#bbcf2e',
+
+    chipGreenColor: '#b6d37d',
+
+    transparentGreenColor: 'rgba(189, 208, 153, 0.53)',
 
     //botones
-    button: '#A8BBA3',
+    button: '#bbcf2e',
     button2: '5E936C',
-    buttonClear: '#A7C1A8',
+    buttonClear: 'rgb(173, 205, 164)',
 
-    greenClear: 'rgb(201, 228, 203)',
+    greenClear: 'rgb(164, 212, 160)',
     greenClearChip: 'rgb(176, 198, 178)',
 
     whiteLetter:'rgb(242, 244, 242))' ,
 
+    headerDate: 'rgb(176, 198, 178)',
 
+    buttonClearLetter: 'rgb(52, 89, 55)',
+
+
+    //nuevos----
     buttonViolet: '#a088c3',
     buttonClearViolet: 'rgb(219, 209, 234)',
-
-    headerDate: 'rgb(236, 229, 245)',
-
-    buttonClearLetter: 'rgb(119, 94, 157)',
 
     background: 'rgb(230, 226, 238)',
     backgroundVioletClear: 'rgb(238, 236, 242)',

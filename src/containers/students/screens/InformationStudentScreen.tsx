@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList, ActivityIndicator, Pressable, Text } from 'react-native';
+import { View, StyleSheet, FlatList, ActivityIndicator, Pressable, Text, ImageBackground } from 'react-native';
 import { Avatar, Divider, Text as PaperText } from 'react-native-paper';
 import { useIncomesByStudent } from '../../incomes/hooks/useIncomesByStudent';
 import ItemIncomeStudentView from '../../../containers/incomes/components/ItemIncomeStudentView';
@@ -59,130 +59,140 @@ export default function InformationStudentScreen({ route }: Props) {
 
 
   return (
-    <View style={{ flex: 1 }}>
-      <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Avatar.Text size={48} label={firstName[0]} style={{ backgroundColor: '#80cbc4' }} />
-          <View style={styles.textContainer}>
-            <PaperText style={styles.name}>
-              {firstName} {lastName}
-            </PaperText>
-            <PaperText style={styles.category}>{category}</PaperText>
+    <ImageBackground
+      source={require('../../../../assets/fondo.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <View style={{ flex: 1 }}>
+        <View style={styles.container}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Avatar.Text size={48} color= {COLORS.white} label={firstName[0]} style={{ backgroundColor: COLORS.mediumGreenColor }} />
+            <View style={styles.textContainer}>
+              <PaperText style={styles.name}>
+                {firstName} {lastName}
+              </PaperText>
+              <PaperText style={styles.category}>{category}</PaperText>
+            </View>
           </View>
-        </View>
 
-        {/* Resumen */}
-        <View style={styles.headerResum}>
-          <Text style={styles.headerText}>Resumen al {formattedDate}</Text>
-        </View>
-        <View style={styles.resumenContainer}>
-          {loadingResumen ? <ActivityIndicator size="small" /> : resumen ? (
-            <>
-              
-              <View style={styles.rowResumen}>
-                <PaperText style={styles.label}>Total clases compradas</PaperText>
-                <PaperText style={styles.value}>{resumen.cant_buyed_classes}</PaperText>
-              </View>
-              <View style={styles.rowResumen}>
-                <PaperText style={styles.label}>Total clases tomadas</PaperText>
-                <PaperText style={styles.value}>{resumen.cant_presents}</PaperText>
-              </View>
-              <Divider style={{ marginVertical: 4 }} />
-              <View style={styles.rowResumen}>
-                <PaperText style={styles.label}>Total abonado</PaperText>
-                <PaperText style={styles.value}>$ {resumen.tot_paid_amount}</PaperText>
-              </View>
-              <View style={styles.rowResumen}>
-                <PaperText style={styles.label}>Total deuda</PaperText>
-                <PaperText style={styles.value}>$ {resumen.tot_amount - resumen.tot_paid_amount}</PaperText>
-              </View>
-            </>
-          ) : (
-            <PaperText>No se pudo cargar el resumen</PaperText>
-          )}
-        </View>
+          {/* Resumen */}
+          <View style={styles.headerResum}>
+            <Text style={styles.headerText}>Resumen al {formattedDate}</Text>
+          </View>
+          <View style={styles.resumenContainer}>
+            {loadingResumen ? <ActivityIndicator size="small" /> : resumen ? (
+              <>
+                
+                <View style={styles.rowResumen}>
+                  <PaperText style={styles.label}>Total clases compradas</PaperText>
+                  <PaperText style={styles.value}>{resumen.cant_buyed_classes}</PaperText>
+                </View>
+                <View style={styles.rowResumen}>
+                  <PaperText style={styles.label}>Total clases tomadas</PaperText>
+                  <PaperText style={styles.value}>{resumen.cant_presents}</PaperText>
+                </View>
+                <Divider style={{ marginVertical: 4 }} />
+                <View style={styles.rowResumen}>
+                  <PaperText style={styles.label}>Total abonado</PaperText>
+                  <PaperText style={styles.value}>$ {resumen.tot_paid_amount}</PaperText>
+                </View>
+                <View style={styles.rowResumen}>
+                  <PaperText style={styles.label}>Total deuda</PaperText>
+                  <PaperText style={styles.value}>$ {resumen.tot_amount - resumen.tot_paid_amount}</PaperText>
+                </View>
+              </>
+            ) : (
+              <PaperText>No se pudo cargar el resumen</PaperText>
+            )}
+          </View>
 
-        {/* Clases tomadas */}
-        <View style={{ marginHorizontal: 8, marginTop: 16, flex: 1 }}>
+          {/* Clases tomadas */}
+          <View style={{ marginHorizontal: 8, marginTop: 16, flex: 1 }}>
+            <View style={styles.headerTitle}>
+              <Text style={{  marginLeft: 16,  fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter }}>Clases tomadas</Text>
+            </View>
+            {loadingPresents && presents.length === 0 ? <ActivityIndicator size="large" /> : (
+              <View style={styles.resumenContainerClases}>
+              <FlatList
+                data={presents}
+                keyExtractor={(item, index) => (item.present_id ?? index).toString()}
+                renderItem={({ item, index }) => (
+                  <ItemPresentStudentView
+                    item={item}
+                    index={index}
+                    previousItem={presents[index - 1]}
+                  />
+                )}
+                refreshing={loadingPresents}
+                onRefresh={reloadPresents}
+              />
+              </View>
+            )}
+          </View>
+
+          {/* Pagos realizados */}
+          <View style={{ marginHorizontal: 8, marginTop: 16, flex: 1 }}>
           <View style={styles.headerTitle}>
-            <Text style={{  marginLeft: 16 }}>Clases tomadas</Text>
+              <Text style={{  marginLeft: 16, fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter }}>Pagos realizados</Text>
+            </View>
+            {loading && incomes.length === 0 ? <ActivityIndicator size="large" /> : (
+              <View style={styles.resumenContainerClases}>
+              <FlatList
+                data={incomes}
+                keyExtractor={(item, index) => (item.income_id ?? index).toString()}
+                renderItem={({ item, index }) => (
+                  <ItemIncomeStudentView
+                    income_created={item.created ?? ''}
+                    description={item.detail ?? ''}
+                    payment_method={item.payment_method ?? ''}
+                    category={item.category ?? ''}
+                    detail={item.detail ? item.detail.toString() : ''}
+                    amount={item.amount ?? 0}
+                    income_id={item.income_id ?? index}
+                    showDateHeader={index === 0 || (item.created?.split('T')[0] ?? '') !== (incomes[index - 1]?.created?.split('T')[0] ?? '')}
+                  />
+                )}
+                onEndReached={loadMore}
+                onEndReachedThreshold={0.5}
+                ListFooterComponent={loadingMore ? <ActivityIndicator size="small" /> : null}
+                refreshing={loading}
+                onRefresh={reload}
+              />
+              </View>
+            )}
           </View>
-          {loadingPresents && presents.length === 0 ? <ActivityIndicator size="large" /> : (
-            <FlatList
-              data={presents}
-              keyExtractor={(item, index) => (item.present_id ?? index).toString()}
-              renderItem={({ item, index }) => (
-                <ItemPresentStudentView
-                  item={item}
-                  index={index}
-                  previousItem={presents[index - 1]}
-                />
-              )}
-              refreshing={loadingPresents}
-              onRefresh={reloadPresents}
-            />
-          )}
         </View>
 
-        {/* Pagos realizados */}
-        <View style={{ marginHorizontal: 8, marginTop: 16, flex: 1 }}>
-        <View style={styles.headerTitle}>
-            <Text style={{  marginLeft: 16 }}>Pagos realizados</Text>
-          </View>
-          {loading && incomes.length === 0 ? <ActivityIndicator size="large" /> : (
-            <FlatList
-              data={incomes}
-              keyExtractor={(item, index) => (item.income_id ?? index).toString()}
-              renderItem={({ item, index }) => (
-                <ItemIncomeStudentView
-                  income_created={item.created ?? ''}
-                  description={item.detail ?? ''}
-                  payment_method={item.payment_method ?? ''}
-                  category={item.category ?? ''}
-                  detail={item.detail ? item.detail.toString() : ''}
-                  amount={item.amount ?? 0}
-                  income_id={item.income_id ?? index}
-                  showDateHeader={index === 0 || (item.created?.split('T')[0] ?? '') !== (incomes[index - 1]?.created?.split('T')[0] ?? '')}
-                />
-              )}
-              onEndReached={loadMore}
-              onEndReachedThreshold={0.5}
-              ListFooterComponent={loadingMore ? <ActivityIndicator size="small" /> : null}
-              refreshing={loading}
-              onRefresh={reload}
-            />
-          )}
-        </View>
+        {/* FAB */}
+        <Pressable style={styles.fab} onPress={() => setModalVisible(true)}>
+          <Text style={styles.fabText}>cargar{'\n'}pago</Text>
+        </Pressable>
+
+        {/* Modal */}
+        <PaymentModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          studentId={studentId}
+          firstName={firstName}
+          category={category}
+          sub_category={sub_category}
+          lastName={lastName}
+          onSuccess={() => {
+            reload();        // recargar pagos
+            reloadPresents(); // recargar presentes
+            fetchResumen();  // recargar resumen
+          }}
+          
+        />
       </View>
-
-      {/* FAB */}
-      <Pressable style={styles.fab} onPress={() => setModalVisible(true)}>
-        <Text style={styles.fabText}>cargar{'\n'}pago</Text>
-      </Pressable>
-
-      {/* Modal */}
-      <PaymentModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        studentId={studentId}
-        firstName={firstName}
-        category={category}
-        sub_category={sub_category}
-        lastName={lastName}
-        onSuccess={() => {
-          reload();        // recargar pagos
-          reloadPresents(); // recargar presentes
-          fetchResumen();  // recargar resumen
-        }}
-        
-      />
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'rgb(232, 237, 189)' },
+  container: { flex: 1 },
   headers: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12 },
 
   header: {
@@ -197,19 +207,23 @@ const styles = StyleSheet.create({
  
   category: {
     fontSize: 16,
-    color: COLORS.buttonClearLetter, // color más claro
+    color: COLORS.darkLetter3, // color más claro
     fontFamily: 'OpenSans-Light',
   },
   name: { fontFamily: 'OpenSans-Light', fontSize: 20, fontWeight: 'bold', color: '#000' },
-  resumenContainer: { backgroundColor: '#f8bbd0', padding: 16 },
+  resumenContainer: { backgroundColor: 'rgba(173, 209, 181, 0.37)', padding: 16 },
+
+  resumenContainerClases: 
+  { backgroundColor:'rgba(218, 227, 138, 0.43)',  height: 280 },
+
   rowResumen: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 2 },
-  label: { fontFamily: 'OpenSans-Regular', fontSize: 14, color: '#4e342e' },
-  value: { fontFamily: 'OpenSans-Regular', fontSize: 14, color: '#000' },
+  label: { fontFamily: 'OpenSans-Regular', fontSize: 15, color: COLORS.darkLetter2 },
+  value: { fontFamily: 'OpenSans-Regular', fontSize: 15, color: COLORS.darkLetter2 },
   fab: {
     position: 'absolute',
     right: 30,
     bottom: 30,
-    backgroundColor: COLORS.buttonClear,
+    backgroundColor: COLORS.lightGreenColor,
     paddingVertical: 6,
     paddingHorizontal: 18,
     borderRadius: 8,
@@ -232,7 +246,7 @@ const styles = StyleSheet.create({
   headerResum: {
     flexDirection: 'row', // avatar y texto al lado
     alignItems: 'center', // centra verticalmente
-    backgroundColor:   'rgb(204, 98, 135)',
+    backgroundColor:   '#88bfb9',
     paddingLeft: 16,
     paddingBottom: 6,
     paddingTop: 6,
@@ -242,10 +256,13 @@ const styles = StyleSheet.create({
   headerTitle: {
     flexDirection: 'row', // avatar y texto al lado
     alignItems: 'center', // centra verticalmente
-    backgroundColor:   'rgb(208, 222, 190)',
+    backgroundColor:   'rgba(226,223,50,255)',
     paddingBottom: 6,
     paddingTop: 6,
     marginHorizontal:-8,
     marginTop:4,
+  },
+  background: {
+    flex: 1,
   },
 });

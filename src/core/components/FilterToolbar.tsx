@@ -12,6 +12,8 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import { CustomDatePicker } from './DatePickerCustom'
 import { COLORS } from 'core/constants'
 import { TextInput as PaperInput } from "react-native-paper";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 type FilterBarProps = {
   date?: Date
   onDateChange?: (date: Date) => void
@@ -76,48 +78,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.container}
     >
-       {/* Botones 
-      <TextInput
-        ref={inputRef}
-        label="Buscar..."
-        mode="flat"
-        cursorColor="#6200ee"
-        theme={{
-          colors: {
-            primary: "#6200ee",
-            onSurfaceVariant: "#6200ee",
-          },
-        }}
-      />
-    <TextInput
-  value={searchText}
-  onChangeText={onSearchTextChange}
-  placeholder="Buscar..."
-  mode="flat"
-  style={styles.searchInput}
-  left={<TextInput.Icon icon="magnify" color="#666" />}
-  right={
-    isKeyboardVisible ? (
-      <TextInput.Icon icon="close" color="#666" onPress={handleClear} />
-    ) : null
-  }
-  placeholderTextColor="#888"
-  underlineColor="transparent"
-  activeUnderlineColor="transparent"
-  blurOnSubmit={false}
-  cursorColor="#6200ee"        // color del cursor
-  selectionColor="#b39ddb"     // color del highlight al seleccionar texto
-  theme={{
-    colors: {
-      primary: "#6200ee",       // 👈 esto asegura que el input quede en foco bien
-      onSurfaceVariant: "#6200ee",
-      text: "#333",
-      placeholder: "#888",
-      background: "#ede7f6",
-    },
-  }}
-/> */}
-
         <PaperInput
           value={searchText}
           onChangeText={onSearchTextChange}
@@ -162,7 +122,15 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
           {enablePresentFilter && (
             <Chip
-              icon={showOnlyPresent ? 'account-check' : 'account-check-outline'}
+            icon={() => (
+              <MaterialCommunityIcons
+                  name={
+                   showOnlyPresent ? 'account-check' : 'account-check-outline'
+                  }
+                  size={20}
+                  color={COLORS.darkLetter} 
+                />
+              )}
               mode="flat"
               selected={showOnlyPresent}
               onPress={onTogglePresent}
@@ -170,7 +138,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 styles.chip,
                 showOnlyPresent
                   ? { backgroundColor: COLORS.buttonClear } // violeta oscuro cuando está seleccionado
-                  : { backgroundColor: COLORS.greenClearChip } // violeta claro cuando NO está seleccionado
+                  : { backgroundColor: COLORS.chipGreenColor } // violeta claro cuando NO está seleccionado
               ]}
               textStyle={{
                 color: showOnlyPresent ? COLORS.darkLetter : COLORS.darkLetter, 
@@ -183,23 +151,39 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           )}
 
           {enableRefresh && (
-            <Chip icon="refresh" onPress={onRefresh} style={styles.chip}
-            textStyle={{
-              color: COLORS.darkLetter,        
-              fontFamily: 'OpenSans-Light',      
-              fontSize: 16,                  
-            }}>
-              Refresh
-            </Chip>
+           <Chip
+           icon={() => (
+             <MaterialCommunityIcons
+               name="refresh"
+               color={COLORS.darkLetter}   // 👈 ahora controlás el color
+               size={20}
+             />
+           )}
+           onPress={onRefresh}
+           style={styles.chip}
+           textStyle={{
+             color: COLORS.darkLetter,
+             fontFamily: 'OpenSans-Light',
+             fontSize: 16,
+           }}
+         >
+           Refresh
+         </Chip>
           )}
 
           {enableSortOrder && (
             <Chip
-              icon={
-                sortOrder === 'alf'
-                  ? 'sort-alphabetical-ascending'
-                  : 'sort-alphabetical-descending'
-              }
+            icon={() => (
+              <MaterialCommunityIcons
+                name={
+                  sortOrder === 'alf'
+                    ? 'sort-alphabetical-ascending'
+                    : 'sort-alphabetical-descending'
+                }
+                size={20}
+                color={COLORS.darkLetter} 
+              />
+            )}
               selected
               onPress={onToggleSortOrder}
               style={styles.chip}
@@ -227,7 +211,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   searchInput: {
-    backgroundColor: COLORS.greenClear,
+    backgroundColor:  COLORS.transparentGreenColor,
     borderRadius: 8,
     marginHorizontal: 0,
     marginBottom: 8,
@@ -250,7 +234,7 @@ const styles = StyleSheet.create({
     marginLeft: 0,
     paddingLeft: 2,
     marginBottom: 8,
-    backgroundColor: COLORS.greenClearChip,
+    backgroundColor: COLORS.chipGreenColor,
     borderRadius: 8,
   },
 })

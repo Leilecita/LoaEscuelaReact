@@ -3,6 +3,7 @@ import { Chip } from 'react-native-paper';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import { COLORS } from 'core/constants'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 type Props = {
   date: Date;
@@ -24,10 +25,18 @@ export const CustomDatePicker: React.FC<Props> = ({ date, onDateChange }) => {
   return (
     <>
       <Chip
-        icon="calendar"
+        icon={() => (
+          <MaterialCommunityIcons
+              name={
+               'calendar'
+              }
+              size={20}
+              color={COLORS.darkLetter} 
+            />
+          )}
         onPress={openPicker}
-        style={{ marginRight: 8, marginBottom: 8, backgroundColor: COLORS.greenClearChip }}
-        textStyle={{ color: '#333',  fontFamily: 'OpenSans-Light', fontSize: 16 }}
+        style={{ marginRight: 8, marginBottom: 8, backgroundColor: COLORS.chipGreenColor }}
+        textStyle={{ color: COLORS.darkLetter,  fontFamily: 'OpenSans-Light', fontSize: 16 }}
       >
         {format(date, 'dd/MM/yyyy')}
       </Chip>

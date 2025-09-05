@@ -44,7 +44,7 @@ export const ItemStudentAssistView: React.FC<Props> = ({
           </Text>
           <Text style={styles.dni}>{student.dni}</Text>
            {student.student_observation?.trim() !== '' && (
-            <Text style={[styles.dni, { color: '#6a1b9a', marginTop: 2 }]}>{student.student_observation}</Text>
+            <Text style={[styles.dni, { color: COLORS.darkLetter3, marginTop: 2 }]}>{student.student_observation}</Text>
             )}
         </View>
         <Text style={{ marginRight: 8, color: '#666', fontSize: 12 }}>

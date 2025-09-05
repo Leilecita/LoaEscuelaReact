@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#ede7f6",
+    backgroundColor:  COLORS.chipGreenColor,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 20,
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     overflow: "hidden",
-    backgroundColor: "#ede7f6",
+    backgroundColor:  COLORS.chipGreenColor,
     borderRadius: 12,
     marginTop: 4,
   },

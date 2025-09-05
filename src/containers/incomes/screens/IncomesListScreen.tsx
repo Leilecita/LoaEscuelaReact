@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   RefreshControl,
   ScrollView,
+  ImageBackground
 } from "react-native";
 import { useIncomes } from "../hooks/useIncomes";
 import ItemIncomeView from "../components/ItemIncomeView";
@@ -73,68 +74,74 @@ export default function IncomesListScreen() {
   }
 
   return (
-    <View style={{ flex: 1, backgroundColor: "rgb(239, 241, 202)" }}>
-      
-      {/* 🔹 Barra de filtros horizontal */}
-      <View style={styles.filterWrapper}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContainer}
-        >
-          <IncomesFilterBar filter={paymentPlace} onChangeFilter={setPaymentPlace} />
-          <CategoryFilter filter={categoryFilter} onChangeFilter={setCategoryFilter} />
-          <PaymentMethodFilter filter={paymentMethodFilter} onChangeFilter={setPaymentMethodFilter} />
-        </ScrollView>
-      </View>
+    <ImageBackground
+      source={require('../../../../assets/fondo.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <View style={{ flex: 1}}>
+        
+        {/* 🔹 Barra de filtros horizontal */}
+        <View style={styles.filterWrapper}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContainer}
+          >
+            <IncomesFilterBar filter={paymentPlace} onChangeFilter={setPaymentPlace} />
+            <CategoryFilter filter={categoryFilter} onChangeFilter={setCategoryFilter} />
+            <PaymentMethodFilter filter={paymentMethodFilter} onChangeFilter={setPaymentMethodFilter} />
+          </ScrollView>
+        </View>
 
-      {/* 🔹 Lista de pagos */}
-      {incomes.length === 0 ? (
-        <Text style={{ textAlign: "center", marginTop: 20 }}>
-          No hay pagos disponibles
-        </Text>
-      ) : (
-        <FlatList
-          data={incomes}
-          keyExtractor={(item) => item.income_id.toString()}
-          onEndReached={loadMore}
-          onEndReachedThreshold={0.5}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reload} />}
-          ListFooterComponent={loadingMore ? <ActivityIndicator size="small" /> : null}
-          contentContainerStyle={{ paddingTop: 80 }}
-          renderItem={({ item, index }) => {
-            const currentDate = new Date(item.income_created).toISOString().substring(0, 10);
-            const previousDate = index > 0 ? new Date(incomes[index - 1].income_created).toISOString().substring(0, 10) : null;
+        {/* 🔹 Lista de pagos */}
+        {incomes.length === 0 ? (
+          <Text style={{ textAlign: "center", marginTop: 20 }}>
+            No hay pagos disponibles
+          </Text>
+        ) : (
+          <FlatList
+            data={incomes}
+            keyExtractor={(item) => item.income_id.toString()}
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.5}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reload} />}
+            ListFooterComponent={loadingMore ? <ActivityIndicator size="small" /> : null}
+            contentContainerStyle={{ paddingTop: 80 }}
+            renderItem={({ item, index }) => {
+              const currentDate = new Date(item.income_created).toISOString().substring(0, 10);
+              const previousDate = index > 0 ? new Date(incomes[index - 1].income_created).toISOString().substring(0, 10) : null;
 
-            return (
-              <ItemIncomeView
-                income_created={item.income_created}
-                description={item.description}
-                payment_method={item.payment_method}
-                category={item.category || ""}
-                sub_category={item.sub_category || ""}
-                detail={item.detail.toString()}
-                amount={item.amount}
-                income_id={item.income_id}
-                student_id={item.student_id}
-                class_course_id={item.class_course_id}
-                payment_place={item.payment_place}
-                showDateHeader={index === 0 || currentDate !== previousDate}
-                onEdit={(income) => setEditingIncome(income)}
-              />
-            );
-          }}
+              return (
+                <ItemIncomeView
+                  income_created={item.income_created}
+                  description={item.description}
+                  payment_method={item.payment_method}
+                  category={item.category || ""}
+                  sub_category={item.sub_category || ""}
+                  detail={item.detail.toString()}
+                  amount={item.amount}
+                  income_id={item.income_id}
+                  student_id={item.student_id}
+                  class_course_id={item.class_course_id}
+                  payment_place={item.payment_place}
+                  showDateHeader={index === 0 || currentDate !== previousDate}
+                  onEdit={(income) => setEditingIncome(income)}
+                />
+              );
+            }}
+          />
+        )}
+
+        {/* 🔹 Modal de edición */}
+        <EditIncomeModal
+          visible={!!editingIncome}
+          income={editingIncome}
+          onClose={() => setEditingIncome(null)}
+          onSuccess={() => { setEditingIncome(null); reload(); }}
         />
-      )}
-
-      {/* 🔹 Modal de edición */}
-      <EditIncomeModal
-        visible={!!editingIncome}
-        income={editingIncome}
-        onClose={() => setEditingIncome(null)}
-        onSuccess={() => { setEditingIncome(null); reload(); }}
-      />
-    </View>
+      </View>
+    </ImageBackground>
   );
 }
 
@@ -153,5 +160,8 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  background: {
+    flex: 1,
   },
 });

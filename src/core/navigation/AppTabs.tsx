@@ -9,7 +9,7 @@ import { COLORS } from 'core/constants'
 
 
 const Tab = createBottomTabNavigator()
-const ICON_COLOR = '#3a875b'
+const ICON_COLOR = 'rgb(255, 255, 255)'
 const tabs = [
   { title: 'Adultos', category: 'escuela' as Category, subcategoria: 'adultos' as Subcategoria, iconName: 'account' },
   { title: 'Intermedios', category: 'Escuela' as Category, subcategoria: 'intermedios' as Subcategoria, iconName: 'human' },
@@ -24,16 +24,21 @@ export const AppTabs = () => {
     screenOptions={({ route }) => ({
       headerShown: false,
       tabBarActiveTintColor: ICON_COLOR,
-      tabBarInactiveTintColor: 'rgb(251, 251, 251)',
+      tabBarInactiveTintColor: COLORS.lightGreenColor,
       tabBarStyle: {
-        backgroundColor: COLORS.buttonClear,        // 👈 Fondo de la barra
-        borderTopColor: COLORS.buttonClear,           // Borde superior
+        backgroundColor: COLORS.darkGreenColor,        // 👈 Fondo de la barra bottom tabs
+        borderTopColor: COLORS.darkGreenColor,           // Borde superior
         height: 80,                        // Altura del tab bar
       },
       tabBarIcon: ({ color, size }) => {
         const tab = tabs.find(t => t.title === route.name)
         const iconName = tab?.iconName || 'help-circle'
-        return <MaterialCommunityIcons name={iconName} color={color} size={size} />
+        return <MaterialCommunityIcons name={iconName} color={color} size={26} />
+      },
+      tabBarLabelStyle: {
+        fontSize: 12, 
+        marginTop: 2,
+        fontFamily: 'OpenSans-Regular'  // 👈 también podés agrandar el texto debajo
       },
     })}
   >

@@ -238,10 +238,12 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
   
           <FAB
             icon="plus"
+            color= "#6c8a35"
             style={{
               position: 'absolute',
               bottom: 30,
               right: 30,
+              backgroundColor: COLORS.lightGreenColor
             }}
             onPress={() => navigation.navigate('CreateStudent')}
           />
