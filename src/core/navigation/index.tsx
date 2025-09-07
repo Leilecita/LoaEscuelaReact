@@ -83,11 +83,7 @@ export function NavigationApp() {
   const { userToken } = React.useContext(AuthContext);
 
   return (
-    <ImageBackground
-      source={require('../../../assets/fondo.png')}
-      style={styles.background}
-      resizeMode="cover"
-    >
+    <>
       <StatusBar style="light" backgroundColor={COLORS.mediumGreenColor} />
       <NavigationContainer theme={MyTheme}>
         {userToken ? (
@@ -149,7 +145,7 @@ export function NavigationApp() {
           </RootStack.Navigator>
         )}
       </NavigationContainer>
-    </ImageBackground>
+      </>
   );
 }
 

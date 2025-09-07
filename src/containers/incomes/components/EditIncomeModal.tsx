@@ -7,7 +7,7 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
-  Platform,
+  ImageBackground,
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import Modal from "react-native-modal";
@@ -19,6 +19,7 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
 
   // Campos de pago
   const [monto, setMonto] = useState("");
+  const [description, setDescription] = useState("");
   const [metodo, setMetodo] = useState("");
   const [lugar, setLugar] = useState("");
   const [showMetodoOptions, setShowMetodoOptions] = useState(false);
@@ -47,6 +48,7 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
       setLugar(income.payment_place || "");
       setCategoria(income.category || "");
       setSubcategoria(income.sub_category || "");
+      setDescription(income.description || "");
     }
   }, [income]);
 
@@ -87,9 +89,18 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
       avoidKeyboard
       propagateSwipe
     >
+       <ImageBackground
+              source={require('../../../../assets/fondo.png')}
+              resizeMode="cover"
+            >
       <View style={[styles.bottomSheet, { width, height: "80%" }]}>
         <View style={styles.dragHandle} />
-        <Text style={styles.title}>Editar Registro</Text>
+          <View style={styles.header}>
+            <Text style={styles.studentName}>{description} </Text>
+
+            <Text style={styles.title}>Editar Pago</Text>
+          </View>
+      
 
         {/* Segment control */}
         <View style={styles.segmentedContainer}>
@@ -126,6 +137,10 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
                 keyboardType="numeric"
                 mode="outlined"
                 style={styles.input}
+                outlineColor={COLORS.veryLightGreenColor}
+                activeOutlineColor={COLORS.lightGreenColor}
+                textColor= {COLORS.darkLetter3}
+                
               />
 
               {/* Método de pago */}
@@ -138,6 +153,9 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
                     editable={false}
                     pointerEvents="none"
                     style={styles.input}
+                    outlineColor={COLORS.veryLightGreenColor}
+                    activeOutlineColor={COLORS.lightGreenColor}
+                    textColor= {COLORS.darkLetter3}
                   />
                 </TouchableOpacity>
               </View>
@@ -172,6 +190,9 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
                     editable={false}
                     pointerEvents="none"
                     style={styles.input}
+                    outlineColor={COLORS.veryLightGreenColor}
+                    activeOutlineColor={COLORS.lightGreenColor}
+                    textColor= {COLORS.darkLetter3}
                   />
                 </TouchableOpacity>
               </View>
@@ -209,6 +230,9 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
                   editable={false}
                   pointerEvents="none"
                   style={styles.input}
+                  outlineColor={COLORS.veryLightGreenColor}
+                  activeOutlineColor={COLORS.lightGreenColor}
+                  textColor= {COLORS.darkLetter3}
                 />
               </TouchableOpacity>
               {showCategoriaOptions && (
@@ -240,6 +264,9 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
                   editable={false}
                   pointerEvents="none"
                   style={styles.input}
+                  outlineColor={COLORS.veryLightGreenColor}
+                  activeOutlineColor={COLORS.lightGreenColor}
+                  textColor= {COLORS.darkLetter3}
                 />
               </TouchableOpacity>
               {showSubcategoriaOptions && (
@@ -268,7 +295,7 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
           {/* Botones */}
           <View style={styles.buttonsRow}>
             <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.buttonText}>Cancelar</Text>
+              <Text style={styles.buttonTextCancelar}>Cancelar</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.submitButton} onPress={handleUpdate}>
               <Text style={styles.buttonText}>Guardar</Text>
@@ -276,13 +303,14 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
           </View>
         </ScrollView>
       </View>
+      </ImageBackground>
     </Modal>
   );
 };
 
 const styles = StyleSheet.create({
   bottomSheet: {
-    backgroundColor: COLORS.backgroundVioletClear,
+   // backgroundColor: COLORS.backgroundVioletClear,
     borderTopLeftRadius: 16,
     borderTopRightRadius: 16,
     padding: 20,
@@ -298,16 +326,18 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 16,
-    fontWeight: "600",
+    color: COLORS.darkLetter3,
+    fontFamily: 'OpenSans-Regular',
     marginBottom: 12,
     textAlign: "center",
-    color: COLORS.darkLetter,
   },
-  segmentedContainer: { flexDirection: "row", borderRadius: 8, overflow: "hidden", marginBottom: 10 },
-  segment: { flex: 1, paddingVertical: 10, backgroundColor: COLORS.buttonClear, alignItems: "center" },
-  segmentActive: { backgroundColor: COLORS.button },
-  segmentText: { color: COLORS.buttonClearLetter },
-  segmentTextActive: { color: "#fff", fontWeight: "600" },
+  studentName: { fontSize: 18, color: COLORS.darkLetter2, marginBottom: 4, textAlign: 'center',   fontFamily: 'OpenSans-Regular' },
+
+  segmentedContainer: { flexDirection: "row", marginTop: 12, borderRadius: 8, overflow: "hidden", marginBottom: 10 },
+  segment: { flex: 1, paddingVertical: 10,  backgroundColor: COLORS.veryLightGreenColor, alignItems: "center" },
+  segmentActive: {  backgroundColor: COLORS.headerDate,  },
+  segmentText: { color: COLORS.buttonClearLetter, fontFamily: 'OpenSans-Regular', fontSize: 16},
+  segmentTextActive: { color: '#fff', fontFamily: 'OpenSans-Regular', fontSize: 16},
   input: { marginVertical: 4, borderRadius: 10 },
   dropdownOverlay: {
     position: "absolute",
@@ -330,6 +360,11 @@ const styles = StyleSheet.create({
   dropdownItem: { padding: 12, borderBottomWidth: 1, borderBottomColor: "#eee" },
   buttonsRow: { flexDirection: "row", justifyContent: "flex-end", marginTop: 16 },
   cancelButton: { paddingHorizontal: 14, paddingVertical: 10, marginRight: 10, borderRadius: 8 },
-  submitButton: { paddingHorizontal: 14, paddingVertical: 10, backgroundColor: COLORS.buttonClear, borderRadius: 8 },
-  buttonText: { color: COLORS.buttonClearLetter, fontSize: 14 },
+  submitButton: { paddingHorizontal: 14, paddingVertical: 10, backgroundColor: COLORS.headerDate,borderRadius: 8 },
+  buttonText: { color: COLORS.whiteLetter, fontSize: 17 },
+  buttonTextCancelar: {color:COLORS.buttonClearLetter, fontSize: 17 },
+  header: {
+    alignItems: 'center',
+  },
+ 
 });

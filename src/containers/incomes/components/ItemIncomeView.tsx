@@ -40,6 +40,7 @@ type ItemIncomeProps = {
     category: string;
     sub_category: string;
     detail: string;
+    description: string;
   }) => void;
 };
 
@@ -82,6 +83,7 @@ export default function ItemIncomeView({
             class_course_id,
             category,
             sub_category,
+            description
           })
         }
         delayLongPress={400} // medio segundito
@@ -195,7 +197,6 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
     borderBottomWidth: 0.3, 
-
     borderColor: COLORS.ligthLetter, 
   },
   row: {

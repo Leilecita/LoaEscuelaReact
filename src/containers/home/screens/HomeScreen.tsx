@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { RootStackParamList } from '../../../../src/types';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -52,6 +52,11 @@ export const HomeScreen = () => {
   );
 
   return (
+    <ImageBackground
+      source={require('../../../../assets/fondo.png')}
+      style={styles.background}
+      resizeMode="cover"
+    >
     <View style={styles.container}>
       {/* fila superior */}
       <View style={styles.row}>
@@ -59,9 +64,20 @@ export const HomeScreen = () => {
           <Image source={require('../../../../assets/asistencia.png')} style={styles.icon} />
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('ListaDePagos')} style={styles.button}>
-          <Image source={require('../../../../assets/pagos.png')} style={styles.icon} />
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('ListaDeAlumnos', {
+              category: 'Todas',
+              subcategoria: 'Todas',
+              modo: 'cargarPago',
+            })
+          }
+          style={styles.button}
+        >
+          <Image source={require('../../../../assets/crear_pago.png')} style={styles.icon} />
         </TouchableOpacity>
+
+      
       </View>
 
       {/* botón central */}
@@ -82,6 +98,7 @@ export const HomeScreen = () => {
 
       {/* fila inferior */}
       <View style={styles.row}>
+       
         <TouchableOpacity
           onPress={() =>
             navigation.navigate('ListaDeAlumnos', {
@@ -92,20 +109,11 @@ export const HomeScreen = () => {
           }
           style={styles.button}
         >
-          <Image source={require('../../../../assets/pagos.png')} style={styles.icon} />
+          <Image source={require('../../../../assets/resumen_diario.png')} style={styles.icon} />
         </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('ListaDeAlumnos', {
-              category: 'Todas',
-              subcategoria: 'Todas',
-              modo: 'cargarPago',
-            })
-          }
-          style={styles.button}
-        >
-          <Image source={require('../../../../assets/estadisticas.png')} style={styles.icon} />
+        <TouchableOpacity onPress={() => navigation.navigate('ListaDePagos')} style={styles.button}>
+          <Image source={require('../../../../assets/listado_pagos.png')} style={styles.icon} />
         </TouchableOpacity>
       </View>
 
@@ -139,16 +147,17 @@ export const HomeScreen = () => {
         )}
       </View>
     </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'flex-start', alignItems: 'center',  paddingTop: 40 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', width: '80%', marginVertical: 20 },
+  container: { flex: 1, justifyContent: 'flex-start', alignItems: 'center',  paddingTop: 140 },
+  row: { flexDirection: 'row', justifyContent: 'space-between', width: '115%', marginHorizontal:100 },
   button: { flex: 1, alignItems: 'center', marginHorizontal: 10 },
   bigButton: { alignItems: 'center', marginVertical: 5 },
-  icon: { width: 120, height: 120, resizeMode: 'contain' },
-  bigIcon: { width: 140, height: 140, resizeMode: 'contain' },
+  icon: { width: 125, height: 125, resizeMode: 'contain' },
+  bigIcon: { width: 155, height: 155, resizeMode: 'contain' },
   center: { alignItems: 'center' },
   transparentBox: {
     position: 'absolute',
@@ -163,4 +172,7 @@ const styles = StyleSheet.create({
   columnsContainer: { flexDirection: 'row', marginVertical: 1, flexWrap: 'wrap' },
   columnItem: { width: '50%', paddingRight: 10 },
   rowItem: { flexDirection: 'row', marginVertical: 5, justifyContent: 'space-between' },
+  background: {
+    flex: 1,
+  },
 });

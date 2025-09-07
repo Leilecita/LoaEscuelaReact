@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 8,
     marginTop: 8,
+    marginLeft:8,
     alignSelf: 'flex-start', // 👈 solo abarca el año
   },
   yearText: {
@@ -76,6 +77,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 8,
     paddingHorizontal: 12,
+    marginLeft : 6,
     borderBottomWidth: 0.3,
     borderColor: COLORS.ligthLetter,
     alignItems: 'center',

@@ -113,7 +113,7 @@ export default function InformationStudentScreen({ route }: Props) {
           </View>
 
           {/* Clases tomadas */}
-          <View style={{ marginHorizontal: 8, marginTop: 16,  }}>
+          <View style={{ marginTop: 16,  }}>
             <Pressable style={styles.headerTitle} onPress={() => setExpandedClases(!expandedClases)}>
               <Text style={styles.headerTitleText}>Clases tomadas</Text>
               <Icon 
@@ -145,41 +145,32 @@ export default function InformationStudentScreen({ route }: Props) {
           </View>
 
           {/* Pagos realizados */}
-          <View style={{ marginHorizontal: 8, marginTop: 16, flex: 1 }}>
+          <View style={{  marginTop: 16, flex: 1 }}>
           <View style={styles.headerTitle}>
-              <Text style={{  marginLeft: 16, fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter }}>Pagos realizados</Text>
+              <Text style={{ fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter }}>Pagos realizados</Text>
             </View>
             {loading && incomes.length === 0 ? <ActivityIndicator size="large" /> : (
-              <View style={styles.resumenContainerClases}>
+              <View style={styles.resumenContainerPayments}>
               <FlatList
                 data={incomes}
                 keyExtractor={(item, index) => (item.income_id ?? index).toString()}
                 renderItem={({ item, index }) => (
-                   <ItemIncomeView
-                      income_created={item.created ?? ''}
-                      description={item.created ?? ''}
-                      payment_method={item.payment_method ?? ''}
-                      category={item.category || ""}
-                      sub_category={item.sub_category ?? ''}
-                      detail={item.detail ? item.detail.toString() : ''}
-                      amount={item.amount}
-                      income_id={item.income_id}
-                      student_id={item.student_id}
-                      class_course_id={item.class_course_id}
-                      payment_place={item.payment_place ?? ''}
-                      fromPayments={true} 
-
-                    />
-                 /* <ItemIncomeStudentView
+                
+                  <ItemIncomeStudentView
                     income_created={item.created ?? ''}
                     description={item.detail ?? ''}
                     payment_method={item.payment_method ?? ''}
                     category={item.category ?? ''}
+                    student_id={item.student_id}
+                    class_course_id={item.class_course_id}
+                    sub_category={item.sub_category ?? ''}
                     detail={item.detail ? item.detail.toString() : ''}
                     amount={item.amount ?? 0}
                     income_id={item.income_id ?? index}
+                    payment_place={item.payment_place ?? ''}
+                    fromPayments={true} 
                     showDateHeader={index === 0 || (item.created?.split('T')[0] ?? '') !== (incomes[index - 1]?.created?.split('T')[0] ?? '')}
-                  />*/
+                  />
                 )}
                 onEndReached={loadMore}
                 onEndReachedThreshold={0.5}
@@ -242,6 +233,8 @@ const styles = StyleSheet.create({
 
   resumenContainerClases: 
   { backgroundColor: 'rgba(235, 245, 177, 0.42)',  height: 280 },
+  resumenContainerPayments: 
+  { backgroundColor: 'rgba(235, 245, 177, 0.42)',  height: 1580 },
 
   rowResumen: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 2 },
   label: { fontFamily: 'OpenSans-Regular', fontSize: 15, color: COLORS.darkLetter2 },
@@ -250,24 +243,24 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 30,
     bottom: 30,
-    backgroundColor: COLORS.lightGreenColor,
-    paddingVertical: 6,
+    backgroundColor: COLORS.headerDate,
+    paddingVertical: 8,
     paddingHorizontal: 18,
     borderRadius: 8,
     elevation: 6,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
-    shadowRadius: 4,
+    shadowRadius: 3,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 100,
   },
   
   fabText: {
-    color: COLORS.buttonClearLetter,
+    color: COLORS.white,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 15,
   },
   
   background: {
@@ -275,6 +268,6 @@ const styles = StyleSheet.create({
   },
   headerText: { fontFamily: 'OpenSans-Regular', fontSize: 16, color: '#ffff' },
   headerResum: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#93aba2', paddingLeft: 16, paddingVertical: 6, marginTop: 4 },
-  headerTitle: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#dfed47', paddingVertical: 6, justifyContent: 'space-between', marginHorizontal: -8, marginTop: 4 },
-  headerTitleText: { marginLeft: 16, fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter },
+  headerTitle: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#dfed47', paddingVertical: 6, justifyContent: 'space-between', paddingLeft: 16, marginTop: 4 },
+  headerTitleText: { fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter },
 });

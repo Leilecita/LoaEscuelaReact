@@ -8,6 +8,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Dimensions,
+  ImageBackground
 } from 'react-native';
 import Modal from 'react-native-modal';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -130,9 +131,14 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       style={{ justifyContent: 'flex-end', margin: 0 }}
       avoidKeyboard
     >
+       
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={{ flex: 1, justifyContent: 'flex-end' }}
+      >
+         <ImageBackground
+        source={require('../../../assets/fondo.png')}
+        resizeMode="cover"
       >
         <View style={[styles.bottomSheet, { height: '85%', width: width }]}>
           <View style={styles.dragHandle} />
@@ -168,60 +174,6 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             </View>
 
 
-            {/* Tipo de pago 
-            <View style={styles.row}>
-              <TouchableOpacity onPress={() => setShowCategoryOptions(!showCategoryOptions)} style={{ flex: 1, marginRight: 8 }}>
-                <TextInput
-                  label="Categoría"
-                  value={selectedCategory}
-                  mode="outlined"
-                  editable={false}
-                  pointerEvents="none"
-                  outlineColor={violetPlaceholder}
-                  activeOutlineColor={violetButton}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={() => setShowSubCategoryOptions(!showSubCategoryOptions)} style={{ flex: 1 }}>
-                <TextInput
-                  label="Subcategoría"
-                  value={selectedSubCategory}
-                  mode="outlined"
-                  editable={false}
-                  pointerEvents="none"
-                  outlineColor={violetPlaceholder}
-                  activeOutlineColor={violetButton}
-                />
-              </TouchableOpacity>
-            </View> 
-
-            {showCategoryOptions && (
-                <View style={styles.dropdown}>
-                  {categories.map(c => (
-                    <TouchableOpacity key={c} style={styles.dropdownItem} onPress={() => {
-                      setSelectedCategory(c);
-                      setShowCategoryOptions(false);
-                    }}>
-                      <Text>{c}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}
-
-              {showSubCategoryOptions && (
-                <View style={styles.dropdown}>
-                  {subCategories.map(sc => (
-                    <TouchableOpacity key={sc} style={styles.dropdownItem} onPress={() => {
-                      setSelectedSubCategory(sc);
-                      setShowSubCategoryOptions(false);
-                    }}>
-                      <Text>{sc}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              )}*/}
-
-
             {/* Fecha y Lugar */}
             <View style={styles.row}>
               <TouchableOpacity onPress={() => setShowDatePicker(true)} style={{ flex: 1, marginRight: 8 }}>
@@ -229,12 +181,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   label="Fecha"
                   value={fecha.toLocaleDateString()}
                   mode="outlined"
+                  textColor= {COLORS.darkLetter3}
                   editable={false}
                   pointerEvents="none"
-                  outlineColor={violetPlaceholder}
-                  activeOutlineColor={violetButton}
-                 
-                  left={<TextInput.Icon icon="calendar" color={violetButton} size={22} />}
+                  outlineColor={COLORS.veryLightGreenColor}
+                  activeOutlineColor={COLORS.lightGreenColor}
+                  left={<TextInput.Icon icon="calendar" color={COLORS.headerDate} size={22} />}
                 />
               </TouchableOpacity>
 
@@ -243,11 +195,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   label="Lugar de pago"
                   value={lugar}
                   mode="outlined"
+                  textColor= {COLORS.darkLetter3}
                   editable={false}
                   pointerEvents="none"
-                  outlineColor={violetPlaceholder}
-                  activeOutlineColor={violetButton}
-                  left={<TextInput.Icon icon="map-marker" color={violetButton} size={22}/>}
+                  outlineColor={COLORS.veryLightGreenColor}
+                  activeOutlineColor={COLORS.lightGreenColor}
+                  left={<TextInput.Icon icon="map-marker" color={COLORS.headerDate} size={22}/>}
                 />
               </TouchableOpacity>
             </View>
@@ -263,77 +216,108 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             )}
 
             {showDatePicker && (
-              <DateTimePicker
-                value={fecha}
-                mode="date"
-                display="calendar"
-                onChange={handleDateChange}
-              />
+              Platform.OS === 'ios' ? (
+                <Modal
+                  isVisible={showDatePicker}
+                  onBackdropPress={() => setShowDatePicker(false)}
+                >
+                  <View style={{ backgroundColor: 'white', padding: 16, borderRadius: 8 }}>
+                    <DateTimePicker
+                      value={fecha}
+                      mode="date"
+                      display="spinner"
+                      onChange={(event, selectedDate) => {
+                        if (selectedDate) setFecha(selectedDate);
+                      }}
+                    />
+
+                    <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12 }}>
+                      <TouchableOpacity onPress={() => setShowDatePicker(false)} style={{ marginRight: 10 }}>
+                        <Text>Cancelar</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setShowDatePicker(false)}>
+                        <Text>Aceptar</Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                </Modal>
+              ) : (
+                <DateTimePicker
+                  value={fecha}
+                  mode="date"
+                  display="calendar"
+                  onChange={handleDateChange}
+                />
+              )
             )}
-        
 
-
-            {/* Curso 
-            <View style={[styles.row, { justifyContent: 'flex-start', marginVertical: 10 }]}>
-              <TouchableOpacity style={styles.checkboxContainer} onPress={() => setTipoCurso('nuevo')}>
-                <View style={[styles.checkbox, tipoCurso === 'nuevo' && styles.checked]} />
-                <Text style={styles.checkboxLabel}>Curso nuevo</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={[styles.checkboxContainer, { marginLeft: 20 }]} onPress={() => { setTipoCurso('cta'); setClases(''); setTotal(''); }}>
-                <View style={[styles.checkbox, tipoCurso === 'cta' && styles.checked]} />
-                <Text style={styles.checkboxLabel}>A cta</Text>
-              </TouchableOpacity>
-            </View>*/}
 
             {tipoCurso === 'nuevo' && (
               <View style={styles.row}>
                 <TextInput
-                  label="Cantidad de clases"
-                  mode="outlined"
-                  keyboardType="numeric"
+                  label={clases ? "Cantidad de clases" : undefined} // solo aparece si hay valor
                   value={clases}
                   onChangeText={setClases}
-                  outlineColor={violetPlaceholder}
-                  activeOutlineColor={violetButton}
-                  style={styles.input}
-                />
-                <TextInput
-                  label="Valor total del curso"
+                  textColor= {COLORS.darkLetter3}
                   mode="outlined"
                   keyboardType="numeric"
+                  outlineColor={COLORS.veryLightGreenColor}
+                  activeOutlineColor={COLORS.lightGreenColor}
+                  style={styles.input}
+                  placeholder="Cantidad de clases"
+                  placeholderTextColor={COLORS.placeholderColor}
+                />
+
+                <TextInput
+                  label={total ? "Valor total del curso" : undefined} // solo aparece si hay valor
                   value={total}
                   onChangeText={setTotal}
-                  outlineColor={violetPlaceholder}
-                  activeOutlineColor={violetButton}
+                  mode="outlined"
+                  textColor= {COLORS.darkLetter}
+                  keyboardType="numeric"
+                  outlineColor={COLORS.veryLightGreenColor}
+                  activeOutlineColor={COLORS.lightGreenColor}
                   style={styles.input}
+                  placeholder="Valor total del curso"
+                  placeholderTextColor={COLORS.placeholderColor}
                 />
+
               </View>
             )}
 
             {/* Monto y Método */}
             <View style={styles.row}>
-              <TextInput
-                label="Monto a abonar"
-                mode="outlined"
-                keyboardType="numeric"
-                value={monto}
-                onChangeText={setMonto}
-                outlineColor={violetPlaceholder}
-                activeOutlineColor={violetButton}
-                style={styles.input}
-              />
+            <TextInput
+              label={monto ? "Monto a abonar" : undefined} // solo aparece si hay valor
+              value={monto}
+              onChangeText={setMonto}
+              textColor= {COLORS.darkLetter3}
+              mode="outlined"
+              keyboardType="numeric"
+              outlineColor={COLORS.veryLightGreenColor}
+              activeOutlineColor={COLORS.lightGreenColor}
+              style={styles.input}
+              placeholder="Monto a abonar"
+              placeholderTextColor={COLORS.placeholderColor}
+            />
+
+
+      
               <TouchableOpacity onPress={() => setShowMetodoOptions(!showMetodoOptions)} style={{ flex: 1 }}>
-                <TextInput
-                  label="Método"
-                  value={metodo}
-                  mode="outlined"
-                  editable={false}
-                  pointerEvents="none"
-                  outlineColor={violetPlaceholder}
-                  activeOutlineColor={violetButton}
-                  style={styles.input}
-                />
+              <TextInput
+                label={metodo ? "Método" : undefined} // 👈 solo aparece si hay valor
+                value={metodo}
+                mode="outlined"
+                editable={false}
+                pointerEvents="none"
+                textColor= {COLORS.darkLetter3}
+                outlineColor={COLORS.veryLightGreenColor}
+                activeOutlineColor={COLORS.lightGreenColor}
+                style={styles.input}
+                placeholder="Método"
+                placeholderTextColor={COLORS.placeholderColor}
+              />
+
               </TouchableOpacity>
             </View>
 
@@ -348,26 +332,23 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
             )}
 
             <TextInput
-              label="Observación"
+              label={detalle ? "Observación" : undefined} // 👈 solo aparece si hay texto
               value={detalle}
               onChangeText={setDetalle}
-              theme={{
-                colors: {
-                  placeholder: COLORS.ligthLetter, // 👈 color del placeholder
-                  text: COLORS.darkLetter,         // 👈 color del texto escrito
-                }
-              }}
+              textColor= {COLORS.darkLetter3}
               mode="outlined"
-              outlineColor={violetPlaceholder}
-              activeOutlineColor={violetButton}
+              outlineColor={COLORS.veryLightGreenColor}
+              activeOutlineColor={COLORS.lightGreenColor}
               multiline
               style={[styles.input, { height: 60 }]}
+              placeholder="Observación"
+              placeholderTextColor={COLORS.placeholderColor}
             />
 
             {/* Botones */}
             <View style={styles.buttonsRow}>
               <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-                <Text style={styles.buttonText}>Cancelar</Text>
+                <Text style={styles.buttonTextCancelar}>cancelar</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>Guardar</Text>
@@ -376,6 +357,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
           </ScrollView>
         </View>
+        </ImageBackground>
       </KeyboardAvoidingView>
     </Modal>
   );
@@ -383,21 +365,24 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
 const styles = StyleSheet.create({
   bottomSheet: { 
-    backgroundColor: COLORS.backgroundVioletClear, 
+    //backgroundColor: COLORS.backgroundGreenClear, 
     borderTopLeftRadius: 16, 
     borderTopRightRadius: 16, 
+    
     padding: 20,
     marginBottom: 0,   
+    
   },
   dragHandle: { width: 40, height: 5, backgroundColor: '#ccc', borderRadius: 2.5, alignSelf: 'center', marginBottom: 10 },
   row: { flexDirection: 'row', alignItems: 'center', marginVertical: 6 },
-  input: { flex: 1, marginVertical: 4, marginRight: 8, borderRadius: 10, },
+  input: { flex: 1, marginVertical: 4, marginRight: 8, borderRadius: 10, textShadowColor:  '#fff',   height: 50, },
   dropdown: { position: 'absolute', width: '100%', backgroundColor: '#fff', borderWidth: 1, borderColor: '#ccc', borderRadius: 8, zIndex: 10 },
   dropdownItem: { padding: 12, borderBottomWidth: 1, borderBottomColor: '#eee' },
   buttonsRow: { flexDirection: 'row', justifyContent: 'flex-end', marginTop: 16 },
   cancelButton: { paddingHorizontal: 14, paddingVertical: 10, marginRight: 10, borderRadius: 8 },
-  submitButton: { paddingHorizontal: 14, paddingVertical: 10, backgroundColor: COLORS.buttonClear, borderRadius: 8 },
-  buttonText: { color: COLORS.buttonClearLetter, fontSize: 14 },
+  submitButton: { paddingHorizontal: 14, paddingVertical: 10, backgroundColor: COLORS.headerDate, borderRadius: 8 },
+  buttonText: {color:COLORS.white, fontSize: 17 },
+  buttonTextCancelar: {color:COLORS.buttonClearLetter, fontSize: 17 },
   checkboxContainer: { flexDirection: 'row', alignItems: 'center' },
   checkbox: { width: 25, height: 25, borderWidth: 2, borderColor: COLORS.button, borderRadius: 4, marginRight: 6 },
   checked: { backgroundColor: COLORS.buttonClear },
@@ -412,16 +397,17 @@ const styles = StyleSheet.create({
   segment: {
     flex: 1,
     paddingVertical: 10,
-    backgroundColor: COLORS.buttonClear,
+    backgroundColor: COLORS.veryLightGreenColor,
     alignItems: 'center',
   },
   
   segmentActive: {
-    backgroundColor: COLORS.button,
+    backgroundColor: COLORS.headerDate,
   },
   segmentText: {
     color: COLORS.buttonClearLetter,
-    fontFamily: 'Poppins_500Medium',
+    fontSize: 15,
+    fontFamily: 'OpenSans-Regular',
   },
   segmentTextActive: {
     color: '#fff',
@@ -432,11 +418,13 @@ const styles = StyleSheet.create({
     marginBottom: 17,
   },
   title: {
-    fontSize: 15,
+    fontSize: 16,
     color: COLORS.darkLetter3,
     fontFamily: 'OpenSans-Light'
   },
-  studentName: { fontSize: 16, color: COLORS.darkLetter3, marginBottom: 4, textAlign: 'center',   fontFamily: 'OpenSans-Regular' },
-
+  studentName: { fontSize: 18, color: COLORS.darkLetter2, marginBottom: 4, textAlign: 'center',   fontFamily: 'OpenSans-Regular' },
+  background: {
+    flex: 1,
+  },
   
 });

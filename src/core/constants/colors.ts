@@ -16,14 +16,17 @@ export const COLORS = {
     darkLetter2: 'rgb(28, 67, 32)',
     darkLetter3: 'rgb(62, 105, 66)',
 
-    ligthLetter: 'rgb(151, 180, 154)',
+    ligthLetter: 'rgb(185, 205, 187)',
+    placeholderColor :'rgb(167, 195, 170)' ,
 
     darkGreenColor: '#6c8a35',
     mediumGreenColor: '#88ae40',
     lightGreenColor: '#bbcf2e',
+    veryLightGreenColor: 'rgb(215, 225, 138)',
 
     chipGreenColor: '#b6d37d',
 
+    transparentGreyColor: 'rgba(177, 202, 192, 0.64)',
     transparentGreenColor: 'rgba(189, 208, 153, 0.53)',
 
     //botones
@@ -36,17 +39,21 @@ export const COLORS = {
 
     whiteLetter:'rgb(242, 244, 242))' ,
 
-    headerDate: 'rgb(176, 198, 178)',
+    headerDate: '#96aea4',
+    headerDateDark: 'rgb(100, 120, 112)',
 
     buttonClearLetter: 'rgb(52, 89, 55)',
 
+
+    fabColor : '#96aea4',
+    fabTextColor : '#fff' ,
 
     //nuevos----
     buttonViolet: '#a088c3',
     buttonClearViolet: 'rgb(219, 209, 234)',
 
     background: 'rgb(230, 226, 238)',
-    backgroundVioletClear: 'rgb(238, 236, 242)',
+    backgroundGreenClear: 'rgb(211, 218, 194)',
     backgroundApp: 'rgb(217, 203, 244)',
 
     escuela: '#90CAF9',

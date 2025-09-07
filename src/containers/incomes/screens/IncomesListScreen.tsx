@@ -80,7 +80,8 @@ export default function IncomesListScreen() {
       style={styles.background}
       resizeMode="cover"
     >
-      <View style={{ flex: 1, backgroundColor: COLORS.transparentGreenColor}}>
+      <View style={{ flex: 1,
+         backgroundColor: COLORS.transparentGreyColor}}>
         
         {/* 🔹 Barra de filtros horizontal */}
         <View style={styles.filterWrapper}>
@@ -153,10 +154,10 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 10,
+    
     backgroundColor: "rgba(255,255,255,0.4)",
     paddingVertical: 8,
     paddingHorizontal: 12,
-    borderRadius: 12,
   },
   scrollContainer: {
     flexDirection: "row",

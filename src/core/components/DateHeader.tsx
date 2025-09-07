@@ -28,7 +28,7 @@ export const DateHeader: React.FC<Props> = ({ date }) => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.chipGreenColor,
+    backgroundColor: COLORS.headerDate,
     alignSelf: 'flex-start',
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -38,11 +38,13 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: 'OpenSans-Regular',
-    fontSize: 15,
-    color: COLORS.darkLetter2,
+    fontSize: 16,
+   // color: COLORS.darkLetter2,
+    color: COLORS.whiteLetter,
   },
   monthText: {
    fontFamily: 'OpenSans-Light', 
-    color: COLORS.buttonClearLetter,
+    //color: COLORS.buttonClearLetter,
+    color: COLORS.whiteLetter,
   },
 });

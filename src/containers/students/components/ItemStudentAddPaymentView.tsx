@@ -97,13 +97,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: COLORS.buttonClear,
+    backgroundColor: COLORS.headerDate,
     paddingHorizontal: 18,
     paddingVertical: 6,
     borderRadius: 8,
   },
   buttonText: {
-    color: COLORS.buttonClearLetter,
+    color: COLORS.whiteLetter,
+    fontFamily: 'OpenSans-Regular',
     fontSize: 15,
     textAlign: 'center',
   },

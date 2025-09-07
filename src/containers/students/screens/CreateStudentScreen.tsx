@@ -7,6 +7,7 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import { Platform, Pressable } from 'react-native' 
 import { Keyboard, TouchableWithoutFeedback, KeyboardAvoidingView } from 'react-native'
 import { Alert } from 'react-native';
+import Modal from 'react-native-modal';
 
 
 export default function CreateStudentScreen() {
@@ -27,10 +28,10 @@ export default function CreateStudentScreen() {
     setForm({ ...form, [key]: value })
   }
 
-  const violetMain = '#ede7f6'
-  const violetText = '#6c55b8'
-  const violetPlaceholder = '#bcb0e4'
-  const violetButton = COLORS.button
+ // const violetPlaceholder = '#bcb0e4'
+  const violetPlaceholder = COLORS.veryLightGreenColor
+  //const violetButton = COLORS.button
+  const violetButton = COLORS.headerDate
 
   const [showDatePicker, setShowDatePicker] = useState(false)
   const calcularEdad = (fechaISO: string): number => {
@@ -100,34 +101,41 @@ export default function CreateStudentScreen() {
       >
       <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <Text style={[styles.subtitle, { color: violetButton }]}>Datos del alumno</Text>
+        <Text style={[styles.subtitle, { color: COLORS.darkLetter2 }]}>Datos del alumno</Text>
         <TextInput
-          label="Nombre"
+          label={form.nombre ? "Nombre" : undefined}
           value={form.nombre}
           onChangeText={(text) => handleChange('nombre', text)}
           mode="outlined"
           style={styles.input}
+           textColor= {COLORS.darkLetter3}
           outlineColor={violetPlaceholder}
           activeOutlineColor={violetButton}
           left={<TextInput.Icon icon="account" color={violetButton} />}
+          placeholder="Nombre"
+          placeholderTextColor={COLORS.placeholderColor}
         />
 
         <TextInput
-          label="Apellido"
+          label={form.apellido ? "Apellido" : undefined}
           value={form.apellido}
           onChangeText={(text) => handleChange('apellido', text)}
           mode="outlined"
+           textColor= {COLORS.darkLetter3}
           style={styles.input}
           outlineColor={violetPlaceholder}
           activeOutlineColor={violetButton}
           left={<TextInput.Icon icon="account-outline" color={violetButton} />}
+          placeholder="Apellido"
+          placeholderTextColor={COLORS.placeholderColor}
         />
 
         <Pressable onPress={() => setShowDatePicker(true)}>
           <TextInput
-            label="Fecha de Nacimiento"
+            label={form.fechaNacimiento ? "Fecha de Nacimiento" : undefined}
             value={form.fechaNacimiento}
             mode="outlined"
+             textColor= {COLORS.darkLetter3}
             style={styles.input}
             editable={false}
             pointerEvents="none"
@@ -135,56 +143,126 @@ export default function CreateStudentScreen() {
             activeOutlineColor={violetButton}
             left={<TextInput.Icon icon="calendar" color={violetButton} />}
             placeholder="YYYY-MM-DD"
+            placeholderTextColor={COLORS.placeholderColor}
           />
         </Pressable>
 
         {showDatePicker && (
-          <DateTimePicker
-          value={
-            form.fechaNacimiento
-              ? parseISODateToLocalDate(form.fechaNacimiento)
-              : new Date(2010, 0, 1, 12, 0, 0)
-          }
-          mode="date"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          maximumDate={new Date()}
-          onChange={handleDateChange}
-        />
+          Platform.OS === 'ios' ? (
+            <Modal
+              isVisible={showDatePicker}
+              onBackdropPress={() => setShowDatePicker(false)}
+            >
+              <View style={{ backgroundColor: 'white', padding: 16, borderRadius: 8 }}>
+                <DateTimePicker
+                  value={
+                    form.fechaNacimiento
+                      ? parseISODateToLocalDate(form.fechaNacimiento)
+                      : new Date(2010, 0, 1, 12, 0, 0)
+                  }
+                  mode="date"
+                  display="spinner"
+                  maximumDate={new Date()}
+                  onChange={(event, selectedDate) => {
+                    if (selectedDate) {
+                      handleDateChange(event, selectedDate);
+                    }
+                  }}
+                />
+
+                <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12 }}>
+                
+                  <TouchableOpacity
+                    onPress={() => setShowDatePicker(false)}
+                    style={{
+                      paddingVertical: 8,
+                      paddingHorizontal: 16,
+                      borderRadius: 6,
+                      backgroundColor: '#eee',
+                      marginRight: 12,
+                      minWidth: 90,              // 👈 ancho mínimo
+                      alignItems: 'center',      // 👈 centra el texto
+                    }}
+                  >
+                    <Text style={{ fontSize: 16, color: COLORS.darkLetter }}>Cancelar</Text>
+                  </TouchableOpacity>
+
+                   <TouchableOpacity
+                      onPress={() => setShowDatePicker(false)}
+                      style={{
+                        paddingVertical: 8,
+                        paddingHorizontal: 16,
+                        borderRadius: 6,
+                        backgroundColor: COLORS.headerDate,
+                        minWidth: 90,              // 👈 ancho mínimo
+                        alignItems: 'center',
+                      }}
+                    >
+                      <Text style={{ fontSize: 16, color: COLORS.white }}>Aceptar</Text>
+                    </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+          ) : (
+            <DateTimePicker
+              value={
+                form.fechaNacimiento
+                  ? parseISODateToLocalDate(form.fechaNacimiento)
+                  : new Date(2010, 0, 1, 12, 0, 0)
+              }
+              mode="date"
+              display="calendar"
+              maximumDate={new Date()}
+              onChange={handleDateChange}
+            />
+          )
         )}
 
+
+
+
         <TextInput
-          label="DNI"
+          label={form.dni ? "DNI" : undefined}
           value={form.dni}
           onChangeText={(text) => handleChange('dni', text)}
           mode="outlined"
           keyboardType="numeric"
           style={styles.input}
+           textColor= {COLORS.darkLetter3}
           outlineColor={violetPlaceholder}
           activeOutlineColor={violetButton}
           left={<TextInput.Icon icon="card-account-details" color={violetButton} />}
+          placeholder='DNI'
+          placeholderTextColor={COLORS.placeholderColor}
         />
 
         <TextInput
-          label="Teléfono"
+           label={form.telefono ? "Teléfono" : undefined}
           value={form.telefono}
           onChangeText={(text) => handleChange('telefono', text)}
           mode="outlined"
           keyboardType="phone-pad"
+           textColor= {COLORS.darkLetter3}
           style={styles.input}
           outlineColor={violetPlaceholder}
           activeOutlineColor={violetButton}
           left={<TextInput.Icon icon="phone" color={violetButton} />}
+          placeholder='Teléfono'
+          placeholderTextColor={COLORS.placeholderColor}
         />
 
         <TextInput
-          label="bservación importante"
+          label={form.observacion ? "Observación importante" : undefined}
           value={form.observacion}
           onChangeText={(text) => handleChange('observacion', text)}
           mode="outlined"
+           textColor= {COLORS.darkLetter3}
           style={styles.input}
           outlineColor={violetPlaceholder}
           activeOutlineColor={violetButton}
           left={<TextInput.Icon icon="note" color={violetButton} />}
+          placeholder='Observación importante'
+          placeholderTextColor={COLORS.ligthLetter}
         />
 
   
@@ -199,41 +277,47 @@ export default function CreateStudentScreen() {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#fff',
-            borderColor: '#7b61ff',
+            borderColor: COLORS.darkLetter,
           }}>
             <Checkbox
               status={form.esMenor ? 'checked' : 'unchecked'}
               onPress={() => handleChange('esMenor', !form.esMenor)}
-              color="#7b61ff" // color del tilde
+              color={COLORS.darkLetter}// color del tilde
               uncheckedColor="transparent"
             />
           </View>
-          <Text style={[styles.checkboxLabel, { color: '#6c55b8' }]}>Soy menor de edad</Text>
+          <Text style={[styles.checkboxLabel, { color: COLORS.darkLetter }]}>Soy menor de edad</Text>
         </View>
 
         {form.esMenor && (
           <View >
-            <Text style={[styles.subtitle, { color: violetButton }]}>Datos de los padres</Text>
+            <Text style={[styles.subtitle, { color: COLORS.darkLetter2 }]}>Datos de los padres</Text>
 
             <TextInput
-              label="Nombre del responsable"
+              label={form.nombreMama ? "Nombre del responsable" : undefined}
               value={form.nombreMama}
               onChangeText={(text) => handleChange('nombreMama', text)}
               mode="outlined"
               style={styles.input}
               outlineColor={violetPlaceholder}
               activeOutlineColor={violetButton}
+              textColor= {COLORS.darkLetter3}
+              placeholder="Nombre del responsable"
+              placeholderTextColor={COLORS.ligthLetter}
             />
 
             <TextInput
-              label="Teléfono del responsable"
+              label={form.telMama ? "Teléfono del responsable" : undefined}
               value={form.telMama}
               onChangeText={(text) => handleChange('telMama', text)}
               mode="outlined"
               keyboardType="phone-pad"
               style={styles.input}
+               textColor= {COLORS.darkLetter3}
               outlineColor={violetPlaceholder}
               activeOutlineColor={violetButton}
+              placeholder='Teléfono del responsable'
+              placeholderTextColor={COLORS.placeholderColor}
             />
           </View>
         )}
@@ -338,7 +422,7 @@ const styles = StyleSheet.create({
     marginVertical: 15
   },
   input: {
-    marginTop: 10
+    marginTop: 10,
   },
   rightBox: {
     width: 36,
