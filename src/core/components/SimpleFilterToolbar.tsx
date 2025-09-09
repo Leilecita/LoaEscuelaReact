@@ -52,6 +52,7 @@ export const SimpleFilterToolbar: React.FC<SimpleFilterBarProps> = ({
         onChangeText={onSearchTextChange}
         placeholder="Buscar..."
         mode="flat"
+        textColor= {COLORS.white}
         style={styles.searchInput}
         left={<PaperInput.Icon icon="magnify" color="#fff" />}
         right={
@@ -63,8 +64,8 @@ export const SimpleFilterToolbar: React.FC<SimpleFilterBarProps> = ({
         underlineColor="transparent"
         activeUnderlineColor="transparent"
         blurOnSubmit={false}
-        cursorColor="#6200ee"
-        selectionColor="#b39ddb"
+        cursorColor={COLORS.white}
+        selectionColor={COLORS.white}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         theme={{
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
   fabButton: {
    borderRadius: 8,           // círculo (medio del tamaño del botón)
    width: 48,
-   height: 40,
+   height: 50,
    backgroundColor:  COLORS.transparentGreenColor,
    justifyContent: 'center',
    alignItems: 'center',
@@ -122,9 +123,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor:  COLORS.transparentGreenColor,
     borderRadius: 8,
-    height: 40,
-    fontSize: 14,
+    height: 50,
+    fontSize: 17,
   },
+  
   buttonsContainer: {
     flexDirection: 'row',
     marginLeft: 8,

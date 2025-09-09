@@ -21,7 +21,7 @@ export const ItemStudentAddPaymentView: React.FC<Props> = ({
   return (
     <View style={styles.itemContainer}>
       <View style={styles.topRow}>
-        <InitialAvatar letra={student.nombre.charAt(0)} />
+        <InitialAvatar letra={student.nombre.charAt(0)} category={student.category} />
 
         {/* Nombre y DNI */}
         <View style={styles.leftColumn}>
@@ -47,6 +47,9 @@ export const ItemStudentAddPaymentView: React.FC<Props> = ({
       {isExpanded && (
         <View style={styles.extraInfo}>
           {/* Contactos del alumno */}
+          {student.tel_adulto && (
+            <ContactRow name={student.nombre} phone={student.tel_adulto} />
+          )}
           {student.nombre_mama && (
             <ContactRow name={student.nombre_mama} phone={student.tel_mama} />
           )}
@@ -104,12 +107,13 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: COLORS.whiteLetter,
-    fontFamily: 'OpenSans-Regular',
+    fontFamily: 'Roboto',
     fontSize: 15,
     textAlign: 'center',
   },
   extraInfo: {
     marginTop: 10,
+    paddingLeft: 10,
     paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: '#ddd',

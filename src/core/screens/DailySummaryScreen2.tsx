@@ -101,7 +101,7 @@ async function fetchResumenes(page: number, period: PeriodFilterOption): Promise
 // ----------------------
 // Componente principal
 // ----------------------
-export const DailySummaryScreen: React.FC = () => {
+export const DailySummaryScreen2: React.FC = () => {
   const [expandedDay, setExpandedDay] = useState<string | null>(null);
   const [filter, setFilter] = useState<FilterOption>('Todos');
   const [periodFilter, setPeriodFilter] = useState<PeriodFilterOption>("Dia");

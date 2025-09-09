@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
    color: COLORS.darkLetter,
   },
   number: {
-    fontSize: 14,
+    fontSize: 15,
     fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter,
   },
@@ -103,17 +103,19 @@ const styles = StyleSheet.create({
   },
   month: {
    fontFamily: 'OpenSans-Regular',
+   fontSize: 15,
    color: COLORS.darkLetter,
   },
   categoryContainer: {
     minWidth: 100,
+    fontSize: 15,
     alignItems: 'flex-end',
 
   },
   category: {
-    fontStyle: 'italic',
     fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
+    fontSize: 15,
     marginRight: 8,
   },
 });

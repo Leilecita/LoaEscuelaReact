@@ -66,7 +66,8 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
     try {
       await addStudentToAssist({ planilla_id, alumno_id })
       alert('Alumno agregado a la planilla correctamente')
-      reload()  // refresca la lista si querés que se actualice
+      
+     // reload()  
     } catch (error) {
       alert('Error al agregar alumno a la planilla')
     }
@@ -152,7 +153,6 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
         onRefresh={reload}
       />
 
-     
   
       {loading ? (
         <ActivityIndicator style={styles.center} size="large" />
@@ -235,7 +235,7 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
 
   
           <FAB
-            icon="plus"
+            icon="account-plus"
             color= {COLORS.fabTextColor}
             style={{
               position: 'absolute',
@@ -272,6 +272,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+  },
+  searchInput: {
+    backgroundColor:  COLORS.transparentGreenColor,
+    borderRadius: 8,
+    marginHorizontal: 0,
+    marginBottom: 8,
+    height: 50,
+    fontSize: 17,
   },
   sectionHeader: {
     backgroundColor: COLORS.headerDate,

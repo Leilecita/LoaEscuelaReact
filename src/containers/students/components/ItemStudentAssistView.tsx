@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, Linking, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, Linking, StyleSheet, TouchableOpacity, Pressable } from 'react-native'
 import { Checkbox, IconButton } from 'react-native-paper'
 import type { ReportStudent } from '../services/studentService'
 import { ContactRow } from '../../../core/components/ContactRow'
@@ -33,10 +33,11 @@ export const ItemStudentAssistView: React.FC<Props> = ({
 
   const totalClasesTomadas = student.taken_classes?.[0]?.cant_presents || 0
   const isToday = selectedDate.toDateString() === new Date().toDateString()
-  return (
+
+    return (
     <View style={styles.itemContainer_check}>
-      <View style={styles.row}>
-       <InitialAvatar letra={student.nombre.charAt(0)} />
+      <Pressable style={styles.row} onPress={onToggleExpand}>
+       <InitialAvatar letra={student.nombre.charAt(0)} category={student.category}  />
 
         <View style={styles.infoContainer}>
           <Text style={styles.name} onPress={onToggleExpand}>
@@ -67,33 +68,7 @@ export const ItemStudentAssistView: React.FC<Props> = ({
           >
             {student.presente === 'si' && <Text style={styles.checkMark}>✓</Text>}
           </TouchableOpacity>
-
-             {/* Línea separadora 
-        <View style={[
-            styles.rightBox,
-            {
-              backgroundColor: isToday ? '#fff' : ' #f3e5f5',      
-              borderColor: isToday ? ' #000' : ' #b39ddb',         
-              borderWidth: 1,
-              opacity: isToday ? 1 : 0.8,                        
-            },
-          ]}
-        >
-          <Checkbox
-            status={student.presente === 'si' ? 'checked' : 'unchecked'}
-            onPress={() => {
-              if (!isToday) return
-              student.presente === 'si'
-                ? eliminarPresente(student)
-                : togglePresente(student)
-            }}
-            
-            color={isToday ? 'black' : '#b39ddb'} // violeta suave
-            uncheckedColor="transparent"
-            disabled={!isToday}
-          /> 
-        </View>*/}
-      </View>
+      </Pressable>
 
       {isExpanded && (
         <View style={styles.extraInfo}>
@@ -115,7 +90,6 @@ export const ItemStudentAssistView: React.FC<Props> = ({
             <ContactRow name={student.nombre_papa} phone={student.tel_papa} />
           )}
            
-
            <TouchableOpacity
               onPress={() =>
                 navigation.navigate('InformationStudent', {  studentId: student.student_id,
@@ -124,6 +98,17 @@ export const ItemStudentAssistView: React.FC<Props> = ({
                   category: student.category,
                   sub_category: student.sub_category })
               }
+              style={{
+                alignSelf: 'flex-end',   // se alinea a la derecha
+                backgroundColor: COLORS.transparentGreenColor,
+                borderRadius: 6,
+                marginTop: 8,
+                marginBottom: 4,
+                paddingVertical : 4,
+                paddingHorizontal: 10,   // controla ancho del botón
+                justifyContent: 'center', // centra verticalmente
+                alignItems: 'center',  
+              }}
             >
               <Text style={styles.masInfoText}>+ info</Text>
             </TouchableOpacity>
@@ -202,11 +187,8 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   masInfoText: {
-    marginTop: 8,
-    marginBottom:6,
     fontFamily: 'OpenSans-Regular',
-    fontSize: 18,
-    marginRight: 14,
+    fontSize: 17,
     color: COLORS.buttonClearLetter, 
     textDecorationLine: 'none', // 👈 sin subrayado
     textAlign: 'right',          // 👈 alineado a la izquierda

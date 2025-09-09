@@ -7,9 +7,6 @@ export const COLORS = {
     theriary: '#B8CFCE',
     complementary: '#EAEFEF',
     white: '#FFFFFF',
-
-
-
     //nuevos
 
     darkLetter: 'rgb(16, 46, 19)',
@@ -57,6 +54,6 @@ export const COLORS = {
     backgroundApp: 'rgb(217, 203, 244)',
 
     escuela: '#90CAF9',
-    colonia: 'D4E157',
-    high: '81C784',
+    colonia: '#D4E157',
+    high: '#81C784',
 }

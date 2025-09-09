@@ -14,7 +14,9 @@ import { AuthContext } from '../../contexts/AuthContext';
 import type { AuthStackParamList, RootStackParamList } from '../../types';
 import { MenuHeader } from '../../../src/core/components/MenuHeader';
 import { CustomDrawerContent } from '../../../src/core/components/CustomDrawerContent';
-import { DailySummaryScreen } from '../../../src/core/screens/DailySummaryScreen';
+import { DailySummaryScreen } from '../../containers/dailySummary/screens/DailySummaryScreen';
+import { DailySummaryScreen2 } from '../../../src/core/screens/DailySummaryScreen2';
+import { AttendanceSheetScreen } from '../../../src/core/screens/AttendanceSheetScreen';
 import { AppTabs } from './AppTabs';
 import { StatusBar } from 'expo-status-bar';
 import { COLORS } from 'core/constants';
@@ -137,6 +139,17 @@ export function NavigationApp() {
                 name="DailySummaryScreen"
                 component={DailySummaryScreen}
                 options={{ title: 'Daily Summary' }}
+              />
+
+<RootStack.Screen
+                name="DailySummaryScreen2"
+                component={DailySummaryScreen2}
+                options={{ title: 'Daily Summary2' }}
+              />
+            <RootStack.Screen
+                name="AttendanceSheetScreen"
+                component={AttendanceSheetScreen}
+                options={{ title: 'Planillas' }}
               />
           </RootStack.Navigator>
         ) : (

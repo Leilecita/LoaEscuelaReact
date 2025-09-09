@@ -1,10 +1,12 @@
-import React, { useEffect, useState, useRef, useMemo } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
+import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, ImageBackground } from 'react-native'
 import { useStudents } from '../../../core/hooks/useStudents'
 import type { ReportStudent } from '../services/studentService'
 import { savePresent, usePresentCount, removePresent } from '../services/studentService'
 import { formatDateToFullDateTime, formatDateToYYYYMMDD } from 'helpers/dateHelper'
 import { FilterBar } from 'core/components/FilterToolbar'
+import { CustomFAB } from 'core/components/CustomFAB'
 import { Category, Subcategoria } from 'types'
 import { FlatList } from 'react-native'
 import { ItemStudentAssistView } from '../components/ItemStudentAssistView'
@@ -64,16 +66,24 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
   } = useStudents(category, subcategoria, only_date, showOnlyPresent, sortOrder)
 
 
-    useEffect(() => {
-      const handler = setTimeout(() => {
-        updateQuery(searchInput.toLowerCase())
-      }, 400)
+  // Hook para recargar cuando la pantalla entra en foco
+  useFocusEffect(
+    useCallback(() => {
+     // setSortOrder('alf');
+      //reload();
+      //forzarRefrescoContador();
+    }, [only_date, showOnlyPresent, sortOrder])
+  );
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      updateQuery(searchInput.toLowerCase())
+    }, 400)
   
       return () => clearTimeout(handler)
     }, [searchInput])
-  
 
-  const toggleExpand = (id: number) => {
+    const toggleExpand = (id: number) => {
     setExpandedStudentId((prev) => (prev === id ? null : id))
   }
 
@@ -220,11 +230,14 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
                 />
               )}
             />
+
+
             
             <FAB
-                icon="plus"
+                icon="account-plus"
                 //color= "#6c8a35"
                 color= {COLORS.fabTextColor}
+                
                 style={{
                   position: 'absolute',
                   bottom: 30,
@@ -236,7 +249,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
                   category: 'category',
                   subcategoria: 'subcategoria',
                   modo: 'asistencias',
-                  planilla_id: planillaId
+                  planilla_id: planillaId,
                 })}
               />
           </>

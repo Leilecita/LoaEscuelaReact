@@ -66,9 +66,11 @@ export default function ItemIncomeView({
   const navigation = useNavigation<NavigationProp>();
 
   return (
-    <View style={styles.container}>
-      {showDateHeader && <DateHeader date={income_created} />}
-
+    <View>
+      <View style={styles.date}>
+      {showDateHeader && <DateHeader date={income_created}  />}
+      </View>
+      <View style={styles.container}>
       <TouchableOpacity
         style={styles.row}
         onPress={() => setIsExpanded(prev => !prev)}
@@ -190,14 +192,24 @@ export default function ItemIncomeView({
         </View>
       )}
     </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 6,
     borderBottomWidth: 0.3, 
-    borderColor: COLORS.ligthLetter, 
+    marginLeft: 12,
+    marginRight: 12,
+    marginBottom : 8,
+    borderColor: COLORS.darkLetter3, 
+  },
+  date: {
+    marginLeft: 10,
+    borderColor: COLORS.darkLetter3, 
+    marginBottom: -5,
+    marginTop : 4,
   },
   row: {
     flexDirection: 'row',

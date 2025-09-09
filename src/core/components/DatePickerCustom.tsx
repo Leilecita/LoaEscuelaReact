@@ -17,7 +17,7 @@ export const CustomDatePicker: React.FC<Props> = ({ date, onDateChange }) => {
   const [tempDate, setTempDate] = useState(date);
 
   const openPicker = () => {
-   // setTempDate(date); // resetea al valor actual
+    setTempDate(date); // resetea al valor actual
     setShowPicker(true);
   };
 
@@ -58,9 +58,8 @@ export const CustomDatePicker: React.FC<Props> = ({ date, onDateChange }) => {
       {showPicker &&
         (Platform.OS === 'android' ? (
           <DateTimePicker
-           // value={date}
-           value={new Date()}     
-           mode="date"
+            value={date}
+            mode="date"
             display="default"
             onChange={(event, selectedDate) => {
               setShowPicker(false);
@@ -71,8 +70,7 @@ export const CustomDatePicker: React.FC<Props> = ({ date, onDateChange }) => {
           <Modal isVisible={showPicker} onBackdropPress={handleCancel}>
             <View style={{ backgroundColor: 'white', padding: 16, borderRadius: 8 }}>
               <DateTimePicker
-              value={new Date()}    
-                //value={tempDate}
+                value={tempDate}
                 mode="date"
                 display="spinner"
                 onChange={(event, selectedDate) => {

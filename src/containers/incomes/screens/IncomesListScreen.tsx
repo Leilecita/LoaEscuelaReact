@@ -109,7 +109,7 @@ export default function IncomesListScreen() {
             onEndReachedThreshold={0.5}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reload} />}
             ListFooterComponent={loadingMore ? <ActivityIndicator size="small" /> : null}
-            contentContainerStyle={{ paddingTop: 80 }}
+            contentContainerStyle={{ paddingTop: 60 }}
             renderItem={({ item, index }) => {
               const currentDate = new Date(item.income_created).toISOString().substring(0, 10);
               const previousDate = index > 0 ? new Date(incomes[index - 1].income_created).toISOString().substring(0, 10) : null;

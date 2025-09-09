@@ -101,7 +101,7 @@ export default function CreateStudentScreen() {
       >
       <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-        <Text style={[styles.subtitle, { color: COLORS.darkLetter2 }]}>Datos del alumno</Text>
+        <Text style={[styles.subtitle, { color: COLORS.darkLetter3 }]}>Datos del alumno</Text>
         <TextInput
           label={form.nombre ? "Nombre" : undefined}
           value={form.nombre}
@@ -277,27 +277,28 @@ export default function CreateStudentScreen() {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: '#fff',
-            borderColor: COLORS.darkLetter,
+            borderColor: COLORS.darkLetter3,
           }}>
             <Checkbox
               status={form.esMenor ? 'checked' : 'unchecked'}
               onPress={() => handleChange('esMenor', !form.esMenor)}
-              color={COLORS.darkLetter}// color del tilde
+              color={COLORS.darkLetter3}// color del tilde
               uncheckedColor="transparent"
             />
           </View>
-          <Text style={[styles.checkboxLabel, { color: COLORS.darkLetter }]}>Soy menor de edad</Text>
+          <Text style={[styles.checkboxLabel, { color: COLORS.darkLetter2 }]}>Soy menor de edad</Text>
         </View>
 
         {form.esMenor && (
           <View >
-            <Text style={[styles.subtitle, { color: COLORS.darkLetter2 }]}>Datos de los padres</Text>
+            <Text style={[styles.subtitle, { color: COLORS.darkLetter3 }]}>Datos de los padres</Text>
 
             <TextInput
               label={form.nombreMama ? "Nombre del responsable" : undefined}
               value={form.nombreMama}
               onChangeText={(text) => handleChange('nombreMama', text)}
               mode="outlined"
+              left={<TextInput.Icon icon="account" color={violetButton} />}
               style={styles.input}
               outlineColor={violetPlaceholder}
               activeOutlineColor={violetButton}
@@ -310,6 +311,7 @@ export default function CreateStudentScreen() {
               label={form.telMama ? "Teléfono del responsable" : undefined}
               value={form.telMama}
               onChangeText={(text) => handleChange('telMama', text)}
+              left={<TextInput.Icon icon="phone" color={violetButton} />}
               mode="outlined"
               keyboardType="phone-pad"
               style={styles.input}
@@ -451,7 +453,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 30,
     paddingVertical: 15,
-    borderRadius: 12,
+    borderRadius: 8,
     alignItems: 'center',
     shadowColor: '#7b61ff',
     shadowOpacity: 0.15,

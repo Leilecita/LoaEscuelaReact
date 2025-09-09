@@ -231,13 +231,18 @@ const styles = StyleSheet.create({
     // opcional: estilo de fondo del ícono
   },
   day: {
-    width:50,
-    fontFamily: 'OpenSans-Light',
+    width:20,
+    textAlign: 'center',
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 16,
     color: COLORS.darkLetter,
    },
 
    month: {
-    fontFamily: 'OpenSans-Regular',
+    fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter,
+    fontSize: 14,
+    width:24,
+    textAlign: 'center',
    },
 });

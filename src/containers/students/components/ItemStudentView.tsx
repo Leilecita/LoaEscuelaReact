@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity , Pressable} from 'react-native'
 import type { Student } from '../services/studentService'
 import { ContactRow } from '../../../core/components/ContactRow'
 import { InitialAvatar } from '../../../core/components/InitialAvatar'
@@ -26,10 +26,10 @@ export const ItemStudentView: React.FC<Props> = ({
 
   return (
     <View style={styles.itemContainer}>
-      <View style={styles.topRow}>
-        <InitialAvatar letra={student.nombre.charAt(0)} />
+       <Pressable style={styles.topRow} onPress={onToggleExpand}>
+        <InitialAvatar letra={student.nombre.charAt(0)} category={student.category}  />
         <View style={styles.leftColumn}>
-          <Text style={styles.name} onPress={onToggleExpand}>
+          <Text style={styles.name} >
             {student.nombre} {student.apellido}
           </Text>
           <Text style={styles.dni}>{student.dni}</Text>
@@ -37,7 +37,7 @@ export const ItemStudentView: React.FC<Props> = ({
             <Text style={styles.dni}>{student.observation}</Text>
           )}
         </View>
-      </View>
+      </Pressable>
 
       {isExpanded && (
         <View style={styles.extraInfo}>

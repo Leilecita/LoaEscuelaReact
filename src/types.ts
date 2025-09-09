@@ -7,7 +7,7 @@ export type RootStackParamList = {
     CargarPago : undefined;
     ListaDePagos: undefined;
     
-    ListaDeAlumnos: { category: string; subcategoria: string; shouldReload?: boolean;  modo?: 'lista' | 'asistencias' | 'cargarPago'; planilla_id?: number | null }
+    ListaDeAlumnos: { category: string; subcategoria: string; shouldReload?: boolean;  modo?: 'lista' | 'asistencias' | 'cargarPago'; planilla_id?: number | null;  }
     StudentListScreen: undefined; // <-- no recibe params
     PaymentStudentList: { category: string; subcategoria: string; date: string }; 
 
@@ -17,7 +17,9 @@ export type RootStackParamList = {
       category: string;
       sub_category: string; }; 
 
-    DailySummaryScreen: undefined
+    DailySummaryScreen: undefined;
+    DailySummaryScreen2: undefined;
+    AttendanceSheetScreen: undefined
 
   };
   

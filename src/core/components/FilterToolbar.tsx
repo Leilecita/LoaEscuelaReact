@@ -7,7 +7,8 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native'
-import { Chip, TextInput } from 'react-native-paper'
+import { TouchableRipple } from 'react-native-paper'
+import { Chip, IconButton } from 'react-native-paper'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { CustomDatePicker } from './DatePickerCustom'
 import { COLORS } from 'core/constants'
@@ -78,36 +79,52 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       style={styles.container}
     >
-        <PaperInput
-          value={searchText}
-          onChangeText={onSearchTextChange}
-          placeholder="Buscar..."
-          mode="flat"
-          style={styles.searchInput}
-          left={<PaperInput.Icon icon="magnify" color="#fff" />}
-          right={
-            (isFocused || searchText) ? ( // 👈 aparece si está enfocado o hay texto
-              <PaperInput.Icon icon="close" color="#fff" onPress={handleClear} />
-            ) : null
-          }
-          placeholderTextColor="#fff"
-          underlineColor="transparent"
-          activeUnderlineColor="transparent"
-          blurOnSubmit={false}
-          cursorColor="#6200ee"
-          selectionColor="#b39ddb"
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          theme={{
-            colors: {
-              primary: "#6200ee",
-              onSurfaceVariant: "#6200ee",
-              text: "#333",
-              placeholder: "#888",
-              background: "#ede7f6",
-            },
-          }}
+      <View style={styles.searchRow}>
+      <PaperInput
+        value={searchText}
+        onChangeText={onSearchTextChange}
+        placeholder="Buscar..."
+        mode="flat"
+        textColor={COLORS.white}
+        style={styles.searchInput}
+        left={<PaperInput.Icon icon="magnify" color="#fff" />}
+        right={
+          (isFocused || searchText) ? (
+            <PaperInput.Icon icon="close" color="#fff" onPress={handleClear} />
+          ) : null
+        }
+        placeholderTextColor="#fff"
+        underlineColor="transparent"
+        activeUnderlineColor="transparent"
+        blurOnSubmit={false}
+        cursorColor={COLORS.white}
+        selectionColor={COLORS.white}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        theme={{
+          colors: {
+            primary: "#6200ee",
+            onSurfaceVariant: "#6200ee",
+            text: "#333",
+            placeholder: "#888",
+            background: "#ede7f6",
+          },
+        }}
+      />
+      <TouchableRipple
+        borderless
+        onPress={onRefresh}
+        style={styles.fabButton}
+        rippleColor="rgba(53, 49, 49, 0.32)"
+      >
+        <IconButton
+          icon="refresh"
+          size={24}
+          iconColor={COLORS.white}
+          accessibilityLabel="Refrescar"
         />
+      </TouchableRipple>
+    </View>
       <View style={styles.row}>
         <ScrollView
           horizontal
@@ -148,27 +165,6 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           </Chip>
           )}
 
-          {enableRefresh && (
-           <Chip
-           icon={() => (
-             <MaterialCommunityIcons
-               name="refresh"
-               color={COLORS.darkLetter}   // 👈 ahora controlás el color
-               size={20}
-             />
-           )}
-           onPress={onRefresh}
-           style={styles.chip}
-           textStyle={{
-             color: COLORS.darkLetter,
-             fontFamily: 'OpenSans-Light',
-             fontSize: 16,
-           }}
-         >
-           Refresh
-         </Chip>
-          )}
-
           {enableSortOrder && (
             <Chip
             icon={() => (
@@ -193,7 +189,29 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             >
               {sortOrder === 'alf' ? 'A-Z' : 'Z-A'}
             </Chip>
+          )}  
+
+          {enableRefresh && (
+           <Chip
+           icon={() => (
+             <MaterialCommunityIcons
+               name="refresh"
+               color={COLORS.darkLetter}   // 👈 ahora controlás el color
+               size={20}
+             />
+           )}
+           onPress={onRefresh}
+           style={styles.chip}
+           textStyle={{
+             color: COLORS.darkLetter,
+             fontFamily: 'OpenSans-Light',
+             fontSize: 16,
+           }}
+         >
+           Refresh
+         </Chip>
           )}
+
         </ScrollView>
       </View>
     </KeyboardAvoidingView>
@@ -211,10 +229,10 @@ const styles = StyleSheet.create({
   searchInput: {
     backgroundColor:  COLORS.transparentGreenColor,
     borderRadius: 8,
-    marginHorizontal: 0,
     marginBottom: 8,
-    height: 40,
-    fontSize: 14,
+    height: 50,
+    flex: 1,
+    fontSize: 17,
   },
   row: {
     flexDirection: 'row',
@@ -235,4 +253,21 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.chipGreenColor,
     borderRadius: 8,
   },
+  fabButton: {
+    borderRadius: 8,           // círculo (medio del tamaño del botón)
+    width: 48,
+    height: 50,
+    backgroundColor:  COLORS.transparentGreenColor,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowOffset: { width: 0, height: 2 },
+    marginLeft: 8,
+  },
+  searchRow: {
+   
+    backgroundColor: 'transparent',
+    borderRadius: 12,
+    flexDirection: 'row',
+  },
+ 
 })

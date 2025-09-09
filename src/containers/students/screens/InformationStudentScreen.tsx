@@ -30,6 +30,7 @@ export default function InformationStudentScreen({ route }: Props) {
   const [loadingResumen, setLoadingResumen] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [expandedClases, setExpandedClases] = useState(false); // 👈 controla el colapsado
+  const [expandedPagos, setExpandedPagos] = useState(true); // 👈 nuevo estado
 
 
   if (!studentId) return <PaperText>Estudiante no definido</PaperText>;
@@ -144,43 +145,60 @@ export default function InformationStudentScreen({ route }: Props) {
             )}
           </View>
 
-          {/* Pagos realizados */}
-          <View style={{  marginTop: 16, flex: 1 }}>
-          <View style={styles.headerTitle}>
-              <Text style={{ fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter }}>Pagos realizados</Text>
-            </View>
-            {loading && incomes.length === 0 ? <ActivityIndicator size="large" /> : (
+         {/* Pagos realizados */}
+          <View style={{ marginTop: 16, flex: 1 }}>
+            <Pressable style={styles.headerTitle} onPress={() => setExpandedPagos(!expandedPagos)}>
+              <Text style={{ fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter }}>
+                Pagos realizados
+              </Text>
+              <Icon 
+                name={expandedPagos ? "keyboard-arrow-up" : "keyboard-arrow-down"} 
+                size={24} 
+                color={COLORS.darkLetter} 
+                style={{ marginRight: 12 }}
+              />
+            </Pressable>
+
+            {expandedPagos && (
               <View style={styles.resumenContainerPayments}>
-              <FlatList
-                data={incomes}
-                keyExtractor={(item, index) => (item.income_id ?? index).toString()}
-                renderItem={({ item, index }) => (
-                
-                  <ItemIncomeStudentView
-                    income_created={item.created ?? ''}
-                    description={item.detail ?? ''}
-                    payment_method={item.payment_method ?? ''}
-                    category={item.category ?? ''}
-                    student_id={item.student_id}
-                    class_course_id={item.class_course_id}
-                    sub_category={item.sub_category ?? ''}
-                    detail={item.detail ? item.detail.toString() : ''}
-                    amount={item.amount ?? 0}
-                    income_id={item.income_id ?? index}
-                    payment_place={item.payment_place ?? ''}
-                    fromPayments={true} 
-                    showDateHeader={index === 0 || (item.created?.split('T')[0] ?? '') !== (incomes[index - 1]?.created?.split('T')[0] ?? '')}
+                {loading && incomes.length === 0 ? (
+                  <ActivityIndicator size="large" />
+                ) : (
+                  <FlatList
+                    data={incomes}
+                    keyExtractor={(item, index) => (item.income_id ?? index).toString()}
+                    renderItem={({ item, index }) => (
+                      <ItemIncomeStudentView
+                        income_created={item.created ?? ''}
+                        description={item.detail ?? ''}
+                        payment_method={item.payment_method ?? ''}
+                        category={item.category ?? ''}
+                        student_id={item.student_id}
+                        class_course_id={item.class_course_id}
+                        sub_category={item.sub_category ?? ''}
+                        detail={item.detail ? item.detail.toString() : ''}
+                        amount={item.amount ?? 0}
+                        income_id={item.income_id ?? index}
+                        payment_place={item.payment_place ?? ''}
+                        fromPayments={true} 
+                        showDateHeader={
+                          index === 0 || 
+                          (item.created?.split('T')[0] ?? '') !== 
+                          (incomes[index - 1]?.created?.split('T')[0] ?? '')
+                        }
+                      />
+                    )}
+                    onEndReached={loadMore}
+                    onEndReachedThreshold={0.5}
+                    ListFooterComponent={loadingMore ? <ActivityIndicator size="small" /> : null}
+                    refreshing={loading}
+                    onRefresh={reload}
                   />
                 )}
-                onEndReached={loadMore}
-                onEndReachedThreshold={0.5}
-                ListFooterComponent={loadingMore ? <ActivityIndicator size="small" /> : null}
-                refreshing={loading}
-                onRefresh={reload}
-              />
               </View>
             )}
           </View>
+
         </View>
 
         {/* FAB */}
@@ -214,10 +232,16 @@ const styles = StyleSheet.create({
   headers: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12 },
 
   header: {
-    flexDirection: 'row', // avatar y texto al lado
-    alignItems: 'center', // centra verticalmente
+    backgroundColor: COLORS.transparentGreenColor,
+    flexDirection: 'row',
+    marginHorizontal: 6,
+    marginBottom: 4,
+    marginTop: 8,
     gap: 10, // espacio entre avatar y textos
     padding: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 12,
+    borderRadius: 8,
   },
   textContainer: {
     flexDirection: 'column', // nombre arriba, categoría abajo
