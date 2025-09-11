@@ -20,6 +20,7 @@ import { AttendanceSheetScreen } from '../../../src/core/screens/AttendanceSheet
 import { AppTabs } from './AppTabs';
 import { StatusBar } from 'expo-status-bar';
 import { COLORS } from 'core/constants';
+import { ResumenTabs } from 'containers/dailySummary/components/ResumenTabs';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const AuthStackNav = createNativeStackNavigator<AuthStackParamList>();
@@ -141,11 +142,16 @@ export function NavigationApp() {
                 options={{ title: 'Daily Summary' }}
               />
 
-<RootStack.Screen
-                name="DailySummaryScreen2"
-                component={DailySummaryScreen2}
-                options={{ title: 'Daily Summary2' }}
-              />
+          
+              <RootStack.Screen
+              name="ResumenTabs"
+              component={ResumenTabs}
+              options={{
+                title: 'Resumen',
+                headerBackTitle: 'Volver',
+                headerRight: () => <MenuHeader iconColor="#fff" />,
+              }}
+            />
             <RootStack.Screen
                 name="AttendanceSheetScreen"
                 component={AttendanceSheetScreen}

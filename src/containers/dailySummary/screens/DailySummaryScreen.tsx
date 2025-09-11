@@ -1,13 +1,40 @@
-// src/containers/dailySummary/DailySummaryScreen.tsx
+// src/containers/dailySummary/DailySummaryScreen2.tsx
 import React, { useState, useCallback } from 'react';
-import { View, Text, FlatList, RefreshControl, ActivityIndicator, ListRenderItem, StyleSheet } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+  ListRenderItem,
+  TouchableOpacity,
+  ScrollView,
+  ImageBackground
+} from 'react-native';
 import api from '../../../core/services/axiosClient';
 import { DateHeader } from '../../../core/components/DateHeader';
+import { MonthHeader } from '../../../core/components/MonthHeader';
 import { usePaginatedFetch } from '../../../core/hooks/usePaginatedFetch';
+import { Chip } from 'react-native-paper';
 import { COLORS } from 'core/constants';
+import { IncomesFilterBar } from "../../../containers/incomes/components/IncomesFilterBar";
+import { PaymentMethodFilter } from "../../../containers/incomes/components/PaymentMethodFilter";
+import { PeriodFilter } from "../../../containers/incomes/components/PeriodFilter";
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
+
+// ----------------------
+// Filtros de periodo
+// ----------------------
+type PeriodFilterOption = "Dia" | "Mes";
+type FilterOption = "Todos" | "Playa" | "Negocio";
+type PaymentMethodOption = "Todos" | "Efectivo" | "MP" | "Transferencia";
+
+
+// ----------------------
+// Tipos de reportes
+// ----------------------
 type ReportResumPlanilla = {
   cant_presentes: number;
   nombre_planilla: string;
@@ -17,173 +44,378 @@ export type ReportResumAsist = {
   tot_incomes: number;
   tot_incomes_ef: number;
   tot_incomes_transf: number;
+  tot_incomes_ef_esc: number;
+  tot_incomes_transf_esc: number;
+  tot_incomes_ef_col: number;
+  tot_incomes_transf_col: number;
+
   tot_incomes_playa: number;
+  tot_incomes_ef_playa: number;
+  tot_incomes_transf_playa: number;
+  tot_incomes_ef_esc_playa: number;
+  tot_incomes_transf_esc_playa: number;
+  tot_incomes_ef_col_playa: number;
+  tot_incomes_transf_col_playa: number;
+
   tot_incomes_negocio: number;
-  tot_incomes_escuela: number;
-  tot_incomes_highschool: number;
-  tot_incomes_colonia: number;
+  tot_incomes_ef_negocio: number;
+  tot_incomes_transf_negocio: number;
+  tot_incomes_ef_esc_negocio: number;
+  tot_incomes_transf_esc_negocio: number;
+  tot_incomes_ef_col_negocio: number;
+  tot_incomes_transf_col_negocio: number;
+
   tot_presents: number;
   day: string;
   planillas: ReportResumPlanilla[];
 };
 
-const Tab = createBottomTabNavigator();
-
 // ----------------------
 // API
 // ----------------------
-async function fetchResumenes(page: number, period: 'Dia' | 'Mes'): Promise<ReportResumAsist[]> {
+async function fetchResumenes(page: number, period: PeriodFilterOption): Promise<ReportResumAsist[]> {
   const response = await api.get('/planillas_presentes.php', {
-    params: { method: 'getDayResumPresents', page, period },
+    params: { 
+      method: 'getDayResumPresents',
+      page,
+      period,
+    },
   });
+
   const dataArray = response.data.data;
   if (Array.isArray(dataArray)) return dataArray;
   return [];
 }
 
 // ----------------------
-// Tab Content
+// Componente principal
 // ----------------------
-type DailySummaryTabContentProps = {
-  resumenes: ReportResumAsist[];
-  activeTab: 'Pagos' | 'Presentes';
-  refreshing: boolean;
-  reload: () => void;
-  loadMore: () => void;
-};
+export const DailySummaryScreen: React.FC = () => {
 
-const DailySummaryTabContent: React.FC<DailySummaryTabContentProps> = ({
-  resumenes,
-  activeTab,
-  refreshing,
-  reload,
-  loadMore,
-}) => {
-  const [expandedDay, setExpandedDay] = useState<string | null>(null);
+  const [expandedPlaya, setExpandedPlaya] = useState<string | null>(null);
+  const [expandedNego, setExpandedNego] = useState<string | null>(null);
+  const [expandedTotal, setExpandedTotal] = useState<string | null>(null);
 
-  const renderItem: ListRenderItem<ReportResumAsist> = ({ item }) => {
-    const totalEscuela = item.tot_incomes_escuela;
-    const totalHigh = item.tot_incomes_highschool;
-    const totalColonia = item.tot_incomes_colonia;
-    const totalColoniaGroup = totalHigh + totalColonia;
-    const isExpanded = expandedDay === item.day;
+  const [filter, setFilter] = useState<FilterOption>('Todos');
+  const [periodFilter, setPeriodFilter] = useState<PeriodFilterOption>("Dia");
+  const [paymentPlace, setPaymentPlace] = useState<FilterOption>("Playa");
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState<PaymentMethodOption>("Todos");
 
-    return (
-      <View>
-        <DateHeader date={item.day.includes('T') ? item.day : item.day + 'T00:00:00'} />
+  const fetchResumenesWithPeriod = useCallback(
+    (page: number) => fetchResumenes(page, periodFilter),
+    [periodFilter]
+  );
 
-        <View style={styles.card}>
-          {activeTab === 'Pagos' && (
-            <View style={styles.totalBox}>
-              <Text style={styles.totalLabel}>Total ingresos</Text>
-              <Text style={styles.totalValue}>${item.tot_incomes}</Text>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Efectivo</Text>
-                <Text style={styles.detailValue}>${item.tot_incomes_ef}</Text>
-              </View>
-              <View style={styles.detailRow}>
-                <Text style={styles.detailLabel}>Tarjeta</Text>
-                <Text style={styles.detailValue}>${item.tot_incomes_transf}</Text>
-              </View>
-            </View>
-          )}
+  const {
+    data: resumenes,
+    loading,
+    loadingMore,
+    refreshing,
+    error,
+    reload,
+    loadMore,
+  } = usePaginatedFetch<ReportResumAsist>(fetchResumenesWithPeriod, []);
 
-          {activeTab === 'Presentes' && (
-            <>
-              <View style={styles.totalBox}>
-                <Text style={styles.totalLabel}>Presentes</Text>
-                <Text style={styles.totalValue}>{item.tot_presents}</Text>
-              </View>
-
-              <View style={styles.columnsContainer}>
-                {item.planillas?.map((p) => (
-                  <View key={p.nombre_planilla} style={styles.columnItem}>
-                    <View style={styles.rowItem}>
-                      <Text style={styles.planillaText}>{p.nombre_planilla}</Text>
-                      <Text style={styles.planillaText}>{p.cant_presentes}</Text>
-                    </View>
-                  </View>
-                ))}
-              </View>
-            </>
-          )}
-        </View>
-      </View>
-    );
+  const handlePeriodChange = (newPeriod: PeriodFilterOption) => {
+    setPeriodFilter(newPeriod);
+    //reload();
   };
 
-  if (!resumenes.length) return <Text style={{ textAlign: 'center', marginTop: 20 }}>No hay datos disponibles</Text>;
+  // ----------------------
+  // Render Item
+  // ----------------------
+ 
+
+  const renderItem: ListRenderItem<ReportResumAsist> = ({ item }) => {
+   return (
+     <View>
+       {periodFilter === "Mes" ? (
+          <MonthHeader date={item.day.includes("T") ? item.day : item.day + "T00:00:00"} />
+        ) : (
+          <DateHeader date={item.day.includes("T") ? item.day : item.day + "T00:00:00"} />
+        )}
+       {/* Caja Playa */}
+       <TouchableOpacity onPress={() =>  setExpandedPlaya(expandedPlaya === item.day ? null : item.day)}>
+         <View style={[styles.totalBox, { backgroundColor: COLORS.cardEscuela }]}>
+           <Text style={styles.totalLabel}>Total caja Playa</Text>
+           <Text style={styles.totalValue}>${item.tot_incomes_playa.toLocaleString('es-AR') ?? 0}</Text>
+           
+         </View>
+       </TouchableOpacity>
+ 
+       {expandedPlaya === item.day && (
+         <View style={styles.detailAttached}>
+           {/* Escuela */}
+           <View style={styles.subCategoryBox}>
+             <View style={styles.subCategoryHeader}>
+               <Text style={styles.subCategoryTitle}>Escuela</Text>
+               <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_esc_playa+item.tot_incomes_transf_esc_playa).toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+ 
+             <View style={styles.row}>
+               <View style={styles.rowWithIcon}>
+                 <MaterialCommunityIcons
+                   name="cash"
+                   size={16}
+                   color="#555"
+                   style={{ marginRight: 6 }}
+                 />
+                 <Text style={styles.subDetailLabel}>Efectivo</Text>
+               </View>
+               <Text style={styles.subDetailValue}>${item.tot_incomes_ef_esc_playa.toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+ 
+             <View style={styles.row}>
+               <View style={styles.rowWithIcon}>
+                 <MaterialCommunityIcons
+                   name="credit-card-outline"
+                   size={16}
+                   color="#555"
+                   style={{ marginRight: 6 }}
+                 />
+                 <Text style={styles.subDetailLabel}>Tarjeta</Text>
+               </View>
+               <Text style={styles.subDetailValue}>${item.tot_incomes_transf_esc_playa.toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+           </View>
+ 
+           {/* Colonia */}
+           <View style={styles.subCategoryBox}>
+             <View style={styles.subCategoryHeader}>
+               <Text style={styles.subCategoryTitle}>Colonia</Text>
+               <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_col_playa+item.tot_incomes_transf_col_playa).toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+ 
+             <View style={styles.row}>
+               <View style={styles.rowWithIcon}>
+                 <MaterialCommunityIcons
+                   name="cash"
+                   size={16}
+                   color="#555"
+                   style={{ marginRight: 6 }}
+                 />
+                 <Text style={styles.subDetailLabel}>Efectivo</Text>
+               </View>
+               <Text style={styles.subDetailValue}>${item.tot_incomes_ef_col_playa.toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+ 
+             <View style={styles.row}>
+               <View style={styles.rowWithIcon}>
+                 <MaterialCommunityIcons
+                   name="credit-card-outline"
+                   size={16}
+                   color="#555"
+                   style={{ marginRight: 6 }}
+                 />
+                 <Text style={styles.subDetailLabel}>Tarjeta</Text>
+               </View>
+               <Text style={styles.subDetailValue}>${item.tot_incomes_transf_col_playa.toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+           </View>
+         </View>
+       )}
+       {/* Caja Negocio */}
+       <TouchableOpacity onPress={() => setExpandedNego(expandedNego === item.day ? null : item.day)}>
+         <View style={[styles.totalBox, { backgroundColor: COLORS.cardColonia }]}>
+           <Text style={styles.totalLabel}>Total caja Nego</Text>
+           <Text style={styles.totalValue}>${item.tot_incomes_negocio ?? 0}</Text>
+         </View>
+       </TouchableOpacity>
+ 
+       {expandedNego === item.day && (
+         <View style={styles.detailAttached}>
+           {/* Escuela */}
+           <View style={styles.subCategoryBox}>
+             <View style={styles.subCategoryHeader}>
+               <Text style={styles.subCategoryTitle}>Escuela</Text>
+               <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_esc_negocio+item.tot_incomes_transf_esc_negocio).toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+ 
+             <View style={styles.row}>
+               <View style={styles.rowWithIcon}>
+                 <MaterialCommunityIcons
+                   name="cash"
+                   size={16}
+                   color="#555"
+                   style={{ marginRight: 6 }}
+                 />
+                 <Text style={styles.subDetailLabel}>Efectivo</Text>
+               </View>
+               <Text style={styles.subDetailValue}>${item.tot_incomes_ef_esc_negocio.toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+ 
+             <View style={styles.row}>
+               <View style={styles.rowWithIcon}>
+                 <MaterialCommunityIcons
+                   name="credit-card-outline"
+                   size={16}
+                   color="#555"
+                   style={{ marginRight: 6 }}
+                 />
+                 <Text style={styles.subDetailLabel}>Tarjeta</Text>
+               </View>
+               <Text style={styles.subDetailValue}>${item.tot_incomes_transf_esc_negocio.toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+           </View>
+ 
+           {/* Colonia */}
+           <View style={styles.subCategoryBox}>
+             <View style={styles.subCategoryHeader}>
+               <Text style={styles.subCategoryTitle}>Colonia</Text>
+               <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_col_negocio+item.tot_incomes_transf_col_negocio).toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+ 
+             <View style={styles.row}>
+               <View style={styles.rowWithIcon}>
+                 <MaterialCommunityIcons
+                   name="cash"
+                   size={16}
+                   color="#555"
+                   style={{ marginRight: 6 }}
+                 />
+                 <Text style={styles.subDetailLabel}>Efectivo</Text>
+               </View>
+               <Text style={styles.subDetailValue}>${item.tot_incomes_ef_col_negocio.toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+ 
+             <View style={styles.row}>
+               <View style={styles.rowWithIcon}>
+                 <MaterialCommunityIcons
+                   name="credit-card-outline"
+                   size={16}
+                   color="#555"
+                   style={{ marginRight: 6 }}
+                 />
+                 <Text style={styles.subDetailLabel}>Tarjeta</Text>
+               </View>
+               <Text style={styles.subDetailValue}>${item.tot_incomes_transf_col_negocio.toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+           </View>
+         </View>
+       )}
+       {/* Total Diario */}
+       <TouchableOpacity onPress={() =>   setExpandedTotal(expandedTotal === item.day ? null : item.day)}>
+         <View style={[styles.totalBox, { backgroundColor: COLORS.cardTot }]}>
+           <Text style={styles.totalLabel}>Total diario</Text>
+           <Text style={styles.totalValue}> ${item.tot_incomes.toLocaleString('es-AR') ?? 0}</Text>
+         </View>
+       </TouchableOpacity>
+ 
+       {expandedTotal === item.day && (
+         <View style={styles.detailAttached}>
+           {/* Escuela */}
+           <View style={styles.subCategoryBox}>
+             <View style={styles.subCategoryHeader}>
+               <Text style={styles.subCategoryTitle}>Escuela</Text>
+               <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_esc+item.tot_incomes_transf_esc).toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+ 
+             <View style={styles.row}>
+               <View style={styles.rowWithIcon}>
+                 <MaterialCommunityIcons
+                   name="cash"
+                   size={16}
+                   color="#555"
+                   style={{ marginRight: 6 }}
+                 />
+                 <Text style={styles.subDetailLabel}>Efectivo</Text>
+               </View>
+               <Text style={styles.subDetailValue}>${item.tot_incomes_ef_esc.toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+ 
+             <View style={styles.row}>
+               <View style={styles.rowWithIcon}>
+                 <MaterialCommunityIcons
+                   name="credit-card-outline"
+                   size={16}
+                   color="#555"
+                   style={{ marginRight: 6 }}
+                 />
+                 <Text style={styles.subDetailLabel}>Tarjeta</Text>
+               </View>
+               <Text style={styles.subDetailValue}>${item.tot_incomes_transf_esc.toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+           </View>
+ 
+           {/* Colonia */}
+           <View style={styles.subCategoryBox}>
+             <View style={styles.subCategoryHeader}>
+               <Text style={styles.subCategoryTitle}>Colonia</Text>
+               <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_col+item.tot_incomes_transf_col).toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+ 
+             <View style={styles.row}>
+               <View style={styles.rowWithIcon}>
+                 <MaterialCommunityIcons
+                   name="cash"
+                   size={16}
+                   color="#555"
+                   style={{ marginRight: 6 }}
+                 />
+                 <Text style={styles.subDetailLabel}>Efectivo</Text>
+               </View>
+               <Text style={styles.subDetailValue}>${item.tot_incomes_ef_col.toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+ 
+             <View style={styles.row}>
+               <View style={styles.rowWithIcon}>
+                 <MaterialCommunityIcons
+                   name="credit-card-outline"
+                   size={16}
+                   color="#555"
+                   style={{ marginRight: 6 }}
+                 />
+                 <Text style={styles.subDetailLabel}>Tarjeta</Text>
+               </View>
+               <Text style={styles.subDetailValue}>${item.tot_incomes_transf_col.toLocaleString('es-AR') ?? 0}</Text>
+             </View>
+           </View>
+         </View>
+       )}
+     </View>
+   );
+ };
+ 
+
+  if (loading && resumenes.length === 0) {
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+  }
+
+  if (error) {
+    return <Text style={{ color: 'red', textAlign: 'center', marginTop: 20 }}>{error}</Text>;
+  }
 
   return (
-    <FlatList
-      data={resumenes}
-      keyExtractor={(item) => item.day}
-      renderItem={renderItem}
-      onEndReached={loadMore}
-      onEndReachedThreshold={0.5}
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reload} colors={['#6200ee']} />}
-    />
-  );
-};
-
-// ----------------------
-// Componente principal con Bottom Tabs
-// ----------------------
-type Props = {
-  periodFilter: 'Dia' | 'Mes';
-};
-
-export const DailySummaryScreen: React.FC<Props> = ({ periodFilter }) => {
-  const fetchResumenesWithPeriod = useCallback((page: number) => fetchResumenes(page, periodFilter), [periodFilter]);
-
-  const { data: resumenes, loading, refreshing, reload, loadMore } = usePaginatedFetch<ReportResumAsist>(
-    fetchResumenesWithPeriod,
-    []
-  );
-
-  if (loading && resumenes.length === 0) return <ActivityIndicator size="large" style={{ flex: 1 }} />;
-
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        headerShown: false,
-        tabBarActiveTintColor: 'rgb(255, 255, 255)',
-        tabBarInactiveTintColor: COLORS.lightGreenColor,
-        tabBarStyle: {
-          backgroundColor: COLORS.darkGreenColor,
-          height: 70,
-        },
-        tabBarIcon: ({ color, size }) => {
-          const iconName = route.name === 'Pagos' ? 'cash' : 'account-check';
-          return <MaterialCommunityIcons name={iconName} color={color} size={26} />;
-        },
-        tabBarLabelStyle: { fontSize: 12, fontFamily: 'OpenSans-Regular', marginBottom: 4 },
-      })}
+    <ImageBackground
+      source={require("../../../../assets/fondo.png")} // <-- tu fondo
+      style={{ flex: 1 }}
+      resizeMode="cover"
     >
-      <Tab.Screen name="Pagos">
-        {() => (
-          <DailySummaryTabContent
-            resumenes={resumenes}
-            activeTab="Pagos"
-            refreshing={refreshing}
-            reload={reload}
-            loadMore={loadMore}
-          />
-        )}
-      </Tab.Screen>
+      <View style={styles.container}>
+        <View style={styles.filterWrapper}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterContainer}>
+            <PeriodFilter filter={periodFilter} onChangeFilter={handlePeriodChange} />
+            <IncomesFilterBar filter={paymentPlace} onChangeFilter={setPaymentPlace} />
+            <PaymentMethodFilter filter={paymentMethodFilter} onChangeFilter={setPaymentMethodFilter} />
+          </ScrollView>
+        </View>
 
-      <Tab.Screen name="Presentes">
-        {() => (
-          <DailySummaryTabContent
-            resumenes={resumenes}
-            activeTab="Presentes"
-            refreshing={refreshing}
-            reload={reload}
-            loadMore={loadMore}
+        {resumenes.length === 0 ? (
+          <Text style={styles.loadingText}>No hay datos disponibles</Text>
+        ) : (
+          <FlatList<ReportResumAsist>
+            data={resumenes}
+            keyExtractor={(item) => item.day}
+            renderItem={renderItem}
+            onEndReached={loadMore}
+            onEndReachedThreshold={0.5}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reload} colors={['#6200ee']} tintColor="#6200ee" />}
+            ListFooterComponent={loadingMore ? <ActivityIndicator size="small" /> : null}
+            contentContainerStyle={styles.flatListContent}
           />
         )}
-      </Tab.Screen>
-    </Tab.Navigator>
+      </View>
+    </ImageBackground>
   );
 };
 
@@ -191,27 +423,118 @@ export const DailySummaryScreen: React.FC<Props> = ({ periodFilter }) => {
 // Estilos
 // ----------------------
 const styles = StyleSheet.create({
-  card: {
-    flex: 1,
-    backgroundColor: 'rgba(255,255,255,0.8)',
+  container: { flex: 1, backgroundColor: 'rgba(232, 237, 189, 0.5)' },
+  flatListContent: { paddingVertical: 8, paddingHorizontal: 16 },
+  filterWrapper: {
+    backgroundColor: 'rgba(255,255,255,0.6)',
+    paddingVertical: 8,
+    marginBottom: 8,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  chip: { marginRight: 8, borderRadius: 8, height: 35 },
+  totalBox: {
+    backgroundColor: 'rgba(255,255,255,0.9)',
     borderRadius: 15,
     padding: 16,
-    marginBottom: 5,
-  },
-  totalBox: {
-    backgroundColor: 'rgba(0,0,0,0.05)',
-    borderRadius: 10,
-    padding: 10,
-    marginVertical: 5,
+    marginBottom: 8,
     alignItems: 'center',
   },
-  totalLabel: { fontSize: 16, fontWeight: '600', color: '#333' },
-  totalValue: { fontSize: 22, fontWeight: 'bold', color: '#000' },
-  detailRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6 },
-  detailLabel: { fontSize: 15, color: '#333', fontFamily: 'OpenSans-Light' },
-  detailValue: { fontSize: 15, fontWeight: '600', color: '#000', fontFamily: 'OpenSans-Light' },
-  columnsContainer: { flexDirection: 'row', marginTop: 10, flexWrap: 'wrap' },
-  columnItem: { width: '50%', paddingRight: 10 },
-  rowItem: { flexDirection: 'row', justifyContent: 'space-between', marginVertical: 4 },
-  planillaText: { color: '#000', fontFamily: 'OpenSans-Light', fontSize: 15 },
+  totalLabel: { fontSize: 19, fontFamily:'OpenSans-Regular', color: COLORS.darkLetter },
+  totalValue: { fontSize: 20, fontFamily:'OpenSans-Regular', color: COLORS.darkLetter, marginTop: 8  },
+  detailBox: {
+    backgroundColor: 'rgba(255,255,255,0.7)',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 12,
+  },
+  detailLabel: { fontSize: 15, color: '#333', marginBottom: 4 },
+  loadingText: { textAlign: 'center', marginTop: 20, fontSize: 16 },
+
+ 
+
+categoryBox: {
+  backgroundColor: '#f4f4f4',
+  borderRadius: 10,
+  padding: 10,
+},
+
+categoryHeader: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginBottom: 6,
+},
+
+categoryTitle: {
+  fontSize: 16,
+  fontWeight: '600',
+  color: '#333',
+},
+
+categoryTotal: {
+  fontSize: 16,
+  fontWeight: '600',
+  color: '#333',
+},
+
+row: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  paddingVertical: 2,
+
+},
+
+subDetailLabel: {
+ fontSize: 14,
+ fontFamily: 'OpenSans-Light',
+ color: COLORS.darkLetter3,
+},
+detailAttached: {
+ backgroundColor: 'rgba(255,255,255,0.5)', // fondo claro
+ paddingVertical: 8,
+ paddingHorizontal: 22,
+ 
+ borderBottomLeftRadius: 15, // solo bordes inferiores
+ borderBottomRightRadius: 15,
+ marginBottom: 8, // separa de la siguiente tarjeta
+},
+rowWithIcon: {
+ flexDirection: 'row',
+ alignItems: 'center',
+},
+
+subDetailValue: {
+  fontSize: 14,
+  fontFamily: 'OpenSans-Light',
+  color: COLORS.darkLetter3,
+},
+subDetailContainer: {
+  backgroundColor: 'rgba(255,255,255,0.5)', // fondo claro, semitransparente
+  paddingVertical: 8,
+  paddingHorizontal: 12,
+  borderBottomLeftRadius: 15,
+  borderBottomRightRadius: 15,
+  marginBottom: 8,
+  // sin marginTop, así queda pegado al totalBox
+},
+subCategoryBox: {
+  borderRadius: 10,
+  padding: 8,
+  marginBottom: 6,
+},
+subCategoryHeader: {
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  marginBottom: 4,
+},
+subCategoryTitle: { fontSize: 17, fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter },
+subCategoryTotal: { fontSize: 17, fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter},
+
+
+
+ 
 });

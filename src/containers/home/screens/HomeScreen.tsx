@@ -101,11 +101,7 @@ export const HomeScreen = () => {
        
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('ListaDeAlumnos', {
-              category: 'Todas',
-              subcategoria: 'Todas',
-              modo: 'cargarPago',
-            })
+            navigation.navigate('ResumenTabs')
           }
           style={styles.button}
         >

@@ -21,7 +21,7 @@ export const ItemStudentAddPaymentView: React.FC<Props> = ({
   return (
     <View style={styles.itemContainer}>
       <View style={styles.topRow}>
-        <InitialAvatar letra={student.nombre.charAt(0)} category={student.category} />
+        <InitialAvatar letra={student.nombre.charAt(0)} category={student.sub_category} />
 
         {/* Nombre y DNI */}
         <View style={styles.leftColumn}>

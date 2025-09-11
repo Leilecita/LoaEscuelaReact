@@ -19,7 +19,9 @@ export type RootStackParamList = {
 
     DailySummaryScreen: undefined;
     DailySummaryScreen2: undefined;
-    AttendanceSheetScreen: undefined
+    AttendanceSheetScreen: undefined;
+
+    ResumenTabs: undefined;
 
   };
   

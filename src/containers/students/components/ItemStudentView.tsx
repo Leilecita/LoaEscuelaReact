@@ -27,7 +27,7 @@ export const ItemStudentView: React.FC<Props> = ({
   return (
     <View style={styles.itemContainer}>
        <Pressable style={styles.topRow} onPress={onToggleExpand}>
-        <InitialAvatar letra={student.nombre.charAt(0)} category={student.category}  />
+        <InitialAvatar letra={student.nombre.charAt(0)} category={student.sub_category}  />
         <View style={styles.leftColumn}>
           <Text style={styles.name} >
             {student.nombre} {student.apellido}

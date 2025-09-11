@@ -56,4 +56,15 @@ export const COLORS = {
     escuela: '#90CAF9',
     colonia: '#D4E157',
     high: '#81C784',
+
+    cardColonia : '#caeb85',
+    cardEscuela: '#c3e56b',
+    cardTot: '#b6d0c7',
+
+
+    mini: '#c6db26',
+    kids: '#88ae3f',
+    highschool: '#67813b',
+    intermedios: '#b6d0c7',
+    adultos:'#8ea69b', 
 }

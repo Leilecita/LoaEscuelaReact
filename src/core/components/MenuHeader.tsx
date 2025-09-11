@@ -20,12 +20,9 @@ export const MenuHeader: React.FC<MenuHeaderProps> = ({ iconColor = '#fff' }) =>
 
   const goToDailySummary = () => {
     closeMenu()
-    navigation.navigate('DailySummaryScreen') // <- nombre de la pantalla nueva
+    navigation.navigate('ResumenTabs') // <- nombre de la pantalla nueva
   }
-  const goToDailySummary2 = () => {
-    closeMenu()
-    navigation.navigate('DailySummaryScreen2') // <- nombre de la pantalla nueva
-  }
+  
   const goToAttendanceSheet = () => {
     closeMenu()
     navigation.navigate('AttendanceSheetScreen') // <- nombre de la pantalla nueva
@@ -46,7 +43,6 @@ export const MenuHeader: React.FC<MenuHeaderProps> = ({ iconColor = '#fff' }) =>
       <Menu.Item onPress={signOut} title="Cerrar sesión" />
       <Menu.Item onPress={goToAttendanceSheet} title="Planillas" />
       <Menu.Item onPress={goToDailySummary} title="Daily Summary" /> 
-       <Menu.Item onPress={goToDailySummary2} title="Daily Summary2" />
     </Menu>
   )
 }

@@ -37,7 +37,7 @@ export const ItemStudentAssistView: React.FC<Props> = ({
     return (
     <View style={styles.itemContainer_check}>
       <Pressable style={styles.row} onPress={onToggleExpand}>
-       <InitialAvatar letra={student.nombre.charAt(0)} category={student.category}  />
+       <InitialAvatar letra={student.nombre.charAt(0)} category={student.sub_category}  />
 
         <View style={styles.infoContainer}>
           <Text style={styles.name} onPress={onToggleExpand}>
