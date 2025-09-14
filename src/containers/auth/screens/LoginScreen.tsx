@@ -40,10 +40,14 @@ export const LoginScreen = () => {
 
       console.log('Respuesta del backend:', response.data);
 
-      if (response.data.result === 'success' && response.data.data?.token) {
+      if ( response.data.result === 'success' &&
+        response.data.data?.token &&
+        response.data.data?.level
+       ) {
         console.log('Token recibido del backend:', response.data.data.token);
         // Guardar token y actualizar estado global para "loguear"
-        signIn(response.data.data.token);
+
+        signIn(response.data.data.token, response.data.data.level);
       } else {
         console.log('Login fallido:', response.data);
         setErrorMsg('Usuario o contraseña incorrectos');

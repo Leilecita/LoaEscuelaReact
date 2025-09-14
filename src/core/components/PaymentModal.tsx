@@ -16,6 +16,8 @@ import { TextInput } from 'react-native-paper';
 import { COLORS } from 'core/constants';
 import api from '../services/axiosClient';
 
+import { parseCurrency, currencyToDisplay } from 'helpers/numberHelper';
+
 type PaymentModalProps = {
   visible: boolean;
   onClose: () => void;
@@ -41,16 +43,16 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   console.log('📌 PaymentModal props:', { studentId, firstName, lastName, category, sub_category });
   const [fecha, setFecha] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
-  const [monto, setMonto] = useState('');
   const [clases, setClases] = useState('');
-  const [total, setTotal] = useState('');
   const [lugar, setLugar] = useState('escuela');
   const [metodo, setMetodo] = useState('efectivo');
   const [detalle, setDetalle] = useState('');
   const [showMetodoOptions, setShowMetodoOptions] = useState(false);
   const [showLugarOptions, setShowLugarOptions] = useState(false);
   const [tipoCurso, setTipoCurso] = useState<'nuevo' | 'cta'>('cta');
- 
+
+  const [total, setTotal] = useState<number>(0);
+  const [monto, setMonto] = useState<number>(0);
 
   const violetPlaceholder = '#bcb0e4'
   const violetButton = COLORS.button
@@ -60,19 +62,31 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
   const { width } = Dimensions.get('window');
 
+  const valoresPorClases: { [key: number]: number } = {
+    1: 20000,
+    2: 40000,
+    3: 58000,
+    4: 78000,
+    5: 88000,
+    6: 99000,
+    7: 100000,
+    8: 125000,
+    9: 30000,
+    10: 780000,
+    // agregá más según tu necesidad
+  };
+
   const handleDateChange = (event: any, selectedDate?: Date) => {
     setShowDatePicker(Platform.OS === 'ios');
     if (selectedDate) setFecha(selectedDate);
   };
 
-
-
   const handleSubmit = async () => {
 
     const esNuevoCurso = tipoCurso === 'nuevo';
     const cantidadClases = esNuevoCurso ? parseInt(clases) || 0 : 0;
-    const montoTotalCurso = esNuevoCurso ? parseFloat(total) || 0 : 0;
-    const paidAmount = parseFloat(monto) || 0;
+    const montoTotalCurso = esNuevoCurso ? total : 0; 
+    const paidAmount = monto; 
 
     if (esNuevoCurso && (!clases || !total || !monto)) {
       alert('Complete todos los campos obligatorios del curso y pago.');
@@ -109,9 +123,9 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
       onSuccess?.();
 
       // reset campos
-      setMonto('');
+      setMonto(0);
       setClases('');
-      setTotal('');
+      setTotal(0);
       setLugar('escuela');
       setDetalle('');
       setMetodo('efectivo');
@@ -254,11 +268,19 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
             {tipoCurso === 'nuevo' && (
               <View style={styles.row}>
-                <TextInput
-                  label={clases ? "Cantidad de clases" : undefined} // solo aparece si hay valor
+               <TextInput
+                  label={clases ? "Cantidad de clases" : undefined}
                   value={clases}
-                  onChangeText={setClases}
-                  textColor= {COLORS.darkLetter3}
+                  onChangeText={(text) => {
+                    setClases(text);
+                    const num = parseInt(text);
+                    if (valoresPorClases[num]) {
+                      setTotal(valoresPorClases[num]);
+                    } else {
+                      setTotal(0); // o dejar el valor anterior
+                    }
+                  }}
+                  textColor={COLORS.darkLetter3}
                   mode="outlined"
                   keyboardType="numeric"
                   outlineColor={COLORS.veryLightGreenColor}
@@ -268,12 +290,13 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   placeholderTextColor={COLORS.placeholderColor}
                 />
 
+
                 <TextInput
-                  label={total ? "Valor total del curso" : undefined} // solo aparece si hay valor
-                  value={total}
-                  onChangeText={setTotal}
+                  label={total ? "Valor total del curso" : undefined}
+                  value={currencyToDisplay(total)} // 👈 lo mostramos formateado
+                  onChangeText={(text) => setTotal(parseCurrency(text))} // 👈 lo guardamos como número
                   mode="outlined"
-                  textColor= {COLORS.darkLetter}
+                  textColor={COLORS.darkLetter}
                   keyboardType="numeric"
                   outlineColor={COLORS.veryLightGreenColor}
                   activeOutlineColor={COLORS.lightGreenColor}
@@ -281,25 +304,25 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   placeholder="Valor total del curso"
                   placeholderTextColor={COLORS.placeholderColor}
                 />
-
               </View>
             )}
 
             {/* Monto y Método */}
             <View style={styles.row}>
-            <TextInput
-              label={monto ? "Monto a abonar" : undefined} // solo aparece si hay valor
-              value={monto}
-              onChangeText={setMonto}
-              textColor= {COLORS.darkLetter3}
-              mode="outlined"
-              keyboardType="numeric"
-              outlineColor={COLORS.veryLightGreenColor}
-              activeOutlineColor={COLORS.lightGreenColor}
-              style={styles.input}
-              placeholder="Monto a abonar"
-              placeholderTextColor={COLORS.placeholderColor}
-            />
+              <TextInput
+                label={monto ? "Monto a abonar" : undefined}
+                value={currencyToDisplay(monto)}                 // 👈 mostrar formateado
+                onChangeText={(text) => setMonto(parseCurrency(text))} // 👈 guardar limpio
+                textColor={COLORS.darkLetter3}
+                mode="outlined"
+                keyboardType="numeric"
+                outlineColor={COLORS.veryLightGreenColor}
+                activeOutlineColor={COLORS.lightGreenColor}
+                style={styles.input}
+                placeholder="Monto a abonar"
+                placeholderTextColor={COLORS.placeholderColor}
+              />
+
 
 
       

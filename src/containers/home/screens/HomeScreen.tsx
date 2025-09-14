@@ -1,11 +1,12 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
+import React, { useState, useCallback, useContext } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground, Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { RootStackParamList } from '../../../../src/types';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import api from '../../../core/services/axiosClient';
 import { DateHeader } from '../../../core/components/DateHeader';
 import { COLORS } from '@core';
+import { AuthContext } from '../../../contexts/AuthContext';
 
 type RootStackNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -27,6 +28,8 @@ type ReportResumAsist = {
 export const HomeScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const [resumen, setResumen] = useState<ReportResumAsist | null>(null);
+  const { userRole } = useContext(AuthContext);
+  const isAdmin = userRole === 'admin';
 
   const fetchResumen = async () => {
     try {
@@ -100,9 +103,13 @@ export const HomeScreen = () => {
       <View style={styles.row}>
        
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('ResumenTabs')
-          }
+            onPress={() => {
+              if (!isAdmin) {
+                Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
+                return;
+              }
+              navigation.navigate('ResumenTabs');
+            }}
           style={styles.button}
         >
           <Image source={require('../../../../assets/resumen_diario.png')} style={styles.icon} />

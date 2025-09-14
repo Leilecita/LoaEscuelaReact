@@ -101,11 +101,11 @@ export default function InformationStudentScreen({ route }: Props) {
                 <Divider style={{ marginVertical: 4 }} />
                 <View style={styles.rowResumen}>
                   <PaperText style={styles.label}>Total abonado</PaperText>
-                  <PaperText style={styles.value}>$ {resumen.tot_paid_amount}</PaperText>
+                  <PaperText style={styles.value}>$ {resumen.tot_paid_amount.toLocaleString('es-AR')}</PaperText>
                 </View>
                 <View style={styles.rowResumen}>
                   <PaperText style={styles.label}>Total deuda</PaperText>
-                  <PaperText style={styles.value}>$ {resumen.tot_amount - resumen.tot_paid_amount}</PaperText>
+                  <PaperText style={styles.value}>$ {(resumen.tot_amount - resumen.tot_paid_amount).toLocaleString('es-AR')}</PaperText>
                 </View>
               </>
             ) : (

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react';
 import { View, Text, Linking, StyleSheet, TouchableOpacity, Pressable } from 'react-native'
 import { Checkbox, IconButton } from 'react-native-paper'
 import type { ReportStudent } from '../services/studentService'
@@ -9,6 +9,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from 'types'
 import { COLORS } from 'core/constants'
 import { useNavigation } from '@react-navigation/native'
+
+import { AuthContext } from '../../../contexts/AuthContext';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'InformationStudent'>
 type Props = {
@@ -30,9 +32,14 @@ export const ItemStudentAssistView: React.FC<Props> = ({
   
 }) => {
   const navigation = useNavigation<NavigationProp>()
-
+  const { userRole } = useContext(AuthContext);
   const totalClasesTomadas = student.taken_classes?.[0]?.cant_presents || 0
   const isToday = selectedDate.toDateString() === new Date().toDateString()
+  const isAdmin = userRole === 'admin';
+
+  const isEnabled = isAdmin || isToday;
+
+  console.log(isAdmin)
 
     return (
     <View style={styles.itemContainer_check}>
@@ -52,9 +59,10 @@ export const ItemStudentAssistView: React.FC<Props> = ({
           {totalClasesTomadas}
         </Text>
         
-          <TouchableOpacity
+         <TouchableOpacity
             onPress={() => {
-              if (!isToday) return;
+              if (!isEnabled) return; 
+             // if (!isToday) return;
               student.presente === 'si'
                 ? eliminarPresente(student)
                 : togglePresente(student);
@@ -62,12 +70,15 @@ export const ItemStudentAssistView: React.FC<Props> = ({
             style={[
               styles.checkbox,
               student.presente === 'si' && styles.checked,
-              { borderColor: COLORS.button, backgroundColor: student.presente === 'si' ? COLORS.button : 'transparent' },
+              { borderColor: !isToday
+                ? 'gray' // 👈 color distinto si no es hoy
+                : COLORS.button,
+                backgroundColor: student.presente === 'si' ? COLORS.button : 'transparent' },
             ]}
-            disabled={!isToday}
+            disabled={!isEnabled}
           >
             {student.presente === 'si' && <Text style={styles.checkMark}>✓</Text>}
-          </TouchableOpacity>
+          </TouchableOpacity> 
       </Pressable>
 
       {isExpanded && (
