@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { AuthProvider } from './src/contexts/AuthContext';
+import { ClasesPriceProvider } from './src/contexts/ClasesPriceContext';
 import { PaperProvider } from 'react-native-paper';
 
 export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
   return (
     <PaperProvider>
       <AuthProvider>
+      <ClasesPriceProvider>
         {/* 🎨 Barra superior */}
         <StatusBar style="light" backgroundColor="rgb(130, 94, 193)" />
 
@@ -37,6 +39,7 @@ export default function App() {
         <View style={styles.container}>
           <NavigationApp />
         </View>
+        </ClasesPriceProvider>
       </AuthProvider>
     </PaperProvider>
   );

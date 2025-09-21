@@ -1,14 +1,19 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import React, { useContext } from 'react';
+
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { COLORS } from 'core/constants';
+import { AuthContext } from '../../contexts/AuthContext';
+
 
 export function CustomDrawerContent(props: any) {
   const { navigation } = props;
+  const { userRole } = useContext(AuthContext);
+  const isAdmin = userRole === 'admin';
 
   return (
-    <DrawerContentScrollView {...props} style={{ backgroundColor: COLORS.buttonClearLetter, width: 200 }}>
+    <DrawerContentScrollView {...props} style={{ backgroundColor: COLORS.darkGreenColor, width: 200 }}>
       <View style={styles.header}>
         <Text style={styles.userName}>Leila</Text>
       </View>
@@ -32,12 +37,36 @@ export function CustomDrawerContent(props: any) {
       </TouchableOpacity>
 
       {/* Sección Ajustes */}
-      <Text style={styles.sectionTitle}>Ajustes</Text>
+      <Text style={styles.sectionTitle}>Ajustes</Text> 
 
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Planillas')}>
+      <TouchableOpacity
+        style={styles.menuItem}
+        onPress={() => {
+          if (!isAdmin) {
+            Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
+            return;
+          }
+          navigation.navigate('AttendanceSheetScreen');
+        }}
+      >
         <MaterialCommunityIcons name="book-open" size={22} color="#fff" />
         <Text style={styles.menuText}>Planillas</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.menuItem}
+        onPress={() => {
+          if (!isAdmin) {
+            Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
+            return;
+          }
+          navigation.navigate('ResumenTabs');
+        }}
+      >
+        <MaterialCommunityIcons name="book-open" size={22} color="#fff" />
+        <Text style={styles.menuText}>Resumen diario</Text>
+      </TouchableOpacity>
+
 
       <TouchableOpacity style={styles.menuItem} onPress={() => console.log('Cerrar sesión')}>
         <MaterialCommunityIcons name="logout" size={22} color="#fff" />

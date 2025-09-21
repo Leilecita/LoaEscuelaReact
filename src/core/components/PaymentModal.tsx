@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,15 +8,18 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Dimensions,
-  ImageBackground
+  ImageBackground,
+  Alert
 } from 'react-native';
 import Modal from 'react-native-modal';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { TextInput } from 'react-native-paper';
 import { COLORS } from 'core/constants';
 import api from '../services/axiosClient';
+import { AuthContext } from '../../contexts/AuthContext';
 
 import { parseCurrency, currencyToDisplay } from 'helpers/numberHelper';
+import { ClasesPriceContext } from '../../contexts/ClasesPriceContext';
 
 type PaymentModalProps = {
   visible: boolean;
@@ -54,27 +57,15 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
   const [total, setTotal] = useState<number>(0);
   const [monto, setMonto] = useState<number>(0);
 
-  const violetPlaceholder = '#bcb0e4'
-  const violetButton = COLORS.button
+  const { valores: valoresPorClasesContext } = useContext(ClasesPriceContext);
 
   const medios = ['efectivo', 'mp', 'transferencia'];
   const lugares = ['escuela', 'negocio'];
 
   const { width } = Dimensions.get('window');
+  const { userRole } = useContext(AuthContext);
+  const isAdmin = userRole === 'admin';
 
-  const valoresPorClases: { [key: number]: number } = {
-    1: 20000,
-    2: 40000,
-    3: 58000,
-    4: 78000,
-    5: 88000,
-    6: 99000,
-    7: 100000,
-    8: 125000,
-    9: 30000,
-    10: 780000,
-    // agregá más según tu necesidad
-  };
 
   const handleDateChange = (event: any, selectedDate?: Date) => {
     setShowDatePicker(Platform.OS === 'ios');
@@ -99,8 +90,8 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
     }
 
     const observation = esNuevoCurso
-      ? `${detalle ? detalle + ' - ' : ''}Nuevo curso (${cantidadClases} clases)`
-      : `${detalle ? detalle + ' - ' : ''}A cuenta`;
+    ? `${detalle ? detalle + ' - ' : ''}${cantidadClases} ${cantidadClases > 1 ? 'clases' : 'clase'}`
+    : `${detalle ? detalle + ' - ' : ''}A cuenta`;
 
     const fechaFormateada = fecha.toISOString().replace('T', ' ').substring(0, 19);
 
@@ -190,19 +181,29 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
             {/* Fecha y Lugar */}
             <View style={styles.row}>
-              <TouchableOpacity onPress={() => setShowDatePicker(true)} style={{ flex: 1, marginRight: 8 }}>
-                <TextInput
-                  label="Fecha"
-                  value={fecha.toLocaleDateString()}
-                  mode="outlined"
-                  textColor= {COLORS.darkLetter3}
-                  editable={false}
-                  pointerEvents="none"
-                  outlineColor={COLORS.veryLightGreenColor}
-                  activeOutlineColor={COLORS.lightGreenColor}
-                  left={<TextInput.Icon icon="calendar" color={COLORS.headerDate} size={22} />}
-                />
-              </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                if (!isAdmin) {
+                  Alert.alert('Acceso restringido', 'Solo los administradores pueden cambiar la fecha');
+                  return;
+                }
+                setShowDatePicker(true);
+              }}
+              style={{ flex: 1, marginRight: 8 }}
+            >
+              <TextInput
+                label="Fecha"
+                value={fecha.toLocaleDateString()}
+                mode="outlined"
+                textColor={COLORS.darkLetter3}
+                editable={false}          // evita escribir manualmente
+                pointerEvents="none"      // bloquea interacciones dentro del input
+                outlineColor={COLORS.veryLightGreenColor}
+                activeOutlineColor={COLORS.lightGreenColor}
+                left={<TextInput.Icon icon="calendar" color={COLORS.headerDate} size={22} />}
+              />
+            </TouchableOpacity>
+
 
               <TouchableOpacity onPress={() => setShowLugarOptions(!showLugarOptions)} style={{ flex: 1 }}>
                 <TextInput
@@ -268,17 +269,16 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
 
             {tipoCurso === 'nuevo' && (
               <View style={styles.row}>
-               <TextInput
+                <TextInput
                   label={clases ? "Cantidad de clases" : undefined}
                   value={clases}
                   onChangeText={(text) => {
                     setClases(text);
-                    const num = parseInt(text);
-                    if (valoresPorClases[num]) {
-                      setTotal(valoresPorClases[num]);
-                    } else {
-                      setTotal(0); // o dejar el valor anterior
-                    }
+                    const num = parseInt(text, 10);
+                    // 👈 Convertimos la clave a string para que funcione con "1"
+                    const valor = !isNaN(num) ? valoresPorClasesContext[num.toString()] ?? 0 : 0;
+
+                    setTotal(valor);
                   }}
                   textColor={COLORS.darkLetter3}
                   mode="outlined"
@@ -290,11 +290,10 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   placeholderTextColor={COLORS.placeholderColor}
                 />
 
-
                 <TextInput
                   label={total ? "Valor total del curso" : undefined}
-                  value={currencyToDisplay(total)} // 👈 lo mostramos formateado
-                  onChangeText={(text) => setTotal(parseCurrency(text))} // 👈 lo guardamos como número
+                  value={currencyToDisplay(total)}
+                  onChangeText={(text) => setTotal(parseCurrency(text))}
                   mode="outlined"
                   textColor={COLORS.darkLetter}
                   keyboardType="numeric"
@@ -306,6 +305,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 />
               </View>
             )}
+
 
             {/* Monto y Método */}
             <View style={styles.row}>
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
   segment: {
     flex: 1,
     paddingVertical: 10,
-    backgroundColor: COLORS.veryLightGreenColor,
+    backgroundColor: COLORS.disabledGreyColor,
     alignItems: 'center',
   },
   
@@ -430,6 +430,7 @@ const styles = StyleSheet.create({
   segmentText: {
     color: COLORS.buttonClearLetter,
     fontSize: 15,
+
     fontFamily: 'OpenSans-Regular',
   },
   segmentTextActive: {

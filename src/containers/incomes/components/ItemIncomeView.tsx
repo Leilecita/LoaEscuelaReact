@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useContext } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { DateHeader } from '../../../core/components/DateHeader';
@@ -8,6 +8,7 @@ import { COLORS } from '@core';
 import { Icon } from 'react-native-paper';
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { AuthContext } from '../../../contexts/AuthContext';
 
 type NavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -64,6 +65,8 @@ export default function ItemIncomeView({
   const [firstName, ...rest] = description.split(' ');
   const lastName = rest.join(' ');
   const navigation = useNavigation<NavigationProp>();
+  const { userRole } = useContext(AuthContext);
+  const isAdmin = userRole === 'admin';
 
   return (
     <View>
@@ -74,8 +77,12 @@ export default function ItemIncomeView({
       <TouchableOpacity
         style={styles.row}
         onPress={() => setIsExpanded(prev => !prev)}
-        onLongPress={() =>
-          
+        onLongPress={() => {
+          if (!isAdmin) {
+            Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
+            return;
+          }
+      
           onEdit?.({
             income_id,
             amount,
@@ -86,9 +93,9 @@ export default function ItemIncomeView({
             category,
             sub_category,
             description
-          })
-        }
-        delayLongPress={400} // medio segundito
+          });
+        }}
+        delayLongPress={400}  // medio segundito
       >
        <View style={styles.left}>
           {fromPayments ? (
@@ -146,12 +153,21 @@ export default function ItemIncomeView({
           </Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4, marginLeft: 6 }}>
             {/* ícono de método de pago */}
-            {(payment_method === 'mp' || payment_method === 'transferencia') && (
+            {(payment_method === 'transferencia') && (
               <View style={{ marginRight: 8, marginTop:2 }}>
                 <Icon
                   source="credit-card-outline"
                   color={COLORS.darkLetter3}
                   size={16}
+                />
+              </View>
+            )}
+            {(payment_method === 'mp') && (
+              <View style={{ marginRight: 8, marginTop:2 }}>
+                <Icon
+                  source="cellphone"
+                  color={COLORS.darkLetter3}
+                  size={15}
                 />
               </View>
             )}

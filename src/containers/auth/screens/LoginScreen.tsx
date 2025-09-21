@@ -1,11 +1,20 @@
 import React, { useState, useContext } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  ImageBackground,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
+  Platform,
+} from 'react-native';
+import { TextInput } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Button, Input } from '@core';
-
+import { COLORS } from '@core';
 import axiosClient from '../../../core/services/axiosClient';
-
-import { AuthContext } from '../../../contexts/AuthContext'; 
+import { AuthContext } from '../../../contexts/AuthContext';
 
 export const LoginScreen = () => {
   const { top } = useSafeAreaInsets();
@@ -15,12 +24,14 @@ export const LoginScreen = () => {
   const [password, setPassword] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
 
+  const violetPlaceholder = COLORS.veryLightGreenColor;
+  const violetButton = COLORS.headerDate;
+
   const handleLogin = async () => {
     const name = username.trim().toLowerCase();
     const passwordPlain = password;
 
     try {
-
       const response = await axiosClient.get('/login.php', {
         params: {
           name: name,
@@ -29,83 +40,138 @@ export const LoginScreen = () => {
         },
       });
 
-
-     /* const response = await axios.get('http://192.168.5.33/loa_school/login.php', {
-        params: {
-          name: name,
-          hash_password: passwordPlain,
-          method: 'login',
-        },
-      }); */
-
-      console.log('Respuesta del backend:', response.data);
-
-      if ( response.data.result === 'success' &&
+      if (
+        response.data.result === 'success' &&
         response.data.data?.token &&
         response.data.data?.level
-       ) {
-        console.log('Token recibido del backend:', response.data.data.token);
-        // Guardar token y actualizar estado global para "loguear"
-
+      ) {
         signIn(response.data.data.token, response.data.data.level);
       } else {
-        console.log('Login fallido:', response.data);
         setErrorMsg('Usuario o contraseña incorrectos');
       }
     } catch (error) {
-      console.log('Error en login:', error);
       setErrorMsg('Error de conexión o servidor');
     }
   };
 
   return (
-    <View style={[styles.container, { paddingTop: top }]}>
-      <Text style={styles.title}>Login</Text>
-
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Usuario</Text>
-        <Input value={username} onChange={setUsername} autoCapitalize="none" />
+    <View style={{ flex: 1 }}>
+      {/* 🔹 Top Bar (fuera del fondo) */}
+      <View style={[styles.topBar, { paddingTop: top }]}>
+        <Text style={styles.topBarTitle}>Login</Text>
       </View>
 
-      <View style={styles.inputContainer}>
-        <Text style={styles.label}>Contraseña</Text>
-        <Input value={password} onChange={setPassword} secureTextEntry />
-      </View>
+      {/* 🔹 Fondo solo debajo del TopBar */}
+      <ImageBackground
+        source={require('../../../../assets/fondo.png')}
+        style={styles.background}
+        resizeMode="cover"
+      >
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={{ flex: 1 }}>
+              <View style={styles.container}>
+                <Text style={[styles.title, { color: COLORS.darkLetter3 }]}>
+                  Iniciar Sesión
+                </Text>
 
-      {errorMsg ? <Text style={styles.error}>{errorMsg}</Text> : null}
+                <TextInput
+                  label={username ? 'Usuario' : undefined}
+                  value={username}
+                  onChangeText={setUsername}
+                  autoCapitalize="none"
+                  mode="outlined"
+                  textColor={COLORS.darkLetter3}
+                  style={styles.input}
+                  outlineColor={violetPlaceholder}
+                  activeOutlineColor={violetButton}
+                  left={<TextInput.Icon icon="account" color={violetButton} />}
+                  placeholder="Usuario"
+                  placeholderTextColor={COLORS.placeholderColor}
+                />
 
-      <View style={styles.buttonContainers}>
-        <Button title="Iniciar sesión" onPress={handleLogin} />
-      </View>
+                <TextInput
+                  label={password ? 'Contraseña' : undefined}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                  mode="outlined"
+                  textColor={COLORS.darkLetter3}
+                  style={styles.input}
+                  outlineColor={violetPlaceholder}
+                  activeOutlineColor={violetButton}
+                  left={<TextInput.Icon icon="lock" color={violetButton} />}
+                  placeholder="Contraseña"
+                  placeholderTextColor={COLORS.placeholderColor}
+                />
+
+                {errorMsg ? <Text style={styles.error}>{errorMsg}</Text> : null}
+
+                <TouchableOpacity
+                  style={[styles.button, { backgroundColor: violetButton }]}
+                  onPress={handleLogin}
+                >
+                  <Text style={styles.buttonText}>Entrar</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
+      </ImageBackground>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  topBar: {
+    backgroundColor: COLORS.darkGreenColor,
+    paddingVertical: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  topBarTitle: {
+    color: COLORS.white,
+    fontSize: 18,
+    fontFamily: 'OpenSans-Regular',
+  },
+  background: {
+    flex: 1,
+  },
   container: {
     flex: 1,
-    padding: 16,
-    gap: 24,
+    padding: 25,
+    marginTop: 180,
   },
   title: {
-    fontSize: 24,
+    fontSize: 28,
+    marginBottom: 40,
+    fontFamily: 'OpenSans-Regular',
     textAlign: 'center',
-    marginTop: 40,
-    fontFamily: 'PlaypenSans-Bold',
-    marginBottom: 90,
   },
-  inputContainer: {},
-  label: {
-    fontSize: 16,
-    fontFamily: 'PlaypenSans-Regular',
-    marginBottom: 8,
+  input: {
+    marginTop: 15,
   },
-  buttonContainers: {
-    gap: 24,
-    marginTop: 40,
+  button: {
+    marginTop: 30,
+    paddingVertical: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    shadowColor: '#7b61ff',
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 4 },
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 18,
   },
   error: {
     color: 'red',
-    marginBottom: 10,
+    marginTop: 12,
+    textAlign: 'center',
   },
 });

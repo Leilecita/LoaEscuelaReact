@@ -1,4 +1,4 @@
-// src/containers/dailySummary/DailySummaryScreen2.tsx
+// src/containers/dailySummary/DailySummaryScreen.tsx
 import React, { useState, useCallback } from 'react';
 import {
   View,
@@ -16,13 +16,11 @@ import api from '../../../core/services/axiosClient';
 import { DateHeader } from '../../../core/components/DateHeader';
 import { MonthHeader } from '../../../core/components/MonthHeader';
 import { usePaginatedFetch } from '../../../core/hooks/usePaginatedFetch';
-import { Chip } from 'react-native-paper';
 import { COLORS } from 'core/constants';
 import { IncomesFilterBar } from "../../../containers/incomes/components/IncomesFilterBar";
 import { PaymentMethodFilter } from "../../../containers/incomes/components/PaymentMethodFilter";
 import { PeriodFilter } from "../../../containers/incomes/components/PeriodFilter";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
 
 // ----------------------
 // Filtros de periodo
@@ -30,7 +28,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 type PeriodFilterOption = "Dia" | "Mes";
 type FilterOption = "Todos" | "Playa" | "Negocio";
 type PaymentMethodOption = "Todos" | "Efectivo" | "MP" | "Transferencia";
-
 
 // ----------------------
 // Tipos de reportes
@@ -44,26 +41,41 @@ export type ReportResumAsist = {
   tot_incomes: number;
   tot_incomes_ef: number;
   tot_incomes_transf: number;
+  tot_incomes_mp: number;
+
   tot_incomes_ef_esc: number;
   tot_incomes_transf_esc: number;
+  tot_incomes_mp_esc: number;
+
   tot_incomes_ef_col: number;
   tot_incomes_transf_col: number;
+  tot_incomes_mp_col: number;
 
   tot_incomes_playa: number;
   tot_incomes_ef_playa: number;
   tot_incomes_transf_playa: number;
+  tot_incomes_mp_playa: number;
+
   tot_incomes_ef_esc_playa: number;
   tot_incomes_transf_esc_playa: number;
+  tot_incomes_mp_esc_playa: number;
+
   tot_incomes_ef_col_playa: number;
   tot_incomes_transf_col_playa: number;
+  tot_incomes_mp_col_playa: number;
 
   tot_incomes_negocio: number;
   tot_incomes_ef_negocio: number;
   tot_incomes_transf_negocio: number;
+  tot_incomes_mp_negocio: number;
+
   tot_incomes_ef_esc_negocio: number;
   tot_incomes_transf_esc_negocio: number;
+  tot_incomes_mp_esc_negocio: number;
+
   tot_incomes_ef_col_negocio: number;
   tot_incomes_transf_col_negocio: number;
+  tot_incomes_mp_col_negocio: number;
 
   tot_presents: number;
   day: string;
@@ -91,7 +103,6 @@ async function fetchResumenes(page: number, period: PeriodFilterOption): Promise
 // Componente principal
 // ----------------------
 export const DailySummaryScreen: React.FC = () => {
-
   const [expandedPlaya, setExpandedPlaya] = useState<string | null>(null);
   const [expandedNego, setExpandedNego] = useState<string | null>(null);
   const [expandedTotal, setExpandedTotal] = useState<string | null>(null);
@@ -118,264 +129,195 @@ export const DailySummaryScreen: React.FC = () => {
 
   const handlePeriodChange = (newPeriod: PeriodFilterOption) => {
     setPeriodFilter(newPeriod);
-    //reload();
   };
 
-  // ----------------------
-  // Render Item
-  // ----------------------
- 
+  const renderRow = (label: string, icon: string, value: number) => (
+    <View style={styles.row}>
+      <View style={styles.rowWithIcon}>
+        <MaterialCommunityIcons
+          name={icon}
+          size={16}
+          color={COLORS.darkLetter}
+          style={{ marginRight: 6 }}
+        />
+        <Text style={styles.subDetailLabel}>{label}</Text>
+      </View>
+      <Text style={styles.subDetailValue}>${value.toLocaleString('es-AR') ?? 0}</Text>
+    </View>
+  );
 
   const renderItem: ListRenderItem<ReportResumAsist> = ({ item }) => {
-   return (
-     <View>
-       {periodFilter === "Mes" ? (
+    return (
+      <View>
+        {periodFilter === "Mes" ? (
           <MonthHeader date={item.day.includes("T") ? item.day : item.day + "T00:00:00"} />
         ) : (
           <DateHeader date={item.day.includes("T") ? item.day : item.day + "T00:00:00"} />
         )}
-       {/* Caja Playa */}
-       <TouchableOpacity onPress={() =>  setExpandedPlaya(expandedPlaya === item.day ? null : item.day)}>
-         <View style={[styles.totalBox, { backgroundColor: COLORS.cardEscuela }]}>
-           <Text style={styles.totalLabel}>Total caja Playa</Text>
-           <Text style={styles.totalValue}>${item.tot_incomes_playa.toLocaleString('es-AR') ?? 0}</Text>
-           
-         </View>
-       </TouchableOpacity>
- 
-       {expandedPlaya === item.day && (
-         <View style={styles.detailAttached}>
-           {/* Escuela */}
-           <View style={styles.subCategoryBox}>
-             <View style={styles.subCategoryHeader}>
-               <Text style={styles.subCategoryTitle}>Escuela</Text>
-               <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_esc_playa+item.tot_incomes_transf_esc_playa).toLocaleString('es-AR') ?? 0}</Text>
-             </View>
- 
-             <View style={styles.row}>
-               <View style={styles.rowWithIcon}>
-                 <MaterialCommunityIcons
-                   name="cash"
-                   size={16}
-                   color="#555"
-                   style={{ marginRight: 6 }}
-                 />
-                 <Text style={styles.subDetailLabel}>Efectivo</Text>
-               </View>
-               <Text style={styles.subDetailValue}>${item.tot_incomes_ef_esc_playa.toLocaleString('es-AR') ?? 0}</Text>
-             </View>
- 
-             <View style={styles.row}>
-               <View style={styles.rowWithIcon}>
-                 <MaterialCommunityIcons
-                   name="credit-card-outline"
-                   size={16}
-                   color="#555"
-                   style={{ marginRight: 6 }}
-                 />
-                 <Text style={styles.subDetailLabel}>Tarjeta</Text>
-               </View>
-               <Text style={styles.subDetailValue}>${item.tot_incomes_transf_esc_playa.toLocaleString('es-AR') ?? 0}</Text>
-             </View>
-           </View>
- 
-           {/* Colonia */}
-           <View style={styles.subCategoryBox}>
-             <View style={styles.subCategoryHeader}>
-               <Text style={styles.subCategoryTitle}>Colonia</Text>
-               <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_col_playa+item.tot_incomes_transf_col_playa).toLocaleString('es-AR') ?? 0}</Text>
-             </View>
- 
-             <View style={styles.row}>
-               <View style={styles.rowWithIcon}>
-                 <MaterialCommunityIcons
-                   name="cash"
-                   size={16}
-                   color="#555"
-                   style={{ marginRight: 6 }}
-                 />
-                 <Text style={styles.subDetailLabel}>Efectivo</Text>
-               </View>
-               <Text style={styles.subDetailValue}>${item.tot_incomes_ef_col_playa.toLocaleString('es-AR') ?? 0}</Text>
-             </View>
- 
-             <View style={styles.row}>
-               <View style={styles.rowWithIcon}>
-                 <MaterialCommunityIcons
-                   name="credit-card-outline"
-                   size={16}
-                   color="#555"
-                   style={{ marginRight: 6 }}
-                 />
-                 <Text style={styles.subDetailLabel}>Tarjeta</Text>
-               </View>
-               <Text style={styles.subDetailValue}>${item.tot_incomes_transf_col_playa.toLocaleString('es-AR') ?? 0}</Text>
-             </View>
-           </View>
-         </View>
-       )}
-       {/* Caja Negocio */}
-       <TouchableOpacity onPress={() => setExpandedNego(expandedNego === item.day ? null : item.day)}>
-         <View style={[styles.totalBox, { backgroundColor: COLORS.cardColonia }]}>
-           <Text style={styles.totalLabel}>Total caja Nego</Text>
-           <Text style={styles.totalValue}>${item.tot_incomes_negocio ?? 0}</Text>
-         </View>
-       </TouchableOpacity>
- 
-       {expandedNego === item.day && (
-         <View style={styles.detailAttached}>
-           {/* Escuela */}
-           <View style={styles.subCategoryBox}>
-             <View style={styles.subCategoryHeader}>
-               <Text style={styles.subCategoryTitle}>Escuela</Text>
-               <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_esc_negocio+item.tot_incomes_transf_esc_negocio).toLocaleString('es-AR') ?? 0}</Text>
-             </View>
- 
-             <View style={styles.row}>
-               <View style={styles.rowWithIcon}>
-                 <MaterialCommunityIcons
-                   name="cash"
-                   size={16}
-                   color="#555"
-                   style={{ marginRight: 6 }}
-                 />
-                 <Text style={styles.subDetailLabel}>Efectivo</Text>
-               </View>
-               <Text style={styles.subDetailValue}>${item.tot_incomes_ef_esc_negocio.toLocaleString('es-AR') ?? 0}</Text>
-             </View>
- 
-             <View style={styles.row}>
-               <View style={styles.rowWithIcon}>
-                 <MaterialCommunityIcons
-                   name="credit-card-outline"
-                   size={16}
-                   color="#555"
-                   style={{ marginRight: 6 }}
-                 />
-                 <Text style={styles.subDetailLabel}>Tarjeta</Text>
-               </View>
-               <Text style={styles.subDetailValue}>${item.tot_incomes_transf_esc_negocio.toLocaleString('es-AR') ?? 0}</Text>
-             </View>
-           </View>
- 
-           {/* Colonia */}
-           <View style={styles.subCategoryBox}>
-             <View style={styles.subCategoryHeader}>
-               <Text style={styles.subCategoryTitle}>Colonia</Text>
-               <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_col_negocio+item.tot_incomes_transf_col_negocio).toLocaleString('es-AR') ?? 0}</Text>
-             </View>
- 
-             <View style={styles.row}>
-               <View style={styles.rowWithIcon}>
-                 <MaterialCommunityIcons
-                   name="cash"
-                   size={16}
-                   color="#555"
-                   style={{ marginRight: 6 }}
-                 />
-                 <Text style={styles.subDetailLabel}>Efectivo</Text>
-               </View>
-               <Text style={styles.subDetailValue}>${item.tot_incomes_ef_col_negocio.toLocaleString('es-AR') ?? 0}</Text>
-             </View>
- 
-             <View style={styles.row}>
-               <View style={styles.rowWithIcon}>
-                 <MaterialCommunityIcons
-                   name="credit-card-outline"
-                   size={16}
-                   color="#555"
-                   style={{ marginRight: 6 }}
-                 />
-                 <Text style={styles.subDetailLabel}>Tarjeta</Text>
-               </View>
-               <Text style={styles.subDetailValue}>${item.tot_incomes_transf_col_negocio.toLocaleString('es-AR') ?? 0}</Text>
-             </View>
-           </View>
-         </View>
-       )}
+
+        {/* Caja Playa */}
+        <TouchableOpacity
+            onPress={() =>
+              setExpandedPlaya(expandedPlaya === item.day ? null : item.day)
+            }
+          >
+            <View
+              style={[styles.totalBox2, { backgroundColor: COLORS.cardEscuela }]}
+            >
+              <View style={styles.centeredTexts}>
+                <Text style={styles.totalLabel}>Total caja Playa</Text>
+                <Text style={styles.totalValue}>
+                  ${item.tot_incomes_playa?.toLocaleString("es-AR") ?? 0}
+                </Text>
+              </View>
+
+              <MaterialCommunityIcons
+                name="beach"
+                size={30}
+                color={COLORS.darkLetter}
+              />
+            </View>
+          </TouchableOpacity>
+
+
+
+        {expandedPlaya === item.day && (
+          <View style={styles.detailAttached}>
+            {/* Escuela */}
+            <View style={styles.subCategoryBox}>
+              <View style={styles.subCategoryHeader}>
+                <Text style={styles.subCategoryTitle}>Escuela</Text>
+                <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_esc_playa + item.tot_incomes_transf_esc_playa + item.tot_incomes_mp_esc_playa).toLocaleString('es-AR') ?? 0}</Text>
+              </View>
+              {renderRow("Efectivo", "cash", item.tot_incomes_ef_esc_playa)}
+              {renderRow("Tarjeta", "credit-card-outline", item.tot_incomes_transf_esc_playa)}
+              {renderRow("MP", "cellphone", item.tot_incomes_mp_esc_playa)}
+            </View>
+
+            {/* Colonia */}
+            <View style={styles.subCategoryBox}>
+              <View style={styles.subCategoryHeader}>
+                <Text style={styles.subCategoryTitle}>Colonia</Text>
+                <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_col_playa + item.tot_incomes_transf_col_playa + item.tot_incomes_mp_col_playa).toLocaleString('es-AR') ?? 0}</Text>
+              </View>
+              {renderRow("Efectivo", "cash", item.tot_incomes_ef_col_playa)}
+              {renderRow("Tarjeta", "credit-card-outline", item.tot_incomes_transf_col_playa)}
+              {renderRow("MP", "cellphone", item.tot_incomes_mp_col_playa)}
+            </View>
+          </View>
+        )}
+
+        {/* Caja Negocio */}
+        <TouchableOpacity
+            onPress={() =>
+              setExpandedNego(expandedNego === item.day ? null : item.day)
+            }
+          >
+            <View style={[styles.totalBox2, { backgroundColor: COLORS.cardColonia }]}>
+              <View style={styles.centeredTexts}>
+                <Text style={styles.totalLabel}>Total caja Nego</Text>
+                <Text style={styles.totalValue}>
+                  ${item.tot_incomes_negocio?.toLocaleString("es-AR") ?? 0}
+                </Text>
+              </View>
+
+              {/* Si querés agregar un ícono igual que el de playa, por ejemplo: */}
+              <MaterialCommunityIcons
+                name="store"
+                size={30}
+                color={COLORS.darkLetter}
+              />
+            </View>
+        </TouchableOpacity>
+
+
+        {expandedNego === item.day && (
+          <View style={styles.detailAttached}>
+            {/* Escuela */}
+            <View style={styles.subCategoryBox}>
+              <View style={styles.subCategoryHeader}>
+                <Text style={styles.subCategoryTitle}>Escuela</Text>
+                <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_esc_negocio + item.tot_incomes_transf_esc_negocio + item.tot_incomes_mp_esc_negocio).toLocaleString('es-AR') ?? 0}</Text>
+              </View>
+              {renderRow("Efectivo", "cash", item.tot_incomes_ef_esc_negocio)}
+              {renderRow("Tarjeta", "credit-card-outline", item.tot_incomes_transf_esc_negocio)}
+              {renderRow("MP", "cellphone", item.tot_incomes_mp_esc_negocio)}
+            </View>
+
+            {/* Colonia */}
+            <View style={styles.subCategoryBox}>
+              <View style={styles.subCategoryHeader}>
+                <Text style={styles.subCategoryTitle}>Colonia</Text>
+                <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_col_negocio + item.tot_incomes_transf_col_negocio + item.tot_incomes_mp_col_negocio).toLocaleString('es-AR') ?? 0}</Text>
+              </View>
+              {renderRow("Efectivo", "cash", item.tot_incomes_ef_col_negocio)}
+              {renderRow("Tarjeta", "credit-card-outline", item.tot_incomes_transf_col_negocio)}
+              {renderRow("MP", "cellphone", item.tot_incomes_mp_col_negocio)}
+            </View>
+          </View>
+        )}
+
+        {/* Total Diario */}
        {/* Total Diario */}
-       <TouchableOpacity onPress={() =>   setExpandedTotal(expandedTotal === item.day ? null : item.day)}>
-         <View style={[styles.totalBox, { backgroundColor: COLORS.cardTot }]}>
-           <Text style={styles.totalLabel}>Total diario</Text>
-           <Text style={styles.totalValue}> ${item.tot_incomes.toLocaleString('es-AR') ?? 0}</Text>
-         </View>
-       </TouchableOpacity>
- 
-       {expandedTotal === item.day && (
-         <View style={styles.detailAttached}>
-           {/* Escuela */}
-           <View style={styles.subCategoryBox}>
-             <View style={styles.subCategoryHeader}>
-               <Text style={styles.subCategoryTitle}>Escuela</Text>
-               <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_esc+item.tot_incomes_transf_esc).toLocaleString('es-AR') ?? 0}</Text>
-             </View>
- 
-             <View style={styles.row}>
-               <View style={styles.rowWithIcon}>
-                 <MaterialCommunityIcons
-                   name="cash"
-                   size={16}
-                   color= {COLORS.darkLetter}
-                   style={{ marginRight: 6 }}
-                 />
-                 <Text style={styles.subDetailLabel}>Efectivo</Text>
-               </View>
-               <Text style={styles.subDetailValue}>${item.tot_incomes_ef_esc.toLocaleString('es-AR') ?? 0}</Text>
-             </View>
- 
-             <View style={styles.row}>
-               <View style={styles.rowWithIcon}>
-                 <MaterialCommunityIcons
-                   name="credit-card-outline"
-                   size={16}
-                   color= {COLORS.darkLetter}
-                   style={{ marginRight: 6 }}
-                 />
-                 <Text style={styles.subDetailLabel}>Tarjeta</Text>
-               </View>
-               <Text style={styles.subDetailValue}>${item.tot_incomes_transf_esc.toLocaleString('es-AR') ?? 0}</Text>
-             </View>
-           </View>
- 
-           {/* Colonia */}
-           <View style={styles.subCategoryBox}>
-             <View style={styles.subCategoryHeader}>
-               <Text style={styles.subCategoryTitle}>Colonia</Text>
-               <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_col+item.tot_incomes_transf_col).toLocaleString('es-AR') ?? 0}</Text>
-             </View>
- 
-             <View style={styles.row}>
-               <View style={styles.rowWithIcon}>
-                 <MaterialCommunityIcons
-                   name="cash"
-                   size={16}
-                   color= {COLORS.darkLetter}
-                   style={{ marginRight: 6 }}
-                 />
-                 <Text style={styles.subDetailLabel}>Efectivo</Text>
-               </View>
-               <Text style={styles.subDetailValue}>${item.tot_incomes_ef_col.toLocaleString('es-AR') ?? 0}</Text>
-             </View>
- 
-             <View style={styles.row}>
-               <View style={styles.rowWithIcon}>
-                 <MaterialCommunityIcons
-                   name="credit-card-outline"
-                   size={16}
-                   color= {COLORS.darkLetter}
-                   style={{ marginRight: 6 }}
-                 />
-                 <Text style={styles.subDetailLabel}>Tarjeta</Text>
-               </View>
-               <Text style={styles.subDetailValue}>${item.tot_incomes_transf_col.toLocaleString('es-AR') ?? 0}</Text>
-             </View>
-           </View>
-         </View>
-       )}
-     </View>
-   );
- };
- 
+        <TouchableOpacity
+          onPress={() =>
+            setExpandedTotal(expandedTotal === item.day ? null : item.day)
+          }
+        >
+          <View style={[styles.totalBox2, { backgroundColor: COLORS.cardTot }]}>
+            <View style={styles.centeredTexts}>
+              <Text style={styles.totalLabel}>Total diario</Text>
+              <Text style={styles.totalValue}>
+                ${item.tot_incomes?.toLocaleString('es-AR') ?? 0}
+              </Text>
+            </View>
+
+            <View style={{ alignItems: 'center' }}>
+              <MaterialCommunityIcons
+                name="beach"
+                size={23}
+                color={COLORS.darkLetter}
+                style={{ marginRight:3 }}
+              />
+              <MaterialCommunityIcons
+                name="store"
+                size={23}
+                color={COLORS.darkLetter}
+                style={{ marginTop: 8, marginRight:3 }} // espacio vertical entre los iconos
+              />
+            </View>
+          </View>
+        </TouchableOpacity>
+
+
+        {expandedTotal === item.day && (
+          <View style={styles.detailAttached}>
+            {/* Escuela */}
+            <View style={styles.subCategoryBox}>
+              <View style={styles.subCategoryHeader}>
+                <Text style={styles.subCategoryTitle}>Escuela</Text>
+                <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_esc + item.tot_incomes_transf_esc + item.tot_incomes_mp_esc).toLocaleString('es-AR') ?? 0}</Text>
+              </View>
+              {renderRow("Efectivo", "cash", item.tot_incomes_ef_esc)}
+              {renderRow("Tarjeta", "credit-card-outline", item.tot_incomes_transf_esc)}
+              {renderRow("MP", "cellphone", item.tot_incomes_mp_esc)}
+            </View>
+
+            {/* Colonia */}
+            <View style={styles.subCategoryBox}>
+              <View style={styles.subCategoryHeader}>
+                <Text style={styles.subCategoryTitle}>Colonia</Text>
+                <Text style={styles.subCategoryTotal}>${(item.tot_incomes_ef_col + item.tot_incomes_transf_col + item.tot_incomes_mp_col).toLocaleString('es-AR') ?? 0}</Text>
+              </View>
+              {renderRow("Efectivo", "cash", item.tot_incomes_ef_col)}
+              {renderRow("Tarjeta", "credit-card-outline", item.tot_incomes_transf_col)}
+              {renderRow("MP", "cellphone", item.tot_incomes_mp_col)}
+            </View>
+          </View>
+        )}
+      </View>
+    );
+  };
 
   if (loading && resumenes.length === 0) {
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -387,7 +329,7 @@ export const DailySummaryScreen: React.FC = () => {
 
   return (
     <ImageBackground
-      source={require("../../../../assets/fondo.png")} // <-- tu fondo
+      source={require("../../../../assets/fondo.png")}
       style={{ flex: 1 }}
       resizeMode="cover"
     >
@@ -426,7 +368,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: 'rgba(232, 237, 189, 0.5)' },
   flatListContent: { paddingVertical: 8, paddingHorizontal: 16 },
   filterWrapper: {
-    backgroundColor: 'rgba(255,255,255,0.6)',
+    backgroundColor: 'rgba(255, 255, 255, 0.32)',
     paddingVertical: 8,
     marginBottom: 8,
   },
@@ -436,7 +378,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
   },
-  chip: { marginRight: 8, borderRadius: 8, height: 35 },
   totalBox: {
     backgroundColor: 'rgba(255,255,255,0.9)',
     borderRadius: 15,
@@ -446,95 +387,43 @@ const styles = StyleSheet.create({
   },
   totalLabel: { fontSize: 19, fontFamily:'OpenSans-Regular', color: COLORS.darkLetter },
   totalValue: { fontSize: 20, fontFamily:'OpenSans-Regular', color: COLORS.darkLetter, marginTop: 8  },
-  detailBox: {
-    backgroundColor: 'rgba(255,255,255,0.7)',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 12,
-  },
-  detailLabel: { fontSize: 15, color: '#333', marginBottom: 4 },
   loadingText: { textAlign: 'center', marginTop: 20, fontSize: 16 },
-
- 
-
-categoryBox: {
-  backgroundColor: '#f4f4f4',
-  borderRadius: 10,
-  padding: 10,
-},
-
-categoryHeader: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  marginBottom: 6,
-},
-
-categoryTitle: {
-  fontSize: 16,
-  fontWeight: '600',
-  color: '#333',
-},
-
-categoryTotal: {
-  fontSize: 16,
-  fontWeight: '600',
-  color: '#333',
-},
-
-row: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  paddingVertical: 2,
-
-},
-
-subDetailLabel: {
- fontSize: 15,
- fontFamily: 'OpenSans-Light',
- color: COLORS.darkLetter3,
-},
-detailAttached: {
- backgroundColor: 'rgba(255,255,255,0.5)', // fondo claro
- paddingVertical: 8,
- paddingHorizontal: 22,
- 
- borderBottomLeftRadius: 15, // solo bordes inferiores
- borderBottomRightRadius: 15,
- marginBottom: 8, // separa de la siguiente tarjeta
-},
-rowWithIcon: {
- flexDirection: 'row',
- alignItems: 'center',
-},
-
-subDetailValue: {
-  fontSize: 15,
-  fontFamily: 'OpenSans-Light',
-  color: COLORS.darkLetter3,
-},
-subDetailContainer: {
-  backgroundColor: 'rgba(255,255,255,0.5)', // fondo claro, semitransparente
-  paddingVertical: 8,
-  paddingHorizontal: 12,
-  borderBottomLeftRadius: 15,
-  borderBottomRightRadius: 15,
-  marginBottom: 8,
-  // sin marginTop, así queda pegado al totalBox
-},
-subCategoryBox: {
-  borderRadius: 10,
-  padding: 8,
-  marginBottom: 6,
-},
-subCategoryHeader: {
-  flexDirection: 'row',
-  justifyContent: 'space-between',
-  marginBottom: 4,
-},
-subCategoryTitle: { fontSize: 17, fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter },
-subCategoryTotal: { fontSize: 17, fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter},
-
-
-
- 
+  row: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 2 },
+  rowWithIcon: { flexDirection: 'row', alignItems: 'center' },
+  subDetailLabel: { fontSize: 16, fontFamily: 'OpenSans-Light', color: COLORS.darkLetter3 },
+  subDetailValue: { fontSize: 16, fontFamily: 'OpenSans-Light', color: COLORS.darkLetter3 },
+  detailAttached: {
+    backgroundColor: 'rgba(255,255,255,0.5)',
+    paddingVertical: 8,
+    paddingHorizontal: 22,
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+    marginBottom: 8,
+  },
+  subCategoryBox: { borderRadius: 10, padding: 8, marginBottom: 6 },
+  subCategoryHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 4 },
+  subCategoryTitle: { fontSize: 17, fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter },
+  subCategoryTotal: { fontSize: 17, fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter },
+  valueWithIcon: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end", // alinea a la derecha
+    gap: 6, // espacio entre número e ícono (RN 0.71+ soporta gap, sino usá marginLeft)
+  },
+  totalBox2: {
+    flexDirection: "row",
+    alignItems: "center",      // centra verticalmente
+    justifyContent: "space-between",
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 10,
+  },
+  
+  centeredTexts: {
+    flex: 1,
+    alignItems: "center",      // centra horizontalmente textos
+    justifyContent: "center",  // centra verticalmente textos
+  },
+  
+  
 });

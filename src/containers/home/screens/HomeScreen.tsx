@@ -8,6 +8,7 @@ import { DateHeader } from '../../../core/components/DateHeader';
 import { COLORS } from '@core';
 import { AuthContext } from '../../../contexts/AuthContext';
 
+
 type RootStackNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 type ReportResumPlanilla = {

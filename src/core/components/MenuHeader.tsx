@@ -41,8 +41,8 @@ export const MenuHeader: React.FC<MenuHeaderProps> = ({ iconColor = '#fff' }) =>
       }
     >
       <Menu.Item onPress={signOut} title="Cerrar sesión" />
-      <Menu.Item onPress={goToAttendanceSheet} title="Planillas" />
-      <Menu.Item onPress={goToDailySummary} title="Daily Summary" /> 
+      {/*<Menu.Item onPress={goToAttendanceSheet} title="Planillas" />
+      <Menu.Item onPress={goToDailySummary} title="Daily Summary" /> */}
     </Menu>
   )
 }

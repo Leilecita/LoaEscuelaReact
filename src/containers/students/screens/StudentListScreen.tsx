@@ -46,10 +46,8 @@ type Section = {
 }
 
 export const StudentListScreen: React.FC<Props> = ({ route }) => {
- // const { category, subcategoria } = route.params
   const { category, subcategoria, modo = 'asistencias', planilla_id } = route.params
 
-//export const StudentListScreen: React.FC<Props> = ({ category, subcategoria }) => {
   const [searchInput, setSearchInput] = useState('')
   const [debouncedSearchText, setDebouncedSearchText] = useState('')
 
@@ -204,6 +202,7 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
             ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
             contentContainerStyle={{ paddingBottom: 20 }}
           />
+          
           <PaymentModal
             visible={modalVisible}
             studentId={selectedStudent?.id ?? null}
@@ -212,9 +211,9 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
             category={selectedStudent?.category ?? ''} 
             sub_category={selectedStudent?.sub_category ?? ''} 
             onClose={() => setModalVisible(false)}
-            onSubmit={handleSubmitPago}
+            //onSubmit={handleSubmitPago}
           />
-          {modo === 'cargarPago' && (
+         {/* {modo === 'cargarPago' && (
             <SurfPriceBottomSheet
               visible={showSurfPriceSheet}
               onClose={() => setShowSurfPriceSheet(false)}
@@ -231,7 +230,7 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
                 Ver valor de las clases de surf
               </Text>
             </TouchableOpacity>
-          )}
+          )} */}
 
   
           <FAB

@@ -28,6 +28,11 @@ export const ResumenTabs = () => {
         name="Pagos"
         component={DailySummaryScreen}
         options={{
+          tabBarLabelStyle: {
+            fontSize: 13, 
+            marginTop: 2,
+            fontFamily: 'OpenSans-Regular'  // 👈 también podés agrandar el texto debajo
+          },
           tabBarLabel: "Pagos",
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="cash-multiple" color={color} size={size} />
@@ -38,6 +43,11 @@ export const ResumenTabs = () => {
         name="Presentes"
         component={PresentsSummaryScreen}
         options={{
+          tabBarLabelStyle: {
+            fontSize: 13, 
+            marginTop: 2,
+            fontFamily: 'OpenSans-Regular'  // 👈 también podés agrandar el texto debajo
+          },
           tabBarLabel: "Presentes",
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account-group" color={color} size={size} />

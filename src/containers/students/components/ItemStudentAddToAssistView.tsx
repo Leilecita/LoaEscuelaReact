@@ -91,15 +91,14 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
  
- 
   button: {
-   backgroundColor: COLORS.buttonClear,
+   backgroundColor: COLORS.headerDate,
    paddingHorizontal: 18,
    paddingVertical: 6,
    borderRadius: 8,
  },
   buttonText: {
-    color: COLORS.buttonClearLetter,
+    color: COLORS.whiteLetter,
     fontSize: 15,
   },
   headerRow: {

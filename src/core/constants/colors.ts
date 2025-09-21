@@ -21,6 +21,8 @@ export const COLORS = {
     lightGreenColor: '#bbcf2e',
     veryLightGreenColor: 'rgb(215, 225, 138)',
 
+    disabledGreyColor: 'rgba(185, 202, 195, 0.27)',
+
     chipGreenColor: '#b6d37d',
 
     transparentGreyColor: 'rgba(177, 202, 192, 0.64)',
