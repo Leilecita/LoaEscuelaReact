@@ -20,6 +20,7 @@ type Props = {
   togglePresente: (student: ReportStudent) => void
   eliminarPresente: (student: ReportStudent) => void
   selectedDate: Date
+  onLongPress?: () => void;
 }
 
 export const ItemStudentAssistView: React.FC<Props> = ({
@@ -28,7 +29,8 @@ export const ItemStudentAssistView: React.FC<Props> = ({
   onToggleExpand,
   togglePresente,
   eliminarPresente,
-  selectedDate
+  selectedDate,
+  onLongPress,
   
 }) => {
   const navigation = useNavigation<NavigationProp>()
@@ -43,7 +45,9 @@ export const ItemStudentAssistView: React.FC<Props> = ({
 
     return (
     <View style={styles.itemContainer_check}>
-      <Pressable style={styles.row} onPress={onToggleExpand}>
+      <Pressable style={styles.row} onPress={onToggleExpand}
+        onLongPress={onLongPress}
+        delayLongPress={400}>
        <InitialAvatar letra={student.nombre.charAt(0)} category={student.sub_category}  />
 
         <View style={styles.infoContainer}>

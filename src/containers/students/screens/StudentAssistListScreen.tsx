@@ -3,7 +3,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, ImageBackground } from 'react-native'
 import { useStudents } from '../../../core/hooks/useStudents'
 import type { ReportStudent } from '../services/studentService'
-import { savePresent, usePresentCount, removePresent } from '../services/studentService'
+import { savePresent, usePresentCount, removePresent, updateStudentActive } from '../services/studentService'
 import { formatDateToFullDateTime, formatDateToYYYYMMDD } from 'helpers/dateHelper'
 import { FilterBar } from 'core/components/FilterToolbar'
 import { CustomFAB } from 'core/components/CustomFAB'
@@ -41,8 +41,10 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
   const today = formatDateToFullDateTime(selectedDate)
   const navigation = useNavigation<StudentListScreenNavigationProp>()
 
+  const [activeFilter, setActiveFilter] = useState<'si' | 'no'>('si')
 
-  const { countPresentes, loading: loadingPresentes } = usePresentCount(
+
+  const { countStudents, countPresentes, loading: loadingPresentes } = usePresentCount(
     category,
     subcategoria,
     only_date,
@@ -63,7 +65,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
     setStudents,
     planillaId,
     updateQuery,
-  } = useStudents(category, subcategoria, only_date, showOnlyPresent, sortOrder)
+  } = useStudents(category, subcategoria, only_date, showOnlyPresent, sortOrder, activeFilter)
 
 
   // Hook para recargar cuando la pantalla entra en foco
@@ -175,6 +177,44 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
       ]
     )
   }
+  const handleToggleActive = (student: ReportStudent) => {
+    const nuevoEstado = student.current_student === 'si' ? 'no' : 'si';
+  
+    Alert.alert(
+      'Confirmar',
+      `¿Seguro que deseas marcar a ${student.nombre} ${student.apellido} como ${
+        nuevoEstado === 'si' ? 'Activo' : 'Inactivo'
+      }?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Sí, confirmar',
+          onPress: async () => {
+            try {
+              const res = await updateStudentActive(student.planilla_alumno_id, nuevoEstado);
+              if (res.result && res.result !== 'success') {
+                return Alert.alert('Error', 'No se pudo actualizar el estado.')
+              }
+  
+              setStudents((prev) =>
+                prev.map((s) =>
+                  s.planilla_alumno_id === student.planilla_alumno_id
+                    ? { ...s, current_student: nuevoEstado }
+                    : s
+                )
+              );
+
+              reload(); 
+            } catch (e) {
+              Alert.alert('Error', 'No se pudo actualizar el estado.');
+            }
+          },
+        },
+      ]
+    );
+  };
+  
+  
 
 
   return (
@@ -195,10 +235,16 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
           searchText={searchInput}
           onSearchTextChange={setSearchInput}
           countPresentes={countPresentes}
+          countStudents={countStudents}
           enableDatePicker={true}
           enablePresentFilter={true}
           enableSortOrder={true}
           enableRefresh={true}
+          activeFilter={activeFilter}
+          onToggleActiveFilter={() =>
+            setActiveFilter(prev => (prev === 'si' ? 'no' : 'si'))
+          }
+          enableActiveFilter
         />
     
         {loading ? (
@@ -227,12 +273,11 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
                   togglePresente={togglePresente}
                   eliminarPresente={eliminarPresente}
                   selectedDate={selectedDate}
+                  onLongPress={() => handleToggleActive(item)} // 👈
+
                 />
               )}
             />
-
-
-            
             <FAB
                 icon="account-plus"
                 //color= "#6c8a35"

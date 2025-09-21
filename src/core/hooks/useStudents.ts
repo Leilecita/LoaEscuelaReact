@@ -8,7 +8,8 @@ export function useStudents(
   subcategoria: Subcategoria,
   date: string,
   showOnlyPresent: boolean,
-  sortOrder: 'alf' | ''
+  sortOrder: 'alf' | '',
+  activeFilter: 'si' | 'no' // 👈 nuevo
 ) {
   const [query, setQuery] = useState('')
   const [planillaId, setPlanillaId] = useState<number | null>(null)
@@ -24,12 +25,13 @@ export function useStudents(
       date,
       showOnlyPresent ? 'true' : 'false',
       sortOrder,
-      query
+      query,
+      activeFilter
     )
     //console.log('📥 Respuesta del backend:', JSON.stringify(res.list_rep,null,2))
     setLastResponse({ planilla_id: res.planilla_id })
     return res.list_rep
-  }, [category, subcategoria, date, showOnlyPresent, sortOrder, query])
+  }, [category, subcategoria, date, showOnlyPresent, sortOrder, query,  activeFilter])
 
   const {
     data: students,

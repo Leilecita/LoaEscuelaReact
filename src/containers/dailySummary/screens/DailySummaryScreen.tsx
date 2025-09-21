@@ -315,7 +315,7 @@ export const DailySummaryScreen: React.FC = () => {
                  <MaterialCommunityIcons
                    name="cash"
                    size={16}
-                   color="#555"
+                   color= {COLORS.darkLetter}
                    style={{ marginRight: 6 }}
                  />
                  <Text style={styles.subDetailLabel}>Efectivo</Text>
@@ -328,7 +328,7 @@ export const DailySummaryScreen: React.FC = () => {
                  <MaterialCommunityIcons
                    name="credit-card-outline"
                    size={16}
-                   color="#555"
+                   color= {COLORS.darkLetter}
                    style={{ marginRight: 6 }}
                  />
                  <Text style={styles.subDetailLabel}>Tarjeta</Text>
@@ -349,7 +349,7 @@ export const DailySummaryScreen: React.FC = () => {
                  <MaterialCommunityIcons
                    name="cash"
                    size={16}
-                   color="#555"
+                   color= {COLORS.darkLetter}
                    style={{ marginRight: 6 }}
                  />
                  <Text style={styles.subDetailLabel}>Efectivo</Text>
@@ -362,7 +362,7 @@ export const DailySummaryScreen: React.FC = () => {
                  <MaterialCommunityIcons
                    name="credit-card-outline"
                    size={16}
-                   color="#555"
+                   color= {COLORS.darkLetter}
                    style={{ marginRight: 6 }}
                  />
                  <Text style={styles.subDetailLabel}>Tarjeta</Text>
@@ -489,7 +489,7 @@ row: {
 },
 
 subDetailLabel: {
- fontSize: 14,
+ fontSize: 15,
  fontFamily: 'OpenSans-Light',
  color: COLORS.darkLetter3,
 },
@@ -508,7 +508,7 @@ rowWithIcon: {
 },
 
 subDetailValue: {
-  fontSize: 14,
+  fontSize: 15,
   fontFamily: 'OpenSans-Light',
   color: COLORS.darkLetter3,
 },

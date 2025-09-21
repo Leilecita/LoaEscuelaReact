@@ -26,10 +26,14 @@ type FilterBarProps = {
   searchText: string
   onSearchTextChange: (text: string) => void
   countPresentes?: number
+  countStudents?: number
   enableDatePicker?: boolean
   enablePresentFilter?: boolean
   enableSortOrder?: boolean
   enableRefresh?: boolean
+  activeFilter?: 'si' | 'no'
+  onToggleActiveFilter?: () => void
+  enableActiveFilter?: boolean
 }
 
 export const FilterBar: React.FC<FilterBarProps> = ({
@@ -43,10 +47,14 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   searchText,
   onSearchTextChange,
   countPresentes = 0,
+  countStudents = 0,
   enableDatePicker = false,
   enablePresentFilter = false,
   enableSortOrder = false,
   enableRefresh = false,
+  enableActiveFilter = 'si',
+  activeFilter,
+  onToggleActiveFilter = () => {},
 }) => {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false)
   const inputRef = useRef(null);
@@ -135,35 +143,33 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             <CustomDatePicker date={date} onDateChange={onDateChange} />
           )}
 
-          {enablePresentFilter && (
-            <Chip
+        {enablePresentFilter && (
+          <Chip
             icon={() => (
               <MaterialCommunityIcons
-                  name={
-                   showOnlyPresent ? 'account-check' : 'account-check-outline'
-                  }
-                  size={20}
-                  color={COLORS.darkLetter} 
-                />
-              )}
-              mode="flat"
-              selected={showOnlyPresent}
-              onPress={onTogglePresent}
-              style={[
-                styles.chip,
-                showOnlyPresent
-                  ? { backgroundColor: COLORS.buttonClear } // violeta oscuro cuando está seleccionado
-                  : { backgroundColor: COLORS.chipGreenColor } // violeta claro cuando NO está seleccionado
-              ]}
-              textStyle={{
-                color: showOnlyPresent ? COLORS.darkLetter : COLORS.darkLetter, 
-                fontFamily: 'OpenSans-Light',
-                fontSize: 16
-              }}
-            >
-              Presentes {countPresentes}
+                name={showOnlyPresent ? 'account-check' : 'account-check'}
+                size={20}
+                color={COLORS.darkLetter} 
+              />
+            )}
+            mode="flat"
+            selected={showOnlyPresent}
+            onPress={onTogglePresent}
+            style={[
+              styles.chip,
+              showOnlyPresent
+                ? { backgroundColor: COLORS.buttonClear } // violeta oscuro cuando está seleccionado
+                : { backgroundColor: COLORS.chipGreenColor } // violeta claro cuando NO está seleccionado
+            ]}
+            textStyle={{
+              color: COLORS.darkLetter, 
+              fontFamily: 'OpenSans-Light',
+              fontSize: 16
+            }}
+          >
+            Presentes {countPresentes} / {countStudents}
           </Chip>
-          )}
+        )}
 
           {enableSortOrder && (
             <Chip
@@ -211,7 +217,28 @@ export const FilterBar: React.FC<FilterBarProps> = ({
            Refresh
          </Chip>
           )}
-
+          {enableActiveFilter && (
+              <Chip
+                icon={() => (
+                  <MaterialCommunityIcons
+                    name={activeFilter === 'si' ? 'account-multiple' : 'account-off'}
+                    size={20}
+                    color={COLORS.darkLetter}
+                  />
+                )}
+                selected
+                onPress={onToggleActiveFilter}
+                style={styles.chip}
+                textStyle={{
+                  fontFamily: 'OpenSans-Light',
+                  color: COLORS.darkLetter,
+                  fontSize: 16,
+                }}
+              >
+                {activeFilter === 'si' ? 'Activos' : 'Inactivos'}
+              </Chip>
+            )}
+            
         </ScrollView>
       </View>
     </KeyboardAvoidingView>

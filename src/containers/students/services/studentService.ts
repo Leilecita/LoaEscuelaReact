@@ -35,6 +35,7 @@ export type ReportStudent = {
   student_observation: string;
   category: string;
   sub_category: string;
+  current_student: string;
 
 };
 
@@ -134,7 +135,8 @@ export async function fetchStudentsByAssists(
   date: string,
   onlyPresents = 'false',
   orderby = 'alf',
-  query = ''
+  query = '',
+  activeFilter: 'si' | 'no' = 'si'
 ): Promise<{ planilla_id: number; list_rep: ReportStudent[] }> {
 
   
@@ -149,6 +151,7 @@ export async function fetchStudentsByAssists(
       onlyPresents,
       orderby,
       ...(query ? { query } : {}),
+      current_student: activeFilter 
     },
     
   });
@@ -286,6 +289,7 @@ export function usePresentCount(
   refreshSignal: boolean
 ) {
   const [countPresentes, setCountPresentes] = React.useState<number>(0)
+  const [countStudents, setCountStudents] = React.useState<number>(0)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
 
@@ -309,6 +313,7 @@ export function usePresentCount(
         if (response.data?.result === 'success' && response.data?.data?.tot_presents !== undefined) {
           console.log('Respuesta API getValues:', response.data);
           setCountPresentes(response.data.data.tot_presents)
+          setCountStudents(response.data.data.tot_students)
         } else {
           console.warn('Respuesta inesperada al contar presentes', response.data)
         }
@@ -323,10 +328,34 @@ export function usePresentCount(
     fetchCount()
   }, [category, subcategoria, date, refreshSignal])
 
-  return { countPresentes, loading, error }
+  return { countStudents, countPresentes, loading, error }
 }
 
 
 
+export async function updateStudentActive(
+  planilla_alumno_id: number,
+  current_student: 'si' | 'no'
+) {
+  try {
+    const response = await api.put('/planillas_alumnos.php', {
+      id: planilla_alumno_id,
+      current_student,
+    });
 
+    console.log('📥 Response updateStudentActive:', response.data);
+
+    if (response.data.result !== 'success') {
+      throw new Error(response.data.message || 'Error al actualizar estudiante');
+    }
+
+    return response.data.data;
+  } catch (error: any) {
+    console.error(
+      '❌ Error updateStudentActive:',
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+}
 
