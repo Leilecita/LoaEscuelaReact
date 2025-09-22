@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: 'rgba(232, 237, 189, 0.5)' },
   flatListContent: { paddingVertical: 8, paddingHorizontal: 16 },
   filterWrapper: {
-    backgroundColor: 'rgba(255,255,255,0.6)',
+    backgroundColor: 'rgba(255, 255, 255, 0.29)',
     paddingVertical: 8,
     marginBottom: 8,
   },

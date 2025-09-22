@@ -15,12 +15,12 @@ import type { AuthStackParamList, RootStackParamList } from '../../types';
 import { MenuHeader } from '../../../src/core/components/MenuHeader';
 import { CustomDrawerContent } from '../../../src/core/components/CustomDrawerContent';
 import { DailySummaryScreen } from '../../containers/dailySummary/screens/DailySummaryScreen';
-import { DailySummaryScreen2 } from '../../../src/core/screens/DailySummaryScreen2';
 import { AttendanceSheetScreen } from '../../../src/core/screens/AttendanceSheetScreen';
 import { AppTabs } from './AppTabs';
 import { StatusBar } from 'expo-status-bar';
 import { COLORS } from 'core/constants';
 import { ResumenTabs } from 'containers/dailySummary/components/ResumenTabs';
+import CreateUserScreen from 'core/screens/CreateUserScreen';
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const AuthStackNav = createNativeStackNavigator<AuthStackParamList>();
@@ -156,6 +156,12 @@ export function NavigationApp() {
                 name="AttendanceSheetScreen"
                 component={AttendanceSheetScreen}
                 options={{ title: 'Planillas' }}
+              />
+
+              <RootStack.Screen
+                name="CreateUserScreen"
+                component={CreateUserScreen}
+                options={{ title: 'Crear usuario' }}
               />
           </RootStack.Navigator>
         ) : (

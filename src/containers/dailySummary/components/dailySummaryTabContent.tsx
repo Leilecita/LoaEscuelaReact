@@ -27,10 +27,10 @@ export const DailySummaryTabContent: React.FC<Props> = ({
   const [expandedDay, setExpandedDay] = useState<string | null>(null);
 
   const renderItem: ListRenderItem<ReportResumAsist> = ({ item }) => {
-    const totalEscuela = item.tot_incomes_escuela;
-    const totalHigh = item.tot_incomes_highschool;
-    const totalColonia = item.tot_incomes_colonia;
-    const totalColoniaGroup = totalHigh + totalColonia;
+   // const totalEscuela = item.tot_incomes_escuela;
+   // const totalHigh = item.tot_incomes_highschool;
+   // const totalColonia = item.tot_incomes_colonia;
+   // const totalColoniaGroup = totalHigh + totalColonia;
     const isExpanded = expandedDay === item.day;
 
     return (

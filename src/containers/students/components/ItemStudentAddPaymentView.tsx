@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: COLORS.whiteLetter,
-    fontFamily: 'Roboto',
+    fontFamily: 'OpenSans-Bold',
     fontSize: 15,
     textAlign: 'center',
   },

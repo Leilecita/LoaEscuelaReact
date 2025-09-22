@@ -105,28 +105,33 @@ export const ItemStudentAssistView: React.FC<Props> = ({
             <ContactRow name={student.nombre_papa} phone={student.tel_papa} />
           )}
            
-           <TouchableOpacity
-              onPress={() =>
-                navigation.navigate('InformationStudent', {  studentId: student.student_id,
-                  firstName: student.nombre,   
-                  lastName: student.apellido,
-                  category: student.category,
-                  sub_category: student.sub_category })
-              }
-              style={{
-                alignSelf: 'flex-end',   // se alinea a la derecha
-                backgroundColor: COLORS.transparentGreenColor,
-                borderRadius: 6,
-                marginTop: 8,
-                marginBottom: 4,
-                paddingVertical : 4,
-                paddingHorizontal: 10,   // controla ancho del botón
-                justifyContent: 'center', // centra verticalmente
-                alignItems: 'center',  
-              }}
-            >
-              <Text style={styles.masInfoText}>+ info</Text>
-            </TouchableOpacity>
+           {isAdmin && (
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('InformationStudent', {  
+                    studentId: student.student_id,
+                    firstName: student.nombre,   
+                    lastName: student.apellido,
+                    category: student.category,
+                    sub_category: student.sub_category 
+                  })
+                }
+                style={{
+                  alignSelf: 'flex-end',
+                  backgroundColor: COLORS.transparentGreenColor,
+                  borderRadius: 6,
+                  marginTop: 8,
+                  marginBottom: 4,
+                  paddingVertical : 4,
+                  paddingHorizontal: 10,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={styles.masInfoText}>+ info</Text>
+              </TouchableOpacity>
+            )}
+
         </View>
       )}
     </View>

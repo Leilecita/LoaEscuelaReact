@@ -45,7 +45,7 @@ export const LoginScreen = () => {
         response.data.data?.token &&
         response.data.data?.level
       ) {
-        signIn(response.data.data.token, response.data.data.level);
+        signIn(response.data.data.token, response.data.data.level, response.data.data.name, response.data.data.category);
       } else {
         setErrorMsg('Usuario o contraseña incorrectos');
       }

@@ -22,6 +22,7 @@ export type RootStackParamList = {
     AttendanceSheetScreen: undefined;
 
     ResumenTabs: undefined;
+    CreateUserScreen: undefined; 
 
   };
   

@@ -16,6 +16,8 @@ import { CategoryFilter } from "../components/CategoryFilter";
 import { PaymentMethodFilter } from "../components/PaymentMethodFilter";
 import { EditIncomeModal } from "../components/EditIncomeModal";
 import { COLORS } from "@core";
+import { useContext } from "react";
+import { AuthContext } from "../../../contexts/AuthContext";
 
 // 🔹 Mapeos de filtros para enviar al backend
 const FILTER_MAP: Record<string, string> = {
@@ -43,6 +45,10 @@ type CategoryFilterOption = "Todos" | "Escuela" | "Colonia" | "Highschool";
 type PaymentMethodOption = "Todos" | "Efectivo" | "MP" | "Transferencia";
 
 export default function IncomesListScreen() {
+  
+  const { userRole } = useContext(AuthContext);
+  const isAdmin = userRole === "admin"; 
+
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilterOption>("Escuela");
   const [paymentPlace, setPaymentPlace] = useState<FilterOption>("Playa");
   const [paymentMethodFilter, setPaymentMethodFilter] = useState<PaymentMethodOption>("Todos");
@@ -61,6 +67,13 @@ export default function IncomesListScreen() {
     CATEGORY_FILTER_MAP[categoryFilter],
     PAYMENT_METHOD_MAP[paymentMethodFilter]
   );
+
+  const today = new Date().toISOString().substring(0, 10); 
+  const visibleIncomes = isAdmin
+    ? incomes
+    : incomes.filter(
+        (inc) => new Date(inc.income_created).toISOString().substring(0, 10) === today
+      );
 
   if (loading && incomes.length === 0) {
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -97,13 +110,13 @@ export default function IncomesListScreen() {
         </View>
 
         {/* 🔹 Lista de pagos */}
-        {incomes.length === 0 ? (
+        {visibleIncomes.length === 0 ? (
           <Text style={{ textAlign: "center", marginTop: 20 }}>
             No hay pagos disponibles
           </Text>
         ) : (
           <FlatList
-            data={incomes}
+            data={visibleIncomes} // 👈 usamos la lista filtrada
             keyExtractor={(item) => item.income_id.toString()}
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
@@ -112,7 +125,7 @@ export default function IncomesListScreen() {
             contentContainerStyle={{ paddingTop: 60 }}
             renderItem={({ item, index }) => {
               const currentDate = new Date(item.income_created).toISOString().substring(0, 10);
-              const previousDate = index > 0 ? new Date(incomes[index - 1].income_created).toISOString().substring(0, 10) : null;
+              const previousDate = index > 0 ? new Date(visibleIncomes[index - 1].income_created).toISOString().substring(0, 10) : null;
 
               return (
                 <ItemIncomeView
@@ -135,6 +148,7 @@ export default function IncomesListScreen() {
           />
         )}
 
+
         {/* 🔹 Modal de edición */}
         <EditIncomeModal
           visible={!!editingIncome}
@@ -155,7 +169,7 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 10,
     
-    backgroundColor: "rgba(255,255,255,0.4)",
+    backgroundColor: "rgba(255, 255, 255, 0.26)",
     paddingVertical: 8,
     paddingHorizontal: 12,
   },

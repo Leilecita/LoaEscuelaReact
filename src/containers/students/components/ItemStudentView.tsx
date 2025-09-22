@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity , Pressable} from 'react-native'
 import type { Student } from '../services/studentService'
 import { ContactRow } from '../../../core/components/ContactRow'
@@ -7,6 +7,7 @@ import { COLORS } from 'core/constants'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from 'types'
+import { AuthContext } from '../../../contexts/AuthContext';
 
 // 👈 Navigation tipado hacia InformationStudent
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'InformationStudent'>
@@ -23,6 +24,8 @@ export const ItemStudentView: React.FC<Props> = ({
   onToggleExpand,
 }) => {
   const navigation = useNavigation<NavigationProp>()
+  const { userRole } = useContext(AuthContext);
+  const isAdmin = userRole === 'admin';
 
   return (
     <View style={styles.itemContainer}>
@@ -51,17 +54,22 @@ export const ItemStudentView: React.FC<Props> = ({
             <ContactRow name={student.nombre_papa} phone={student.tel_papa} />
           )}
 
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('InformationStudent', {  studentId: student.id,
-                firstName: student.nombre,   
-                lastName: student.apellido,
-                category: student.category,
-                sub_category: student.sub_category,  })
-            }
-          >
-            <Text style={styles.masInfoText}>+ info</Text>
-          </TouchableOpacity>
+
+          {isAdmin && (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate('InformationStudent', {  studentId: student.id,
+                  firstName: student.nombre,   
+                  lastName: student.apellido,
+                  category: student.category,
+                  sub_category: student.sub_category,  })
+              }
+            >
+              <Text style={styles.masInfoText}>+ info</Text>
+            </TouchableOpacity>
+          )}
+
+         
         </View>
       )}
     </View>
