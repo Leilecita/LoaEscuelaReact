@@ -216,9 +216,9 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 6,
     borderBottomWidth: 0.3, 
-    marginLeft: 12,
+    marginLeft: 10,
     marginRight: 12,
-    marginBottom : 8,
+    marginBottom : 6,
     borderColor: COLORS.darkLetter3, 
   },
   date: {
@@ -230,13 +230,13 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: 6,
   },
   left: { flex: 2 },
   center: { flex: 2 },
   right: { flex: 2, alignItems: 'flex-end' },
   name: {
-    fontSize: 17,
+    fontSize: 16,
     fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
   },
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   masInfoText: {
     marginBottom: 8,
     fontFamily: 'OpenSans-Regular',
-    fontSize: 18,
+    fontSize: 17,
     color: COLORS.darkLetter3,
     textAlign: 'right',
   },

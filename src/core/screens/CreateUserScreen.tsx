@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ImageBackground, 
 import { TextInput } from 'react-native-paper'
 import { COLORS } from '@core'
 import axiosClient from '../services/axiosClient'
-import { Picker } from '@react-native-picker/picker' // 📌 instalar: npm install @react-native-picker/picker
+
 
 export default function CreateUserScreen() {
   const [form, setForm] = useState({
@@ -55,7 +55,11 @@ export default function CreateUserScreen() {
 
   return (
     <ImageBackground source={require('../../../assets/fondo.png')} style={styles.background} resizeMode="cover">
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "padding"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 100} // ajustar según el header
+          >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
             <Text style={[styles.subtitle, { color: COLORS.darkLetter3 }]}>Crear Usuario</Text>
@@ -113,7 +117,11 @@ export default function CreateUserScreen() {
 const styles = StyleSheet.create({
   container: { padding: 25, flexGrow: 1 },
   subtitle: { fontSize: 20, fontWeight: '600', marginVertical: 15 },
-  input: { marginTop: 10,  },
+  input: {
+    marginTop: 10,
+    fontSize: 16,
+    height: 50,
+  },
   button: { marginTop: 30, paddingVertical: 15, borderRadius: 8, alignItems: 'center', shadowColor: '#7b61ff', shadowOpacity: 0.15, shadowRadius: 4, shadowOffset: { width: 0, height: 4 } },
   buttonText: { color: '#fff', fontWeight: '700', fontSize: 18 },
   background: { flex: 1 },

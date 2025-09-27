@@ -106,30 +106,33 @@ export const ItemStudentAssistView: React.FC<Props> = ({
           )}
            
            {isAdmin && (
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate('InformationStudent', {  
-                    studentId: student.student_id,
-                    firstName: student.nombre,   
-                    lastName: student.apellido,
-                    category: student.category,
-                    sub_category: student.sub_category 
-                  })
-                }
-                style={{
-                  alignSelf: 'flex-end',
-                  backgroundColor: COLORS.transparentGreenColor,
-                  borderRadius: 6,
-                  marginTop: 8,
-                  marginBottom: 4,
-                  paddingVertical : 4,
-                  paddingHorizontal: 10,
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <Text style={styles.masInfoText}>+ info</Text>
-              </TouchableOpacity>
+              <Pressable
+                  onPress={() =>
+                    navigation.navigate('InformationStudent', {
+                      studentId: student.student_id,
+                      firstName: student.nombre,
+                      lastName: student.apellido,
+                      category: student.category,
+                      sub_category: student.sub_category,
+                    })
+                  }
+                  style={{
+                    alignSelf: 'flex-end',
+                    backgroundColor: COLORS.transparentGreenColor,
+                    borderRadius: 6,
+                    marginTop: 8,
+                    marginBottom: 4,
+                    paddingVertical: 4,
+                    paddingHorizontal: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                  android_ripple={{ color: '#ccc' }}
+                  pointerEvents="box-none"
+                >
+                  <Text style={styles.masInfoText}>+ info</Text>
+                </Pressable>
+            
             )}
 
         </View>
@@ -147,8 +150,8 @@ const styles = StyleSheet.create({
     marginVertical: 2,
     paddingLeft: 10,
     paddingRight: 16,
-    paddingTop:8,
-    paddingBottom:8,
+    paddingTop:6,
+    paddingBottom:6,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -184,12 +187,12 @@ const styles = StyleSheet.create({
   name: {
     fontFamily:'OpenSans-Regular',
     color: COLORS.darkLetter,
-    fontSize: 18,
+    fontSize: 16,
   },
   dni: {
     fontFamily:'OpenSans-Light',
     color: COLORS.darkLetter,
-    fontSize: 16,
+    fontSize: 15,
   },
   extraInfo: {
     marginTop: 10,

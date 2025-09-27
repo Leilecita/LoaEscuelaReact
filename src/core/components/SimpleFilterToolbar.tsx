@@ -100,8 +100,8 @@ export const SimpleFilterToolbar: React.FC<SimpleFilterBarProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 4,
-    marginTop: 12,
-    marginBottom: 16,
+    marginTop: 8,
+    marginBottom: 10,
     backgroundColor: 'transparent',
     borderRadius: 12,
     flexDirection: 'row',
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   fabButton: {
    borderRadius: 8,           // círculo (medio del tamaño del botón)
    width: 48,
-   height: 50,
+   height: 40,
    backgroundColor:  COLORS.transparentGreenColor,
    justifyContent: 'center',
    alignItems: 'center',
@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor:  COLORS.transparentGreenColor,
     borderRadius: 8,
-    height: 50,
+    height: 40,
     fontSize: 17,
   },
   

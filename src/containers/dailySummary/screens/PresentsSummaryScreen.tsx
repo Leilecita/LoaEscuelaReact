@@ -245,28 +245,28 @@ const renderItem: ListRenderItem<ReportResumAsist> = ({ item }) => {
 };
 
 
- 
-
-  if (loading && resumenes.length === 0) {
-    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
-  }
-
-  if (error) {
-    return <Text style={{ color: 'red', textAlign: 'center', marginTop: 20 }}>{error}</Text>;
-  }
-
   return (
     <ImageBackground
       source={require("../../../../assets/fondo.png")} // <-- tu fondo
       style={{ flex: 1 }}
       resizeMode="cover"
     >
-      <View style={styles.container}>
-        <View style={styles.filterWrapper}>
+       <View style={{ flex: 1, overflow: 'visible' }}>
+         <View style={[styles.filterWrapper, { backgroundColor: 'rgba(255,255,255,0.32)' }]}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterContainer}>
             <PeriodFilter filter={periodFilter} onChangeFilter={handlePeriodChange} />
           </ScrollView>
         </View>
+
+        {error && (
+          <Text style={{ color: 'red', textAlign: 'center', marginTop: 20 }}>
+            {error}
+          </Text>
+        )}
+
+        {loading && resumenes.length === 0 && (
+          <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
+        )}
 
         {resumenes.length === 0 ? (
           <Text style={styles.loadingText}>No hay datos disponibles</Text>
@@ -312,8 +312,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     alignItems: 'center',
   },
-  totalLabel: { fontSize: 19, fontFamily:'OpenSans-Regular', color: COLORS.darkLetter },
-  totalValue: { fontSize: 20, fontFamily:'OpenSans-Regular', color: COLORS.darkLetter, marginTop: 8  },
+  totalLabel: { fontSize: 16, fontFamily:'OpenSans-Regular', color: COLORS.darkLetter },
+  totalValue: { fontSize: 17, fontFamily:'OpenSans-Regular', color: COLORS.darkLetter, marginTop: 8  },
   detailBox: {
     backgroundColor: 'rgba(255,255,255,0.7)',
     borderRadius: 10,

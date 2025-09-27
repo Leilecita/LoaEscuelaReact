@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   Platform,
+  ScrollView
 } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -68,12 +69,13 @@ export const LoginScreen = () => {
         resizeMode="cover"
       >
         <KeyboardAvoidingView
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        >
+                    style={{ flex: 1 }}
+                    behavior={Platform.OS === "ios" ? "padding" : "padding"}
+                    keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 100} // ajustar según el header
+                  >
           <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <View style={{ flex: 1 }}>
-              <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+                
                 <Text style={[styles.title, { color: COLORS.darkLetter3 }]}>
                   Iniciar Sesión
                 </Text>
@@ -116,8 +118,7 @@ export const LoginScreen = () => {
                 >
                   <Text style={styles.buttonText}>Entrar</Text>
                 </TouchableOpacity>
-              </View>
-            </View>
+             </ScrollView>
           </TouchableWithoutFeedback>
         </KeyboardAvoidingView>
       </ImageBackground>
@@ -140,11 +141,7 @@ const styles = StyleSheet.create({
   background: {
     flex: 1,
   },
-  container: {
-    flex: 1,
-    padding: 25,
-    marginTop: 180,
-  },
+  container: { padding: 25, flexGrow: 1, marginTop: 115, paddingBottom: 140 },
   title: {
     fontSize: 28,
     marginBottom: 40,
@@ -153,10 +150,11 @@ const styles = StyleSheet.create({
   },
   input: {
     marginTop: 15,
+    height: 50,
   },
   button: {
     marginTop: 30,
-    paddingVertical: 15,
+    paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
     shadowColor: '#7b61ff',
@@ -166,8 +164,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontWeight: '700',
-    fontSize: 18,
+   fontFamily: 'OpenSans-Regular',
+    fontSize: 17,
   },
   error: {
     color: 'red',

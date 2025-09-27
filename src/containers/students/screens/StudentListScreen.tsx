@@ -121,11 +121,6 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
     setModalVisible(true)
   }
 
-  /*const openCargarPagoModal = (studentId: number) => {
-    setSelectedStudentId(studentId)
-    setModalVisible(true)
-  }*/
-
   const handleSubmitPago = (data: {
     fecha: Date
     monto: string
@@ -213,37 +208,21 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
             onClose={() => setModalVisible(false)}
             //onSubmit={handleSubmitPago}
           />
-         {/* {modo === 'cargarPago' && (
-            <SurfPriceBottomSheet
-              visible={showSurfPriceSheet}
-              onClose={() => setShowSurfPriceSheet(false)}
-              price={5000} // o lo que quieras pasar dinámicamente
-            />
-          )}
-
-          {modo === 'cargarPago' && (
-            <TouchableOpacity
-              style={styles.surfPriceButton}
-              onPress={() => setShowSurfPriceSheet(true)}
-            >
-              <Text style={styles.surfPriceButtonText}>
-                Ver valor de las clases de surf
-              </Text>
-            </TouchableOpacity>
-          )} */}
-
   
-          <FAB
-            icon="account-plus"
-            color= {COLORS.fabTextColor}
-            style={{
-              position: 'absolute',
-              bottom: 30,
-              right: 30,
-              backgroundColor: COLORS.fabColor
-            }}
-            onPress={() => navigation.navigate('CreateStudent')}
-          />
+          <View pointerEvents="box-none" style={{ position: 'absolute', bottom: 30, right: 30 }}>
+            <FAB
+              icon="account-plus"
+              color={COLORS.fabTextColor}
+              style={{
+                backgroundColor: COLORS.fabColor,
+                zIndex: 999,
+                elevation: 6
+              }}
+              onPress={() => {
+                navigation.navigate('CreateStudent');
+              }}
+            />
+          </View>
         </>
       )}
     </View>

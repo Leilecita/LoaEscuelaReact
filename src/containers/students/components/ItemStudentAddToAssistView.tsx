@@ -77,11 +77,12 @@ const styles = StyleSheet.create({
  name: {
   fontFamily:'OpenSans-Regular',
   color: COLORS.darkLetter,
-  fontSize: 18,
+  fontSize: 16,
   },
   dni: {
     fontFamily:'OpenSans-Light',
     color: COLORS.darkLetter,
+    fontSize: 15,
   },
   extraInfo: {
     marginTop: 10,

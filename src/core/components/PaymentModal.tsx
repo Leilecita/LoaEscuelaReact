@@ -199,7 +199,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 editable={false}          // evita escribir manualmente
                 pointerEvents="none"      // bloquea interacciones dentro del input
                 outlineColor={COLORS.veryLightGreenColor}
-                activeOutlineColor={COLORS.lightGreenColor}
+                activeOutlineColor={COLORS.headerDate}
                 left={<TextInput.Icon icon="calendar" color={COLORS.headerDate} size={22} />}
               />
             </TouchableOpacity>
@@ -214,7 +214,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   editable={false}
                   pointerEvents="none"
                   outlineColor={COLORS.veryLightGreenColor}
-                  activeOutlineColor={COLORS.lightGreenColor}
+                  activeOutlineColor={COLORS.headerDate}
                   left={<TextInput.Icon icon="map-marker" color={COLORS.headerDate} size={22}/>}
                 />
               </TouchableOpacity>
@@ -284,7 +284,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   mode="outlined"
                   keyboardType="numeric"
                   outlineColor={COLORS.veryLightGreenColor}
-                  activeOutlineColor={COLORS.lightGreenColor}
+                  activeOutlineColor={COLORS.headerDate}
                   style={styles.input}
                   placeholder="Cantidad de clases"
                   placeholderTextColor={COLORS.placeholderColor}
@@ -298,7 +298,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                   textColor={COLORS.darkLetter}
                   keyboardType="numeric"
                   outlineColor={COLORS.veryLightGreenColor}
-                  activeOutlineColor={COLORS.lightGreenColor}
+                  activeOutlineColor={COLORS.headerDate}
                   style={styles.input}
                   placeholder="Valor total del curso"
                   placeholderTextColor={COLORS.placeholderColor}
@@ -317,7 +317,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 mode="outlined"
                 keyboardType="numeric"
                 outlineColor={COLORS.veryLightGreenColor}
-                activeOutlineColor={COLORS.lightGreenColor}
+                activeOutlineColor={COLORS.headerDate}
                 style={styles.input}
                 placeholder="Monto a abonar"
                 placeholderTextColor={COLORS.placeholderColor}
@@ -335,7 +335,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
                 pointerEvents="none"
                 textColor= {COLORS.darkLetter3}
                 outlineColor={COLORS.veryLightGreenColor}
-                activeOutlineColor={COLORS.lightGreenColor}
+                activeOutlineColor={COLORS.headerDate}
                 style={styles.input}
                 placeholder="Método"
                 placeholderTextColor={COLORS.placeholderColor}
@@ -361,7 +361,7 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
               textColor= {COLORS.darkLetter3}
               mode="outlined"
               outlineColor={COLORS.veryLightGreenColor}
-              activeOutlineColor={COLORS.lightGreenColor}
+              activeOutlineColor={COLORS.headerDate}
               multiline
               style={[styles.input, { height: 60 }]}
               placeholder="Observación"

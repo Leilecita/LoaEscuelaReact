@@ -9,7 +9,6 @@ import {
 } from 'react-native'
 import { TouchableRipple } from 'react-native-paper'
 import { Chip, IconButton } from 'react-native-paper'
-import DateTimePicker from '@react-native-community/datetimepicker'
 import { CustomDatePicker } from './DatePickerCustom'
 import { COLORS } from 'core/constants'
 import { TextInput as PaperInput } from "react-native-paper";
@@ -148,7 +147,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             icon={() => (
               <MaterialCommunityIcons
                 name={showOnlyPresent ? 'account-check' : 'account-check'}
-                size={20}
+                size={19}
                 color={COLORS.darkLetter} 
               />
             )}
@@ -164,7 +163,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             textStyle={{
               color: COLORS.darkLetter, 
               fontFamily: 'OpenSans-Light',
-              fontSize: 16
+              fontSize: 15
             }}
           >
             Presentes {countPresentes} / {countStudents}
@@ -180,7 +179,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                     ? 'sort-alphabetical-ascending'
                     : 'sort-alphabetical-descending'
                 }
-                size={20}
+                size={19}
                 color={COLORS.darkLetter} 
               />
             )}
@@ -190,7 +189,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               textStyle={{
                 fontFamily: 'OpenSans-Light',
                 color: COLORS.darkLetter,              
-                fontSize: 16,                  
+                fontSize: 15,                  
               }}
             >
               {sortOrder === 'alf' ? 'A-Z' : 'Z-A'}
@@ -203,7 +202,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
              <MaterialCommunityIcons
                name="refresh"
                color={COLORS.darkLetter}   // 👈 ahora controlás el color
-               size={20}
+               size={19}
              />
            )}
            onPress={onRefresh}
@@ -211,7 +210,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
            textStyle={{
              color: COLORS.darkLetter,
              fontFamily: 'OpenSans-Light',
-             fontSize: 16,
+             fontSize: 15,
            }}
          >
            Refresh
@@ -222,7 +221,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 icon={() => (
                   <MaterialCommunityIcons
                     name={activeFilter === 'si' ? 'account-multiple' : 'account-off'}
-                    size={20}
+                    size={19}
                     color={COLORS.darkLetter}
                   />
                 )}
@@ -232,7 +231,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 textStyle={{
                   fontFamily: 'OpenSans-Light',
                   color: COLORS.darkLetter,
-                  fontSize: 16,
+                  fontSize: 15,
                 }}
               >
                 {activeFilter === 'si' ? 'Activos' : 'Inactivos'}
@@ -248,16 +247,19 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginHorizontal: 4,
-    marginTop: 12,
+    marginTop: 8,
     backgroundColor: 'transparent',
     borderRadius: 12,
-    padding: 8,
+    paddingTop: 8,
+    paddingLeft: 8,
+    paddingRight: 8,
+    paddingBottom: 4,
   },
   searchInput: {
     backgroundColor:  COLORS.transparentGreenColor,
     borderRadius: 8,
-    marginBottom: 8,
-    height: 50,
+    marginBottom: 13,
+    height: 40,
     flex: 1,
     fontSize: 17,
   },
@@ -268,7 +270,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   chipScrollContainer: {
-    paddingVertical: 8,
     paddingRight: 8,
     marginLeft: 0,
   },
@@ -283,7 +284,7 @@ const styles = StyleSheet.create({
   fabButton: {
     borderRadius: 8,           // círculo (medio del tamaño del botón)
     width: 48,
-    height: 50,
+    height: 40,
     backgroundColor:  COLORS.transparentGreenColor,
     justifyContent: 'center',
     alignItems: 'center',
@@ -291,7 +292,6 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   searchRow: {
-   
     backgroundColor: 'transparent',
     borderRadius: 12,
     flexDirection: 'row',

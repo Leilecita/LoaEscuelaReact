@@ -1,5 +1,6 @@
-import * as React from 'react';
-import { StyleSheet, ImageBackground } from 'react-native';
+import React, { useEffect } from 'react';
+import * as NavigationBar from 'expo-navigation-bar';
+import { StyleSheet, ImageBackground, View, Platform, StatusBar as RNStatusBar } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -21,6 +22,7 @@ import { StatusBar } from 'expo-status-bar';
 import { COLORS } from 'core/constants';
 import { ResumenTabs } from 'containers/dailySummary/components/ResumenTabs';
 import CreateUserScreen from 'core/screens/CreateUserScreen';
+
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const AuthStackNav = createNativeStackNavigator<AuthStackParamList>();
@@ -82,19 +84,36 @@ function MainDrawer() {
       );
 }
  
+// --- NavigationApp completo ---
 export function NavigationApp() {
   const { userToken } = React.useContext(AuthContext);
-
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      NavigationBar.setBackgroundColorAsync(COLORS.backgroundGreenClear); // Fondo transparente
+      NavigationBar.setButtonStyleAsync('light');           // Íconos blancos
+      NavigationBar.setVisibilityAsync('visible');         // Visible
+    }
+  }, []);
   return (
     <>
-      <StatusBar style="light" backgroundColor={COLORS.mediumGreenColor} />
+      {/* StatusBar fina */}
+      <RNStatusBar
+        translucent={false}
+        backgroundColor={Platform.OS === 'android' ? COLORS.darkGreenColor : 'transparent'} //
+        barStyle="light-content"
+      />
+
       <NavigationContainer theme={MyTheme}>
         {userToken ? (
           <RootStack.Navigator
             screenOptions={{
               headerStyle: { backgroundColor: COLORS.mediumGreenColor },
               headerTintColor: '#fff',
-              headerTitleStyle: { fontFamily: 'OpenSans-Regular' },
+              headerTitleStyle: {
+                fontFamily: 'OpenSans-Regular',
+                fontSize: 17,
+              },
+              
             }}
           >
             <RootStack.Screen
@@ -114,17 +133,26 @@ export function NavigationApp() {
             <RootStack.Screen
               name="ListaDeAlumnos"
               component={StudentListScreen}
-              options={{ title: 'Todos los alumnos', headerRight: () => <MenuHeader iconColor="#fff" /> }}
+              options={{
+                title: 'Todos los alumnos',
+                headerRight: () => <MenuHeader iconColor="#fff" />,
+              }}
             />
             <RootStack.Screen
               name="ListaDePagos"
               component={IncomesListScreen}
-              options={{ title: 'Lista de pagos', headerRight: () => <MenuHeader iconColor="#fff" /> }}
+              options={{
+                title: 'Lista de pagos',
+                headerRight: () => <MenuHeader iconColor="#fff" />,
+              }}
             />
             <RootStack.Screen
               name="PaymentStudentList"
               component={PaymentStudentListScreen}
-              options={{ title: 'Alumnos', headerRight: () => <MenuHeader iconColor="#fff" /> }}
+              options={{
+                title: 'Alumnos',
+                headerRight: () => <MenuHeader iconColor="#fff" />,
+              }}
             />
             <RootStack.Screen
               name="CreateStudent"
@@ -134,16 +162,17 @@ export function NavigationApp() {
             <RootStack.Screen
               name="InformationStudent"
               component={InformationStudentScreen}
-              options={{ title: 'Pagos y Clases', headerRight: () => <MenuHeader iconColor="#fff" /> }}
+              options={{
+                title: 'Pagos y Clases',
+                headerRight: () => <MenuHeader iconColor="#fff" />,
+              }}
             />
-             <RootStack.Screen
-                name="DailySummaryScreen"
-                component={DailySummaryScreen}
-                options={{ title: 'Daily Summary' }}
-              />
-
-          
-              <RootStack.Screen
+            <RootStack.Screen
+              name="DailySummaryScreen"
+              component={DailySummaryScreen}
+              options={{ title: 'Daily Summary' }}
+            />
+            <RootStack.Screen
               name="ResumenTabs"
               component={ResumenTabs}
               options={{
@@ -153,16 +182,15 @@ export function NavigationApp() {
               }}
             />
             <RootStack.Screen
-                name="AttendanceSheetScreen"
-                component={AttendanceSheetScreen}
-                options={{ title: 'Planillas' }}
-              />
-
-              <RootStack.Screen
-                name="CreateUserScreen"
-                component={CreateUserScreen}
-                options={{ title: 'Crear usuario' }}
-              />
+              name="AttendanceSheetScreen"
+              component={AttendanceSheetScreen}
+              options={{ title: 'Planillas' }}
+            />
+            <RootStack.Screen
+              name="CreateUserScreen"
+              component={CreateUserScreen}
+              options={{ title: 'Crear usuario' }}
+            />
           </RootStack.Navigator>
         ) : (
           <RootStack.Navigator screenOptions={{ headerShown: false }}>
@@ -170,7 +198,7 @@ export function NavigationApp() {
           </RootStack.Navigator>
         )}
       </NavigationContainer>
-      </>
+    </>
   );
 }
 

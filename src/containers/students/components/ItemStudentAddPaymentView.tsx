@@ -66,8 +66,10 @@ const styles = StyleSheet.create({
   itemContainer: {
     backgroundColor: '#fff',
     marginHorizontal: 8,
-    marginVertical: 4,
-    padding: 10,
+    marginVertical: 2,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingVertical: 6,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -92,17 +94,17 @@ const styles = StyleSheet.create({
   name: {
     fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
-    fontSize: 18,
+    fontSize: 16,
   },
   dni: {
     fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter,
-    fontSize: 16,
+    fontSize: 15,
   },
   button: {
     backgroundColor: COLORS.headerDate,
     paddingHorizontal: 18,
-    paddingVertical: 6,
+    paddingVertical: 4,
     borderRadius: 8,
   },
   buttonText: {

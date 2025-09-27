@@ -319,13 +319,6 @@ export const DailySummaryScreen: React.FC = () => {
     );
   };
 
-  if (loading && resumenes.length === 0) {
-    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
-  }
-
-  if (error) {
-    return <Text style={{ color: 'red', textAlign: 'center', marginTop: 20 }}>{error}</Text>;
-  }
 
   return (
     <ImageBackground
@@ -333,14 +326,26 @@ export const DailySummaryScreen: React.FC = () => {
       style={{ flex: 1 }}
       resizeMode="cover"
     >
-      <View style={styles.container}>
-        <View style={styles.filterWrapper}>
+       <View style={{ flex: 1, overflow: 'visible' }}>
+       <View style={[styles.filterWrapper, { backgroundColor: 'rgba(255,255,255,0.32)' }]}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterContainer}>
             <PeriodFilter filter={periodFilter} onChangeFilter={handlePeriodChange} />
             <IncomesFilterBar filter={paymentPlace} onChangeFilter={setPaymentPlace} />
             <PaymentMethodFilter filter={paymentMethodFilter} onChangeFilter={setPaymentMethodFilter} />
           </ScrollView>
         </View>
+
+        {/* Error */}
+        {error && (
+          <Text style={{ color: 'red', textAlign: 'center', marginTop: 20 }}>
+            {error}
+          </Text>
+        )}
+
+        {/* Loading */}
+        {loading && resumenes.length === 0 && (
+          <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
+        )}
 
         {resumenes.length === 0 ? (
           <Text style={styles.loadingText}>No hay datos disponibles</Text>
@@ -365,7 +370,7 @@ export const DailySummaryScreen: React.FC = () => {
 // Estilos
 // ----------------------
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: 'rgba(232, 237, 189, 0.5)' },
+  container: { flex: 1 },
   flatListContent: { paddingVertical: 8, paddingHorizontal: 16 },
   filterWrapper: {
     backgroundColor: 'rgba(255, 255, 255, 0.32)',
@@ -385,8 +390,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     alignItems: 'center',
   },
-  totalLabel: { fontSize: 19, fontFamily:'OpenSans-Regular', color: COLORS.darkLetter },
-  totalValue: { fontSize: 20, fontFamily:'OpenSans-Regular', color: COLORS.darkLetter, marginTop: 8  },
+  totalLabel: { fontSize: 17, fontFamily:'OpenSans-Regular', color: COLORS.darkLetter },
+  totalValue: { fontSize: 18, fontFamily:'OpenSans-Regular', color: COLORS.darkLetter, marginTop: 8  },
   loadingText: { textAlign: 'center', marginTop: 20, fontSize: 16 },
   row: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 2 },
   rowWithIcon: { flexDirection: 'row', alignItems: 'center' },

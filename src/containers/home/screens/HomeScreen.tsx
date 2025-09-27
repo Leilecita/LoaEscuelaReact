@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useContext } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground, Alert } from 'react-native';
+import { Dimensions } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ImageBackground, Alert, Platform } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import type { RootStackParamList } from '../../../../src/types';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -8,6 +9,7 @@ import { DateHeader } from '../../../core/components/DateHeader';
 import { COLORS } from '@core';
 import { AuthContext } from '../../../contexts/AuthContext';
 
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 type RootStackNavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -156,27 +158,27 @@ export const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'flex-start', alignItems: 'center',  paddingTop: 140 },
-  row: { flexDirection: 'row', justifyContent: 'space-between', width: '115%', marginHorizontal:100 },
+  container: { flex: 1, justifyContent: 'flex-start', alignItems: 'center', paddingTop: SCREEN_HEIGHT * 0.15 },
+  row: { flexDirection: 'row', justifyContent: 'space-between', width: '90%' },
   button: { flex: 1, alignItems: 'center', marginHorizontal: 10 },
-  bigButton: { alignItems: 'center', marginVertical: 5 },
-  icon: { width: 125, height: 125, resizeMode: 'contain' },
-  bigIcon: { width: 155, height: 155, resizeMode: 'contain' },
+  bigButton: { alignItems: 'center', marginVertical: 4 },
+  icon: { width: SCREEN_WIDTH * 0.30, height: SCREEN_WIDTH * 0.30, resizeMode: 'contain' },
+  bigIcon: { width: SCREEN_WIDTH * 0.35, height: SCREEN_WIDTH * 0.35, resizeMode: 'contain' },
   center: { alignItems: 'center' },
   transparentBox: {
     position: 'absolute',
-    bottom: 30,            // 🔹 fijo abajo
+    bottom: Platform.OS === 'android' ? 10 : 30,
     width: '90%',
     backgroundColor: 'rgba(255,255,255,0.3)',
     borderRadius: 15,
-    padding: 20,           // 🔹 padding uniforme
+    paddingBottom: 8,
+    paddingHorizontal: 16,
+    paddingTop: 24,
     alignItems: 'flex-start',
   },
-  boxText: { color: COLORS.darkLetter, fontFamily: 'OpenSans-Light', fontSize: 16 },
+  boxText: { color: COLORS.darkLetter, fontFamily: 'OpenSans-Light', fontSize: 15 },
   columnsContainer: { flexDirection: 'row', marginVertical: 1, flexWrap: 'wrap' },
   columnItem: { width: '50%', paddingRight: 10 },
-  rowItem: { flexDirection: 'row', marginVertical: 5, justifyContent: 'space-between' },
-  background: {
-    flex: 1,
-  },
+  rowItem: { flexDirection: 'row', marginVertical: 4, justifyContent: 'space-between' },
+  background: { flex: 1 },
 });

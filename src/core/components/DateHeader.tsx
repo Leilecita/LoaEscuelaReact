@@ -31,20 +31,18 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.headerDate,
     alignSelf: 'flex-start',
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: 2,
     borderRadius: 8,
     marginTop: 4,
     marginBottom: 6,
   },
   text: {
     fontFamily: 'OpenSans-Regular',
-    fontSize: 16,
-   // color: COLORS.darkLetter2,
+    fontSize: 15,
     color: COLORS.whiteLetter,
   },
   monthText: {
    fontFamily: 'OpenSans-Light', 
-    //color: COLORS.buttonClearLetter,
     color: COLORS.whiteLetter,
   },
 });

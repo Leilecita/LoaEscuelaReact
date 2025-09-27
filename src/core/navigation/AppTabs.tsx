@@ -5,6 +5,7 @@ import { StudentAssistListScreen } from '../../containers/students/screens/Stude
 import { Category, Subcategoria } from 'types'
 import { COLORS } from 'core/constants'
 import { AuthContext } from '../../contexts/AuthContext'
+import { Platform } from 'react-native';
 
 const Tab = createBottomTabNavigator()
 const ICON_COLOR = 'rgb(255, 255, 255)'
@@ -40,7 +41,8 @@ export const AppTabs = () => {
         tabBarStyle: {
           backgroundColor: COLORS.darkGreenColor,
           borderTopColor: COLORS.darkGreenColor,
-          height: 80,
+          height: Platform.OS === 'android' ? 60 : 80, // ⚡ Ajuste por plataforma
+          paddingBottom: Platform.OS === 'android' ? 10 : 20, // opcional, para el safe area
         },
         tabBarIcon: ({ color }) => {
           const tab = tabs.find(t => t.title === route.name)

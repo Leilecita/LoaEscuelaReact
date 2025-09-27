@@ -36,7 +36,7 @@ export const CustomDatePicker: React.FC<Props> = ({ date, onDateChange }) => {
         icon={() => (
           <MaterialCommunityIcons
             name="calendar"
-            size={20}
+            size={19}
             color={COLORS.darkLetter}
           />
         )}
@@ -49,7 +49,7 @@ export const CustomDatePicker: React.FC<Props> = ({ date, onDateChange }) => {
         textStyle={{
           color: COLORS.darkLetter,
           fontFamily: 'OpenSans-Light',
-          fontSize: 16,
+          fontSize: 15,
         }}
       >
         {format(date, 'dd/MM/yyyy')}

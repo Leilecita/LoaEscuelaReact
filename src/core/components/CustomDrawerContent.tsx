@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { DrawerContentScrollView } from '@react-navigation/drawer';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import { COLORS } from 'core/constants';
 import { AuthContext } from '../../contexts/AuthContext';
 import CreateUserScreen from '../screens/CreateUserScreen';

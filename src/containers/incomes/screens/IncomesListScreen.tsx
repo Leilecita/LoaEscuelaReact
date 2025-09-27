@@ -75,18 +75,6 @@ export default function IncomesListScreen() {
         (inc) => new Date(inc.income_created).toISOString().substring(0, 10) === today
       );
 
-  if (loading && incomes.length === 0) {
-    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
-  }
-
-  if (error) {
-    return (
-      <Text style={{ color: "red", textAlign: "center", marginTop: 20 }}>
-        Error: {error}
-      </Text>
-    );
-  }
-
   return (
     <ImageBackground
       source={require('../../../../assets/fondo.png')}
@@ -109,6 +97,17 @@ export default function IncomesListScreen() {
           </ScrollView>
         </View>
 
+         {error && (
+            <Text style={{ color: 'red', textAlign: 'center', marginTop: 20 }}>
+              {error}
+            </Text>
+          )}
+  
+          {loading && visibleIncomes.length === 0 && (
+            <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
+          )}
+        
+
         {/* 🔹 Lista de pagos */}
         {visibleIncomes.length === 0 ? (
           <Text style={{ textAlign: "center", marginTop: 20 }}>
@@ -117,7 +116,8 @@ export default function IncomesListScreen() {
         ) : (
           <FlatList
             data={visibleIncomes} // 👈 usamos la lista filtrada
-            keyExtractor={(item) => item.income_id.toString()}
+            keyExtractor={(item, index) => `${item.income_id}-${index}`}
+           // keyExtractor={(item) => item.income_id.toString()}
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reload} />}

@@ -52,14 +52,14 @@ const styles = StyleSheet.create({
   },
   contactName: {
     flex: 1, // Ocupa espacio proporcional
-    fontSize: 16,
+    fontSize: 15,
     fontFamily: 'OpenSans-Light',
     fontWeight: '500',
     color: COLORS.darkLetter,
   },
   phoneText: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 15,
     color: COLORS.darkLetter,
     fontFamily: 'OpenSans-Light',
     

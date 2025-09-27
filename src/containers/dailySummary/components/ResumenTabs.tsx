@@ -5,6 +5,7 @@ import { DailySummaryScreen } from "../screens/DailySummaryScreen";
 import { PresentsSummaryScreen } from "../screens/PresentsSummaryScreen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS } from 'core/constants'
+import { Platform } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 const ICON_COLOR = 'rgb(255, 255, 255)'
@@ -20,7 +21,8 @@ export const ResumenTabs = () => {
         tabBarStyle: {
           backgroundColor: COLORS.darkGreenColor,        // 👈 Fondo de la barra bottom tabs
           borderTopColor: COLORS.darkGreenColor,           // Borde superior
-          height: 80,                        // Altura del tab bar
+          height: Platform.OS === 'android' ? 60 : 80, // ⚡ Ajuste por plataforma
+          paddingBottom: Platform.OS === 'android' ? 10 : 20, // opcional, para el safe area
         },
       }}
     >

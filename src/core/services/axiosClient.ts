@@ -2,7 +2,8 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const api = axios.create({
-  baseURL: 'http://192.168.0.45/loa_school',
+  //baseURL: 'http://192.168.0.146/loa_school',
+  baseURL: 'https://school.loasurf.com.ar/',
 });
 
 api.interceptors.request.use(

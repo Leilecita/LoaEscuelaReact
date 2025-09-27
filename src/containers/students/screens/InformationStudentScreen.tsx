@@ -3,7 +3,6 @@ import { View, StyleSheet, FlatList, ActivityIndicator, Pressable, Text, ImageBa
 import { Avatar, Divider, Text as PaperText } from 'react-native-paper';
 import { useIncomesByStudent } from '../../incomes/hooks/useIncomesByStudent';
 import ItemIncomeStudentView from '../../../containers/incomes/components/ItemIncomeStudentView';
-import ItemIncomeView from '../../../containers/incomes/components/ItemIncomeView';
 import Icon from 'react-native-vector-icons/MaterialIcons'; 
 import { RootStackParamList } from '../../../types';
 import { RouteProp } from '@react-navigation/native';
@@ -252,8 +251,8 @@ const styles = StyleSheet.create({
     color: COLORS.darkLetter3, // color más claro
     fontFamily: 'OpenSans-Light',
   },
-  name: { fontFamily: 'OpenSans-Light', fontSize: 20, fontWeight: 'bold', color: '#000' },
-  resumenContainer: { backgroundColor: 'rgba(197, 216, 187, 0.59)', padding: 16 },
+  name: { fontFamily: 'OpenSans-Regular', fontSize: 18,  color: COLORS.darkLetter2 },
+  resumenContainer: { backgroundColor: 'rgba(197, 216, 187, 0.59)', paddingTop: 8,paddingBottom: 8, paddingLeft: 16,  paddingRight: 16 },
 
   resumenContainerClases: 
   { backgroundColor: 'rgba(235, 245, 177, 0.42)',  height: 280 },
@@ -291,7 +290,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerText: { fontFamily: 'OpenSans-Regular', fontSize: 16, color: '#ffff' },
-  headerResum: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#93aba2', paddingLeft: 16, paddingVertical: 6, marginTop: 4 },
-  headerTitle: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#dfed47', paddingVertical: 6, justifyContent: 'space-between', paddingLeft: 16, marginTop: 4 },
+  headerResum: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#93aba2', paddingLeft: 16, paddingVertical: 4, marginTop: 4 },
+  headerTitle: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#dfed47', paddingVertical: 4, justifyContent: 'space-between', paddingLeft: 16, marginTop: 4 },
   headerTitleText: { fontFamily: 'OpenSans-Regular', color: COLORS.darkLetter },
 });

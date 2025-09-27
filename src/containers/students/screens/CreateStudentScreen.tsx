@@ -91,7 +91,11 @@ export default function CreateStudentScreen() {
       style={styles.background}
       resizeMode="cover"
     >
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 100} 
+      >
       <TouchableWithoutFeedback
         onPress={() => {
           Keyboard.dismiss()
@@ -108,7 +112,7 @@ export default function CreateStudentScreen() {
           onChangeText={(text) => handleChange('nombre', text)}
           mode="outlined"
           style={styles.input}
-           textColor= {COLORS.darkLetter3}
+          textColor= {COLORS.darkLetter3}
           outlineColor={violetPlaceholder}
           activeOutlineColor={violetButton}
           left={<TextInput.Icon icon="account" color={violetButton} />}
@@ -425,6 +429,8 @@ const styles = StyleSheet.create({
   },
   input: {
     marginTop: 10,
+    fontSize: 16,
+    height: 50,
   },
   rightBox: {
     width: 36,
@@ -452,7 +458,7 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 30,
-    paddingVertical: 15,
+    paddingVertical: 12,
     borderRadius: 8,
     alignItems: 'center',
     shadowColor: '#7b61ff',
@@ -462,8 +468,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontWeight: '700',
-    fontSize: 18
+   fontFamily: 'OpenSans-Regular',
+    fontSize: 17,
   },
   background: {
     flex: 1,

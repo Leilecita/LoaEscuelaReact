@@ -34,17 +34,18 @@ export const PaymentStudentListScreen: React.FC<Props> = ({ category, subcategor
       reload,
     } = useAllStudents({
       category,
-      query: debouncedSearchText,
+      
+      query: searchInput.toLowerCase(),
       orderBy: 'created',
     })
 
-  useEffect(() => {
+ /* useEffect(() => {
     const handler = setTimeout(() => {
       updateQuery(searchInput.toLowerCase())
     }, 400)
 
     return () => clearTimeout(handler)
-  }, [searchInput])
+  }, [searchInput]) */
 
   const toggleExpand = (id: number) => {
     setExpandedStudentId((prev) => (prev === id ? null : id))
@@ -68,7 +69,7 @@ export const PaymentStudentListScreen: React.FC<Props> = ({ category, subcategor
       ) : (
         <FlatList
           data={students}
-          keyExtractor={(item, index) => `${item.student_id}-${index}`}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
           keyboardShouldPersistTaps="handled"
           onEndReached={loadMore}
           onEndReachedThreshold={0.5}
@@ -79,7 +80,7 @@ export const PaymentStudentListScreen: React.FC<Props> = ({ category, subcategor
               student={item}
               isExpanded={expandedStudentId === item.id}
               onToggleExpand={() => toggleExpand(item.id)}
-              planilla_id={planillaId ?? undefined} 
+             // planilla_id={planillaId ?? undefined} 
             />
           )}
         />
