@@ -49,8 +49,8 @@ export default function IncomesListScreen() {
   const { userRole } = useContext(AuthContext);
   const isAdmin = userRole === "admin"; 
 
-  const [categoryFilter, setCategoryFilter] = useState<CategoryFilterOption>("Escuela");
-  const [paymentPlace, setPaymentPlace] = useState<FilterOption>("Playa");
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilterOption>("Todos");
+  const [paymentPlace, setPaymentPlace] = useState<FilterOption>("Todos");
   const [paymentMethodFilter, setPaymentMethodFilter] = useState<PaymentMethodOption>("Todos");
   const [editingIncome, setEditingIncome] = useState<any>(null);
 
@@ -136,6 +136,7 @@ export default function IncomesListScreen() {
                   sub_category={item.sub_category || ""}
                   detail={item.detail.toString()}
                   amount={item.amount}
+                  course_amount={item.course_amount}
                   income_id={item.income_id}
                   student_id={item.student_id}
                   class_course_id={item.class_course_id}

@@ -6,17 +6,16 @@ import type { ReportStudent } from '../services/studentService'
 import { savePresent, usePresentCount, removePresent, updateStudentActive } from '../services/studentService'
 import { formatDateToFullDateTime, formatDateToYYYYMMDD } from 'helpers/dateHelper'
 import { FilterBar } from 'core/components/FilterToolbar'
-import { CustomFAB } from 'core/components/CustomFAB'
 import { Category, Subcategoria } from 'types'
 import { FlatList } from 'react-native'
 import { ItemStudentAssistView } from '../components/ItemStudentAssistView'
-import debounce from 'lodash.debounce'
 import { FAB } from 'react-native-paper'
 import { useNavigation } from '@react-navigation/native'
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from 'types'
 import { COLORS } from '@core'
 
+import { useRoute } from '@react-navigation/native';
 
 
 type StudentListScreenNavigationProp = NativeStackNavigationProp<
@@ -43,8 +42,19 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
 
   const [activeFilter, setActiveFilter] = useState<'si' | 'no'>('si')
 
+  const route = useRoute();
 
-  const { countStudents, countPresentes, loading: loadingPresentes } = usePresentCount(
+    
+  useFocusEffect(
+    useCallback(() => {
+      console.log('📌 useFocusEffect ejecutado - refrescando estudiantes');
+      reload();
+      forzarRefrescoContador();
+    }, [only_date, showOnlyPresent, sortOrder])
+  ); 
+ 
+
+  const { countActiveStudents ,countStudents, countPresentes, loading: loadingPresentes } = usePresentCount(
     category,
     subcategoria,
     only_date,
@@ -66,16 +76,6 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
     planillaId,
     updateQuery,
   } = useStudents(category, subcategoria, only_date, showOnlyPresent, sortOrder, activeFilter)
-
-
-  // Hook para recargar cuando la pantalla entra en foco
-  useFocusEffect(
-    useCallback(() => {
-     // setSortOrder('alf');
-      //reload();
-      //forzarRefrescoContador();
-    }, [only_date, showOnlyPresent, sortOrder])
-  );
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -236,6 +236,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
           onSearchTextChange={setSearchInput}
           countPresentes={countPresentes}
           countStudents={countStudents}
+          countActiveStudents={countActiveStudents}
           enableDatePicker={true}
           enablePresentFilter={true}
           enableSortOrder={true}
@@ -256,16 +257,18 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
           </View>
         ) : (
           <>
-            <FlatList
+           {!planillaId ? (
+              <ActivityIndicator style={styles.center} size="large" />
+            ) : (
+              <FlatList
               data={students}
               keyExtractor={(item, index) => `${item.planilla_alumno_id}-${item.student_id}-${index}`}
               keyboardShouldPersistTaps="handled"
               onEndReached={loadMore}
               onEndReachedThreshold={0.5}
               ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
-              contentContainerStyle={{ paddingBottom: 100 }}
+              contentContainerStyle={{ paddingBottom: 120 }} // ✅ suficiente padding para el FAB
               renderItem={({ item }) => (
-                
                 <ItemStudentAssistView
                   student={item}
                   isExpanded={expandedStudentId === item.student_id}
@@ -273,11 +276,11 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
                   togglePresente={togglePresente}
                   eliminarPresente={eliminarPresente}
                   selectedDate={selectedDate}
-                  onLongPress={() => handleToggleActive(item)} // 👈
-
+                  onLongPress={() => handleToggleActive(item)}
                 />
               )}
             />
+            )}
             <FAB
                 icon="account-plus"
                 //color= "#6c8a35"
@@ -295,6 +298,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
                   subcategoria: 'subcategoria',
                   modo: 'asistencias',
                   planilla_id: planillaId,
+               
                 })}
               />
           </>

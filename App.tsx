@@ -1,10 +1,8 @@
 import { NavigationApp } from './src/core/navigation';
 import { useFonts } from 'expo-font';
-import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
 import { StyleSheet, Platform, SafeAreaView, View, Text, TextInput } from 'react-native';
-import * as NavigationBar from 'expo-navigation-bar';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { ClasesPriceProvider } from './src/contexts/ClasesPriceContext';
 import { PaperProvider, DefaultTheme as PaperDefaultTheme } from 'react-native-paper';
@@ -20,10 +18,10 @@ const PaperTheme = {
 };
 
 // Desactivar escalado global
-(Text as any).defaultProps = (Text as any).defaultProps || {};
+/*(Text as any).defaultProps = (Text as any).defaultProps || {};
 (Text as any).defaultProps.allowFontScaling = false;
 (TextInput as any).defaultProps = (TextInput as any).defaultProps || {};
-(TextInput as any).defaultProps.allowFontScaling = false;
+(TextInput as any).defaultProps.allowFontScaling = false;*/
 
 // Componente separado para poder usar useSafeAreaInsets()
 function AppContent() {
@@ -31,8 +29,8 @@ function AppContent() {
 
   useEffect(() => {
     if (Platform.OS === 'android') {
-      NavigationBar.setPositionAsync('relative');
-      NavigationBar.setBackgroundColorAsync('rgb(240,240,240)');
+      //NavigationBar.setPositionAsync('relative');
+      //NavigationBar.setBackgroundColorAsync('rgb(240,240,240)');
     }
   }, []);
 
@@ -59,7 +57,7 @@ export default function App() {
 
   useEffect(() => {
     if (loaded || error) {
-      SplashScreen.hideAsync();
+     // SplashScreen.hideAsync();
     }
   }, [loaded, error]);
 
@@ -70,8 +68,9 @@ export default function App() {
       <PaperProvider theme={PaperTheme}>
         <AuthProvider>
           <ClasesPriceProvider>
-            {/* Barra superior */}
-            <StatusBar style="light" backgroundColor="rgb(130, 94, 193)" />
+            {/* Barra superior 
+            <StatusBar style="light" backgroundColor="rgb(130, 94, 193)" />*/}
+            <StatusBar style="light"  />
             {Platform.OS === 'ios' ? (
               <View style={styles.container}>
                 <NavigationApp />

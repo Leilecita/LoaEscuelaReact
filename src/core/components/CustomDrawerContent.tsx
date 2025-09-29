@@ -6,13 +6,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 import { COLORS } from 'core/constants';
 import { AuthContext } from '../../contexts/AuthContext';
-import CreateUserScreen from '../screens/CreateUserScreen';
 
 
 export function CustomDrawerContent(props: any) {
   const { navigation } = props;
   const { userRole } = useContext(AuthContext);
   const isAdmin = userRole === 'admin';
+
+  const { signOut } = useContext(AuthContext)
 
   return (
     <DrawerContentScrollView {...props} style={{ backgroundColor: COLORS.darkGreenColor, width: 200 }}>
@@ -44,7 +45,7 @@ export function CustomDrawerContent(props: any) {
           navigation.navigate('ResumenTabs');
         }}
       >
-        <MaterialCommunityIcons name="book-open" size={22} color="#fff" />
+        <MaterialCommunityIcons name="chart-bar" size={22} color="#fff" />
         <Text style={styles.menuText}>Resumen diario</Text>
       </TouchableOpacity>
 
@@ -80,7 +81,7 @@ export function CustomDrawerContent(props: any) {
       </TouchableOpacity>
 
 
-      <TouchableOpacity style={styles.menuItem} onPress={() => console.log('Cerrar sesión')}>
+      <TouchableOpacity style={styles.menuItem} onPress={signOut}>
         <MaterialCommunityIcons name="logout" size={22} color="#fff" />
         <Text style={styles.menuText}>Cerrar sesión</Text>
       </TouchableOpacity>
@@ -94,23 +95,17 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#fff',
   },
-  headerSubtitle: {
-    padding: 20,
-    borderBottomWidth: 1,
-    borderColor: '#d3bfff',
-  },
-
   userName: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 17,
     fontFamily: 'OpenSans-Bold',
   },
   sectionTitle: {
     marginTop: 20,
     marginLeft: 16,
-    color: '#d3bfff',
+    color: COLORS.backgroundGreenClear,
     fontSize: 14,
-    fontFamily: 'OpenSans-Bold',
+    fontFamily: 'OpenSans-Regular',
   },
   menuItem: {
     flexDirection: 'row',
@@ -121,7 +116,7 @@ const styles = StyleSheet.create({
   menuText: {
     marginLeft: 12,
     color: '#fff',
-    fontSize: 16,
-    fontFamily: 'OpenSans-Regular',
+    fontSize: 15,
+    fontFamily: 'OpenSans-Light',
   },
 });

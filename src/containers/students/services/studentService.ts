@@ -290,6 +290,7 @@ export function usePresentCount(
 ) {
   const [countPresentes, setCountPresentes] = React.useState<number>(0)
   const [countStudents, setCountStudents] = React.useState<number>(0)
+  const [countActiveStudents, setCountActiveStudents] = React.useState<number>(0)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
 
@@ -314,6 +315,7 @@ export function usePresentCount(
           console.log('Respuesta API getValues:', response.data);
           setCountPresentes(response.data.data.tot_presents)
           setCountStudents(response.data.data.tot_students)
+          setCountActiveStudents(response.data.data.tot_active_students)
         } else {
           console.warn('Respuesta inesperada al contar presentes', response.data)
         }
@@ -328,7 +330,7 @@ export function usePresentCount(
     fetchCount()
   }, [category, subcategoria, date, refreshSignal])
 
-  return { countStudents, countPresentes, loading, error }
+  return { countActiveStudents, countStudents, countPresentes, loading, error }
 }
 
 

@@ -19,6 +19,7 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
 
   // Campos de pago
   const [monto, setMonto] = useState("");
+  const [montoCurso, setMontoCurso] = useState("");
   const [description, setDescription] = useState("");
   const [metodo, setMetodo] = useState("");
   const [lugar, setLugar] = useState("");
@@ -43,7 +44,9 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
 
   useEffect(() => {
     if (income) {
+      console.log("📌 income recibido:", income);
       setMonto(income.amount?.toString() || "");
+      setMontoCurso(income.course_amount?.toString() || "");
       setMetodo(income.payment_method || "");
       setLugar(income.payment_place || "");
       setCategoria(income.category || "");
@@ -69,6 +72,7 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
           id: income.class_course_id,
           category: categoria,
           sub_category: subcategoria,
+          amount: parseFloat(montoCurso),
         });
       }
 
@@ -222,6 +226,18 @@ export const EditIncomeModal = ({ visible, onClose, income, onSuccess }: any) =>
           {/* Segmento Categoría */}
           {activeSegment === "categoria" && (
             <>
+             <TextInput
+                label="Monto curso"
+                value={montoCurso}
+                onChangeText={setMontoCurso}
+                keyboardType="numeric"
+                mode="outlined"
+                style={styles.input}
+                outlineColor={COLORS.veryLightGreenColor}
+                activeOutlineColor={COLORS.lightGreenColor}
+                textColor= {COLORS.darkLetter3}
+                
+              />
               <TouchableOpacity onPress={() => setShowCategoriaOptions(!showCategoriaOptions)}>
                 <TextInput
                   label="Categoría"

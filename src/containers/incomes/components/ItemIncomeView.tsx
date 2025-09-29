@@ -24,6 +24,7 @@ type ItemIncomeProps = {
   sub_category: string;
   detail: string;
   amount: number;
+  course_amount: number;
   income_id: number;
   class_course_id: number;
   student_id: number;
@@ -36,6 +37,7 @@ type ItemIncomeProps = {
     income_id: number;
     class_course_id: number;
     amount: number;
+    course_amount: number;
     payment_method: string;
     payment_place: string;
     category: string;
@@ -53,6 +55,7 @@ export default function ItemIncomeView({
   category,
   detail,
   amount,
+  course_amount,
   income_id,
   payment_method,
   class_course_id,
@@ -86,6 +89,7 @@ export default function ItemIncomeView({
           onEdit?.({
             income_id,
             amount,
+            course_amount,
             payment_method,
             payment_place,
             detail,

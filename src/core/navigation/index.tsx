@@ -24,6 +24,7 @@ import { ResumenTabs } from 'containers/dailySummary/components/ResumenTabs';
 import CreateUserScreen from 'core/screens/CreateUserScreen';
 
 
+
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 const AuthStackNav = createNativeStackNavigator<AuthStackParamList>();
 const Drawer = createDrawerNavigator();
@@ -54,14 +55,22 @@ function MainDrawer() {
     
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
-      screenOptions={{ headerShown: true, headerStyle: { backgroundColor: COLORS.mediumGreenColor },
-      drawerStyle: {
-        width: 200,                   // ancho del drawer
-        backgroundColor: 'transparent', // fondo transparente
-      },
-      overlayColor: 'rgba(0,0,0,0.5)', // sombra sobre la pantalla
-      headerTintColor: '#fff',
-      headerTitleStyle: { fontFamily: 'OpenSans-Regular' }, }}
+
+
+      screenOptions={{
+        headerShown: true,
+        headerStyle: {
+          backgroundColor: COLORS.mediumGreenColor,
+          ...(Platform.OS === 'android' ? { height: 56 } : {}),
+        } as any,
+        headerTintColor: '#fff',
+        
+        headerTitleStyle: { fontFamily: 'OpenSans-Regular', fontSize: 17 },
+        drawerStyle: {
+          width: 200,
+          backgroundColor: 'transparent',
+        },
+      }}
     >
      <Drawer.Screen
         name="Home"
@@ -89,9 +98,9 @@ export function NavigationApp() {
   const { userToken } = React.useContext(AuthContext);
   useEffect(() => {
     if (Platform.OS === 'android') {
-      NavigationBar.setBackgroundColorAsync(COLORS.backgroundGreenClear); // Fondo transparente
-      NavigationBar.setButtonStyleAsync('light');           // Íconos blancos
-      NavigationBar.setVisibilityAsync('visible');         // Visible
+      //NavigationBar.setBackgroundColorAsync(COLORS.backgroundGreenClear); // Fondo transparente
+      //NavigationBar.setButtonStyleAsync('light');           // Íconos blancos
+      //NavigationBar.setVisibilityAsync('visible');         // Visible
     }
   }, []);
   return (
@@ -99,6 +108,7 @@ export function NavigationApp() {
       {/* StatusBar fina */}
       <RNStatusBar
         translucent={false}
+        
         backgroundColor={Platform.OS === 'android' ? COLORS.darkGreenColor : 'transparent'} //
         barStyle="light-content"
       />
@@ -112,10 +122,13 @@ export function NavigationApp() {
               headerTitleStyle: {
                 fontFamily: 'OpenSans-Regular',
                 fontSize: 17,
+                
               },
-              
+              headerTitleAlign: Platform.OS === 'android' ? 'left' : 'center', // solo Android a la izquierda
+            
             }}
           >
+          
             <RootStack.Screen
               name="MainApp"
               component={MainDrawer}
@@ -126,8 +139,12 @@ export function NavigationApp() {
               component={AppTabs}
               options={{
                 title: 'Asistencias',
+                
                 headerBackTitle: 'Volver',
-                headerRight: () => <MenuHeader iconColor="#fff" />,
+              
+                headerRight: () => <MenuHeader iconColor="#fff" 
+                
+                />,
               }}
             />
             <RootStack.Screen

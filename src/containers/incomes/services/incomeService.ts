@@ -14,6 +14,7 @@ export type Income = {
 
   category: string;
   sub_category: string;
+  course_amount: number;
 };
 
 export type IncomeStudent = {
@@ -52,6 +53,8 @@ export async function fetchIncomes(
   }
 
   const response = await api.get('/incomes.php', { params });
+
+  //console.log('🔎 API response.data:', response.data); 
 
   if (response.data.result === 'success') {
     return response.data.data as Income[];

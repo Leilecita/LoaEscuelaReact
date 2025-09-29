@@ -26,6 +26,7 @@ type FilterBarProps = {
   onSearchTextChange: (text: string) => void
   countPresentes?: number
   countStudents?: number
+  countActiveStudents?: number
   enableDatePicker?: boolean
   enablePresentFilter?: boolean
   enableSortOrder?: boolean
@@ -47,6 +48,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onSearchTextChange,
   countPresentes = 0,
   countStudents = 0,
+  countActiveStudents = 0,
   enableDatePicker = false,
   enablePresentFilter = false,
   enableSortOrder = false,
@@ -166,9 +168,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               fontSize: 15
             }}
           >
-            Presentes {countPresentes} / {countStudents}
+            Presentes {countPresentes} / {countActiveStudents}
           </Chip>
         )}
+
 
           {enableSortOrder && (
             <Chip
@@ -236,7 +239,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               >
                 {activeFilter === 'si' ? 'Activos' : 'Inactivos'}
               </Chip>
+
+              
             )}
+            
             
         </ScrollView>
       </View>

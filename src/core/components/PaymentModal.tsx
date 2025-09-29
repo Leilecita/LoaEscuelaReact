@@ -149,13 +149,12 @@ export const PaymentModal: React.FC<PaymentModalProps> = ({
           <View style={styles.dragHandle} />
           <View style={styles.header}>
             <Text style={styles.studentName}>{firstName} {lastName}</Text>
-
             <Text style={styles.title}>Nuevo Pago</Text>
           </View>
 
           <ScrollView
-            style={{ width: '100%' }}
-            contentContainerStyle={{ paddingBottom: 20 }}
+            style={{ width: '100%', flex: 1 }}
+            contentContainerStyle={{ paddingBottom: 10 }}
             keyboardShouldPersistTaps="handled"
           >
             <View style={styles.segmentedContainer}>
