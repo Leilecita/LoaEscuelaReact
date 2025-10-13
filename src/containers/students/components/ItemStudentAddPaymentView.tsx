@@ -4,6 +4,7 @@ import type { Student } from '../services/studentService'
 import { COLORS } from 'core/constants'
 import { InitialAvatar } from '../../../core/components/InitialAvatar'
 import { ContactRow } from '../../../core/components/ContactRow'
+import { FONT_SIZES } from 'core/constants/fonts';
 
 type Props = {
   student: Student
@@ -20,12 +21,12 @@ export const ItemStudentAddPaymentView: React.FC<Props> = ({
 }) => {
   return (
     <View style={styles.itemContainer}>
-      <View style={styles.topRow}>
+       <Pressable style={styles.topRow} onPress={onToggleExpand}>
         <InitialAvatar letra={student.nombre.charAt(0)} category={student.sub_category} />
 
         {/* Nombre y DNI */}
         <View style={styles.leftColumn}>
-          <Text style={styles.name} onPress={onToggleExpand}>
+          <Text style={styles.name} >
             {student.nombre} {student.apellido}
           </Text>
           <Text style={styles.dni}>{student.dni}</Text>
@@ -42,7 +43,7 @@ export const ItemStudentAddPaymentView: React.FC<Props> = ({
             </Pressable>
           </View>
         )}
-      </View>
+      </Pressable>
 
       {isExpanded && (
         <View style={styles.extraInfo}>
@@ -94,12 +95,12 @@ const styles = StyleSheet.create({
   name: {
     fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
-    fontSize: 16,
+    fontSize: FONT_SIZES.name,
   },
   dni: {
     fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter,
-    fontSize: 15,
+    fontSize: FONT_SIZES.dni,
   },
   button: {
     backgroundColor: COLORS.headerDate,

@@ -268,8 +268,10 @@ const renderItem: ListRenderItem<ReportResumAsist> = ({ item }) => {
           <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
         )}
 
-        {resumenes.length === 0 ? (
-          <Text style={styles.loadingText}>No hay datos disponibles</Text>
+        {resumenes.length === 0 && !loading ? (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+              <Text style={styles.loadingText}>No hay datos disponibles</Text>
+            </View>
         ) : (
           <FlatList<ReportResumAsist>
             data={resumenes}
@@ -320,7 +322,7 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 12,
   },
-  detailLabel: { fontSize: 15, color: '#333', marginBottom: 4 },
+  detailLabel: { fontSize: 17, color: '#333', marginBottom: 4 },
   loadingText: { textAlign: 'center', marginTop: 20, fontSize: 16 },
 
  
@@ -357,7 +359,7 @@ row: {
 },
 
 subDetailLabel: {
- fontSize: 14,
+ fontSize: 16,
  fontFamily: 'OpenSans-Light',
  color: COLORS.darkLetter3,
 },

@@ -5,6 +5,7 @@ import type { Student } from '../services/studentService'
 import { COLORS } from 'core/constants'
 import { InitialAvatar } from '../../../core/components/InitialAvatar'
 import { ContactRow } from '../../../core/components/ContactRow'
+import { FONT_SIZES } from 'core/constants/fonts';
 
 type Props = {
   student: Student
@@ -77,12 +78,12 @@ const styles = StyleSheet.create({
  name: {
   fontFamily:'OpenSans-Regular',
   color: COLORS.darkLetter,
-  fontSize: 16,
+  fontSize: FONT_SIZES.name,
   },
   dni: {
     fontFamily:'OpenSans-Light',
     color: COLORS.darkLetter,
-    fontSize: 15,
+    fontSize: FONT_SIZES.dni,
   },
   extraInfo: {
     marginTop: 10,

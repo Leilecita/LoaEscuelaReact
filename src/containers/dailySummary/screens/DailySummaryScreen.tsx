@@ -330,8 +330,8 @@ export const DailySummaryScreen: React.FC = () => {
        <View style={[styles.filterWrapper, { backgroundColor: 'rgba(255,255,255,0.32)' }]}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterContainer}>
             <PeriodFilter filter={periodFilter} onChangeFilter={handlePeriodChange} />
-            <IncomesFilterBar filter={paymentPlace} onChangeFilter={setPaymentPlace} />
-            <PaymentMethodFilter filter={paymentMethodFilter} onChangeFilter={setPaymentMethodFilter} />
+               {/* <IncomesFilterBar filter={paymentPlace} onChangeFilter={setPaymentPlace} />
+            <PaymentMethodFilter filter={paymentMethodFilter} onChangeFilter={setPaymentMethodFilter} />*/}
           </ScrollView>
         </View>
 
@@ -347,8 +347,10 @@ export const DailySummaryScreen: React.FC = () => {
           <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
         )}
 
-        {resumenes.length === 0 ? (
-          <Text style={styles.loadingText}>No hay datos disponibles</Text>
+        {resumenes.length === 0 && !loading ? (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={styles.loadingText}>No hay datos disponibles</Text>
+          </View>
         ) : (
           <FlatList<ReportResumAsist>
             data={resumenes}

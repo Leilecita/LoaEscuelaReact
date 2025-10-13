@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { COLORS } from '@core';
+import { FONT_SIZES } from 'core/constants/fonts';
 
 type Props = {
   date: string | Date;
@@ -38,7 +39,8 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: 'OpenSans-Regular',
-    fontSize: 15,
+   // fontSize: 15,
+   fontSize: FONT_SIZES.date,
     color: COLORS.whiteLetter,
   },
   monthText: {

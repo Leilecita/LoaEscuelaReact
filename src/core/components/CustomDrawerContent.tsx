@@ -32,25 +32,70 @@ export function CustomDrawerContent(props: any) {
 
       <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('ListaDePagos')}>
         <MaterialCommunityIcons name="hand-coin" size={22} color="#fff" />
-        <Text style={styles.menuText}>Pagos</Text>
+        <Text style={styles.menuText}>Lista pagos</Text>
       </TouchableOpacity>
 
+
+
+      <Text style={styles.sectionTitle}>Resumen diario</Text>
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => {
+            if (!isAdmin) {
+              Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
+              return;
+            }
+            navigation.navigate('ResumenTabs', { screen: 'Trabajos' });
+          }}
+        >
+          <MaterialCommunityIcons name="briefcase-check" size={22} color="#fff" />
+          <Text style={styles.menuText}>Trabajos</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => {
+            if (!isAdmin) {
+              Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
+              return;
+            }
+            navigation.navigate('ResumenTabs', { screen: 'Pagos' });
+          }}
+        >
+          <MaterialCommunityIcons name="cash-multiple" size={22} color="#fff" />
+          <Text style={styles.menuText}>Cajas</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.menuItem}
+          onPress={() => {
+            if (!isAdmin) {
+              Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
+              return;
+            }
+            navigation.navigate('ResumenTabs', { screen: 'Presentes' });
+          }}
+        >
+          <MaterialCommunityIcons name="account-group" size={22} color="#fff" />
+          <Text style={styles.menuText}>Presentes</Text>
+        </TouchableOpacity>
+        
+
+
+      <Text style={styles.sectionTitle}>Profes</Text>
       <TouchableOpacity
         style={styles.menuItem}
         onPress={() => {
-          if (!isAdmin) {
-            Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
-            return;
-          }
-          navigation.navigate('ResumenTabs');
+          
+          navigation.navigate('DailyJobsScreen');
         }}
       >
-        <MaterialCommunityIcons name="chart-bar" size={22} color="#fff" />
-        <Text style={styles.menuText}>Resumen diario</Text>
+        <MaterialCommunityIcons name="clipboard-plus" size={22} color="#fff" />
+        <Text style={styles.menuText}>Carga trabajos</Text>
       </TouchableOpacity>
-
+      
 
       <Text style={styles.sectionTitle}>Admin</Text>
+        
       <TouchableOpacity
         style={styles.menuItem}
         onPress={() => {
@@ -64,6 +109,7 @@ export function CustomDrawerContent(props: any) {
         <MaterialCommunityIcons name="book-open" size={22} color="#fff" />
         <Text style={styles.menuText}>Planillas</Text>
       </TouchableOpacity>
+     
       
      
       <TouchableOpacity
@@ -102,15 +148,17 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     marginTop: 20,
+    marginBottom: 4,
     marginLeft: 16,
     color: COLORS.backgroundGreenClear,
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: 'OpenSans-Regular',
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
+    marginLeft: 8,
     paddingLeft: 16,
   },
   menuText: {

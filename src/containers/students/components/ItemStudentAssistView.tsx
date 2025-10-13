@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from 'types';
 import { COLORS } from 'core/constants';
+import { FONT_SIZES } from 'core/constants/fonts';
 import { AuthContext } from '../../../contexts/AuthContext';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'InformationStudent'>;
@@ -52,7 +53,7 @@ const ItemStudentAssistViewComponent: React.FC<Props> = ({
         <InitialAvatar letra={student.nombre.charAt(0)} category={student.sub_category} />
 
         <View style={styles.infoContainer}>
-          <Text style={styles.name} onPress={onToggleExpand}>
+          <Text style={styles.name}>
             {student.nombre} {student.apellido}
           </Text>
           <Text style={styles.dni}>{student.dni}</Text>
@@ -177,12 +178,14 @@ const styles = StyleSheet.create({
   name: {
     fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
-    fontSize: 16,
+   // fontSize: 16,
+   fontSize: FONT_SIZES.name
   },
   dni: {
     fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter,
-    fontSize: 15,
+    //fontSize: 15,
+    fontSize: FONT_SIZES.dni
   },
   extraInfo: {
     marginTop: 10,

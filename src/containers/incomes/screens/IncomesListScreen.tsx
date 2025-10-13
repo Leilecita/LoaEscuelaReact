@@ -19,6 +19,12 @@ import { COLORS } from "@core";
 import { useContext } from "react";
 import { AuthContext } from "../../../contexts/AuthContext";
 
+import { sendPdf } from "../services/incomeService"
+import RNFS from 'react-native-fs';
+import FileViewer from 'react-native-file-viewer';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+
 // 🔹 Mapeos de filtros para enviar al backend
 const FILTER_MAP: Record<string, string> = {
   Todos: "",
@@ -45,6 +51,28 @@ type CategoryFilterOption = "Todos" | "Escuela" | "Colonia" | "Highschool";
 type PaymentMethodOption = "Todos" | "Efectivo" | "MP" | "Transferencia";
 
 export default function IncomesListScreen() {
+
+  const handleSendPdf = async (incomeId: number, name: string, amount: number, detail: string, created: string) => {
+    try {
+      const response = await sendPdf(incomeId, name, amount, detail, created);
+  
+      if (!response.pdf) throw new Error("No se recibió PDF del backend");
+  
+      const fileUri = FileSystem.documentDirectory + `Orden-${name}.pdf`;
+  
+      // Guardar PDF
+      await FileSystem.writeAsStringAsync(fileUri, response.pdf, {
+        encoding: FileSystem.EncodingType.Base64
+      });
+  
+      // Abrir/compartir PDF
+      await Sharing.shareAsync(fileUri);
+  
+      console.log("PDF abierto correctamente");
+    } catch (err) {
+      console.error("Error al generar/abrir PDF:", err);
+    }
+  };
   
   const { userRole } = useContext(AuthContext);
   const isAdmin = userRole === "admin"; 
@@ -143,6 +171,7 @@ export default function IncomesListScreen() {
                   payment_place={item.payment_place}
                   showDateHeader={index === 0 || currentDate !== previousDate}
                   onEdit={(income) => setEditingIncome(income)}
+                  onSend={() => handleSendPdf(item.income_id, item.description, item.amount, item.detail, item.income_created)}
                 />
               );
             }}

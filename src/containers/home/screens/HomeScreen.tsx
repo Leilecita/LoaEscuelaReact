@@ -8,6 +8,7 @@ import api from '../../../core/services/axiosClient';
 import { DateHeader } from '../../../core/components/DateHeader';
 import { COLORS } from '@core';
 import { AuthContext } from '../../../contexts/AuthContext';
+import { FONT_SIZES } from 'core/constants/fonts';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -176,7 +177,7 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     alignItems: 'flex-start',
   },
-  boxText: { color: COLORS.darkLetter, fontFamily: 'OpenSans-Light', fontSize: 15 },
+  boxText: { color: COLORS.darkLetter, fontFamily: 'OpenSans-Light',  fontSize: FONT_SIZES.dni },
   columnsContainer: { flexDirection: 'row', marginVertical: 1, flexWrap: 'wrap' },
   columnItem: { width: '50%', paddingRight: 10 },
   rowItem: { flexDirection: 'row', marginVertical: 4, justifyContent: 'space-between' },

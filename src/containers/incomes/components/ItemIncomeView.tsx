@@ -9,6 +9,7 @@ import { Icon } from 'react-native-paper';
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
 import { AuthContext } from '../../../contexts/AuthContext';
+import { FONT_SIZES } from 'core/constants/fonts';
 
 type NavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -30,6 +31,7 @@ type ItemIncomeProps = {
   student_id: number;
   showDateHeader?: boolean;
   fromPayments?: boolean;
+  onSend?: (id: number, class_course_id: number) => void;
 
   
   // 👇 callback para abrir modal de edición
@@ -63,6 +65,7 @@ export default function ItemIncomeView({
   showDateHeader = false,
   fromPayments = false, 
   onEdit,
+  onSend,
 }: ItemIncomeProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [firstName, ...rest] = description.split(' ');
@@ -193,24 +196,40 @@ export default function ItemIncomeView({
           </View>
         </View>
       </TouchableOpacity>
-
       {isExpanded && (
-        <View style={styles.extraInfo}>
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate('InformationStudent', {
-                studentId: student_id,
-                firstName,
-                lastName,
-                category,
-                sub_category
-              })
-            }
-          >
-            <Text style={styles.masInfoText}>+ info</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+
+    <View style={styles.extraInfo}>
+      <View style={styles.moreInfoRow}>
+        <TouchableOpacity
+          onPress={() => onSend?.(income_id, class_course_id)}
+        >
+          <View style={{ flexDirection: 'row'}}>
+           
+            <Text style={[styles.pdfText, { marginLeft: 2 }]}>
+              descargar recibo
+            </Text>
+          </View>
+        </TouchableOpacity>
+
+
+        {/* + info alineado a la derecha */}
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate('InformationStudent', {
+              studentId: student_id,
+              firstName,
+              lastName,
+              category,
+              sub_category
+            })
+          }
+        >
+          <Text style={styles.moreText}>+ info</Text>
+        </TouchableOpacity>
+    </View>
+  </View>
+)}
+
     </View>
     </View>
   );
@@ -236,50 +255,44 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 6,
   },
-  left: { flex: 2 },
-  center: { flex: 2 },
-  right: { flex: 2, alignItems: 'flex-end' },
+  left: { flex: 2, marginBottom: 8 },
+  center: { flex: 2, marginBottom: 8 },
+  right: { flex: 2, alignItems: 'flex-end', marginBottom: 8 },
   name: {
-    fontSize: 16,
+    //fontSize: 16,
+    fontSize: FONT_SIZES.name,
     fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
   },
   lastName: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.name,
+   // fontSize: 15,
     marginTop: 6, 
     fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter3,
   },
   concept: {
-    fontSize: 16,
-    fontFamily: 'OpenSans-Regular',
+    fontSize: FONT_SIZES.name,
+    //fontSize: 16,
+    fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter,
   },
   location: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.name,
+   // fontSize: 16,
     fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter3,
     marginLeft: 6, 
   },
   amount: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.name,
+   // fontSize: 16,
     fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
   },
   extraInfo: {
-    paddingLeft: 10,
     borderTopColor: '#ddd',
-    paddingTop: 4,
-  },
-  masInfoText: {
-    marginBottom: 8,
-    fontFamily: 'OpenSans-Regular',
-    fontSize: 17,
-    color: COLORS.darkLetter3,
-    textAlign: 'right',
-  },
-  badge: {
-    // opcional: estilo de fondo del ícono
+    paddingVertical: 4,
   },
   day: {
     width:50,
@@ -291,4 +304,37 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
    },
+   button: {
+    marginTop: 10,
+    backgroundColor: "#2196F3",
+    padding: 8,
+    borderRadius: 6,
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  moreInfoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 6,
+  },
+ 
+  moreText: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: FONT_SIZES.name,
+    color: COLORS.darkLetter3,
+  },
+ 
+  pdfText: {
+    fontFamily: 'OpenSans-Light',
+    fontSize: FONT_SIZES.name,
+    color: COLORS.buttonClearLetter,
+    textDecorationLine: 'none',
+    textAlign: 'left',
+    marginLeft: -15,
+  },
+  
 });

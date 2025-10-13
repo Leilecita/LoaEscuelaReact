@@ -4,6 +4,7 @@ import type { Student } from '../services/studentService'
 import { ContactRow } from '../../../core/components/ContactRow'
 import { InitialAvatar } from '../../../core/components/InitialAvatar'
 import { COLORS } from 'core/constants'
+import { FONT_SIZES } from 'core/constants/fonts'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { RootStackParamList } from 'types'
@@ -40,8 +41,8 @@ export const ItemStudentView: React.FC<Props> = ({
             <Text style={styles.dni}>{student.observation}</Text>
           )}
         </View>
-      </Pressable>
-
+      
+        </Pressable>
       {isExpanded && (
         <View style={styles.extraInfo}>
           {student.tel_adulto && (
@@ -72,6 +73,7 @@ export const ItemStudentView: React.FC<Props> = ({
          
         </View>
       )}
+      
     </View>
   )
 }
@@ -103,12 +105,14 @@ const styles = StyleSheet.create({
   name: {
     fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
-    fontSize: 16,
+    //fontSize: 16,
+    fontSize: FONT_SIZES.name
   },
   dni: {
     fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter,
-    fontSize: 15,
+    //fontSize: 15,
+    fontSize: FONT_SIZES.dni
   },
   extraInfo: {
     marginTop: 10,

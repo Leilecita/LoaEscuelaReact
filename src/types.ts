@@ -20,6 +20,8 @@ export type RootStackParamList = {
     DailySummaryScreen: undefined;
     DailySummaryScreen2: undefined;
     AttendanceSheetScreen: undefined;
+    DailyJobsScreen: undefined;
+    DailyWorksScreen: undefined;
 
     ResumenTabs: undefined;
     CreateUserScreen: undefined; 

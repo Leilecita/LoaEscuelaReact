@@ -6,6 +6,7 @@ import { PresentsSummaryScreen } from "../screens/PresentsSummaryScreen";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { COLORS } from 'core/constants'
 import { Platform } from 'react-native';
+import { DailyWorksScreen } from "../screens/DailyWorksScreen";
 
 const Tab = createBottomTabNavigator();
 const ICON_COLOR = 'rgb(255, 255, 255)'
@@ -51,6 +52,21 @@ export const ResumenTabs = () => {
             fontFamily: 'OpenSans-Regular'  // 👈 también podés agrandar el texto debajo
           },
           tabBarLabel: "Presentes",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="account-group" color={color} size={size} />
+          ),
+        }}
+      />
+       <Tab.Screen
+        name="Trabajos"
+        component={DailyWorksScreen}
+        options={{
+          tabBarLabelStyle: {
+            fontSize: 13, 
+            marginTop: 2,
+            fontFamily: 'OpenSans-Regular'  
+          },
+          tabBarLabel: "Trabajos",
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account-group" color={color} size={size} />
           ),

@@ -17,6 +17,7 @@ import { MenuHeader } from '../../../src/core/components/MenuHeader';
 import { CustomDrawerContent } from '../../../src/core/components/CustomDrawerContent';
 import { DailySummaryScreen } from '../../containers/dailySummary/screens/DailySummaryScreen';
 import { AttendanceSheetScreen } from '../../../src/core/screens/AttendanceSheetScreen';
+import { DailyJobsScreen } from '../../../src/core/screens/DailyJobsScreen';
 import { AppTabs } from './AppTabs';
 import { StatusBar } from 'expo-status-bar';
 import { COLORS } from 'core/constants';
@@ -202,6 +203,11 @@ export function NavigationApp() {
               name="AttendanceSheetScreen"
               component={AttendanceSheetScreen}
               options={{ title: 'Planillas' }}
+            />
+             <RootStack.Screen
+              name="DailyJobsScreen"
+              component={DailyJobsScreen}
+              options={{ title: 'Trabajos' }}
             />
             <RootStack.Screen
               name="CreateUserScreen"

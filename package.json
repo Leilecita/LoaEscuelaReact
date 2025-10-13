@@ -24,13 +24,18 @@
     "date-fns": "^4.1.0",
     "expo": "~53.0.23",
     "expo-asset": "~11.1.7",
+    "expo-file-system": "~18.1.11",
     "expo-font": "~13.3.2",
     "expo-navigation-bar": "~4.2.8",
+    "expo-sharing": "~13.1.5",
     "expo-splash-screen": "^0.30.10",
     "expo-status-bar": "~2.2.3",
     "react": "19.0.0",
     "react-native": "0.79.5",
+    "react-native-dropdown-picker": "^5.4.6",
     "react-native-edge-to-edge": "1.6.0",
+    "react-native-file-viewer": "^2.1.5",
+    "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-md5": "^1.0.0",
     "react-native-modal": "^14.0.0-rc.1",
@@ -40,6 +45,7 @@
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
+    "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^4.1.2",
     "react-native-vector-icons": "^10.2.0"
   },
@@ -53,6 +59,7 @@
     "eslint-config-expo": "~9.2.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.0",
+    "expo-doctor": "^1.17.10",
     "prettier": "^3.5.3",
     "typescript": "~5.8.3"
   },
@@ -89,7 +96,11 @@
       "reactNativeDirectoryCheck": {
         "exclude": [
           "react-native-md5",
-          "react-native-vector-icons"
+          "react-native-vector-icons",
+          "react-native-file-viewer",
+          "react-native-fs",
+          "react-native-dropdown-picker",
+          "react-native-swipe-list-view"
         ]
       }
     }

@@ -8,7 +8,7 @@ export type Income = {
   amount: number;
   description: string;
   income_created: string;
-  detail: string | number;
+  detail: string;
   payment_method: string;
   payment_place: string;
 
@@ -79,4 +79,29 @@ export async function fetchIncomesByStudent(studentId: number, page: number): Pr
   } else {
     throw new Error(response.data.message || 'Error al obtener pagos');
   }
+  
 }
+
+
+export async function sendPdf(incomeId: number, nombre: string, amount: number, detail: string, created: string) {
+  const response = await api.get('/incomes.php', {
+    params: {
+      method: 'generatePdfTest',
+      order_id: incomeId,
+      nombre: nombre,
+      amount: amount,
+      detail: detail,
+      created : created
+    }
+  });
+
+  if (response.data.result !== 'success') {
+    throw new Error(response.data.message || 'Error al generar PDF');
+  }
+
+  return response.data; // { pdf: "BASE64..." }
+}
+
+
+
+

@@ -1,5 +1,3 @@
-import { Button } from "react-native-paper";
-import { transparent } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 
 export const COLORS = {
     primary: '#333446',
