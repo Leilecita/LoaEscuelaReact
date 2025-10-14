@@ -16,6 +16,7 @@ import type { AuthStackParamList, RootStackParamList } from '../../types';
 import { MenuHeader } from '../../../src/core/components/MenuHeader';
 import { CustomDrawerContent } from '../../../src/core/components/CustomDrawerContent';
 import { DailySummaryScreen } from '../../containers/dailySummary/screens/DailySummaryScreen';
+import { DailyWorksScreen } from '../../containers/dailySummary/screens/DailyWorksScreen';
 import { AttendanceSheetScreen } from '../../../src/core/screens/AttendanceSheetScreen';
 import { DailyJobsScreen } from '../../../src/core/screens/DailyJobsScreen';
 import { AppTabs } from './AppTabs';
@@ -209,6 +210,12 @@ export function NavigationApp() {
               component={DailyJobsScreen}
               options={{ title: 'Trabajos' }}
             />
+            <RootStack.Screen
+              name="ListaDeTrabajos"
+              component={DailyWorksScreen}
+              options={{ title: 'ListaDeTrabajos' }}
+            />
+            
             <RootStack.Screen
               name="CreateUserScreen"
               component={CreateUserScreen}

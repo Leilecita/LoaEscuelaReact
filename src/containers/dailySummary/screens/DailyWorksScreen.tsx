@@ -20,6 +20,7 @@ import { usePaginatedFetch } from "../../../core/hooks/usePaginatedFetch";
 import { AuthContext } from "../../../contexts/AuthContext";
 import { useUsers } from "../../../core/hooks/useUsers";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { FONT_SIZES } from 'core/constants/fonts';
 
 type DayJob = {
   id: number;
@@ -231,9 +232,9 @@ export const DailyWorksScreen: React.FC = () => {
 // Estilos
 // ----------------------
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 16 },
+  container: { flex: 1, paddingHorizontal: 12 },
   userName: {
-    fontSize: 18,
+    fontSize: FONT_SIZES.name,
     fontFamily: "OpenSans-Bold",
     color: COLORS.darkLetter,
     marginBottom: 8,
@@ -250,11 +251,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   userCard: {
-    width: "48%",
+    width: "49%",
     backgroundColor: "rgba(255,255,255,0.9)",
     borderRadius: 15,
-    padding: 16,
-    marginBottom: 12,
+    padding: 14,
+    marginBottom: 6,
     borderWidth: 1,
     borderColor: "transparent",
   },
@@ -264,12 +265,12 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   jobName: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.date,
     fontFamily: "OpenSans-Regular",
     color: COLORS.darkLetter,
   },
   jobCount: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.date,
     fontFamily: "OpenSans-Bold",
     color: COLORS.darkLetter,
   },

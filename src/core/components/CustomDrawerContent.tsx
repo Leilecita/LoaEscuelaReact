@@ -36,50 +36,35 @@ export function CustomDrawerContent(props: any) {
       </TouchableOpacity>
 
 
+      {isAdmin && (
+        <>
+          <Text style={styles.sectionTitle}>Resumen diario</Text>
 
-      <Text style={styles.sectionTitle}>Resumen diario</Text>
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => {
-            if (!isAdmin) {
-              Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
-              return;
-            }
-            navigation.navigate('ResumenTabs', { screen: 'Trabajos' });
-          }}
-        >
-          <MaterialCommunityIcons name="briefcase-check" size={22} color="#fff" />
-          <Text style={styles.menuText}>Trabajos</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('ResumenTabs', { screen: 'Trabajos' })}
+          >
+            <MaterialCommunityIcons name="briefcase-check" size={22} color="#fff" />
+            <Text style={styles.menuText}>Trabajos</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => {
-            if (!isAdmin) {
-              Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
-              return;
-            }
-            navigation.navigate('ResumenTabs', { screen: 'Pagos' });
-          }}
-        >
-          <MaterialCommunityIcons name="cash-multiple" size={22} color="#fff" />
-          <Text style={styles.menuText}>Cajas</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.menuItem}
-          onPress={() => {
-            if (!isAdmin) {
-              Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
-              return;
-            }
-            navigation.navigate('ResumenTabs', { screen: 'Presentes' });
-          }}
-        >
-          <MaterialCommunityIcons name="account-group" size={22} color="#fff" />
-          <Text style={styles.menuText}>Presentes</Text>
-        </TouchableOpacity>
-        
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('ResumenTabs', { screen: 'Pagos' })}
+          >
+            <MaterialCommunityIcons name="cash-multiple" size={22} color="#fff" />
+            <Text style={styles.menuText}>Cajas</Text>
+          </TouchableOpacity>
 
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('ResumenTabs', { screen: 'Presentes' })}
+          >
+            <MaterialCommunityIcons name="account-group" size={22} color="#fff" />
+            <Text style={styles.menuText}>Presentes</Text>
+          </TouchableOpacity>
+        </>
+      )}
 
       <Text style={styles.sectionTitle}>Profes</Text>
       <TouchableOpacity
@@ -92,40 +77,35 @@ export function CustomDrawerContent(props: any) {
         <MaterialCommunityIcons name="clipboard-plus" size={22} color="#fff" />
         <Text style={styles.menuText}>Carga trabajos</Text>
       </TouchableOpacity>
+      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('ListaDeTrabajos')}>
+        <MaterialCommunityIcons name="briefcase-check" size={22} color="#fff" />
+        <Text style={styles.menuText}>Lista de trabajos</Text>
+      </TouchableOpacity>
       
 
       <Text style={styles.sectionTitle}>Admin</Text>
-        
+      {isAdmin && (
+        <>
       <TouchableOpacity
         style={styles.menuItem}
         onPress={() => {
-          if (!isAdmin) {
-            Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
-            return;
-          }
           navigation.navigate('AttendanceSheetScreen');
         }}
       >
         <MaterialCommunityIcons name="book-open" size={22} color="#fff" />
         <Text style={styles.menuText}>Planillas</Text>
       </TouchableOpacity>
-     
-      
-     
       <TouchableOpacity
         style={styles.menuItem}
         onPress={() => {
-          if (!isAdmin) {
-            Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
-            return;
-          }
           navigation.navigate('CreateUserScreen'); 
         }}
       >
         <MaterialCommunityIcons name="account-plus" size={22} color="#fff" />
         <Text style={styles.menuText}>Crear usuario</Text>
       </TouchableOpacity>
-
+      </>
+      )}
 
       <TouchableOpacity style={styles.menuItem} onPress={signOut}>
         <MaterialCommunityIcons name="logout" size={22} color="#fff" />

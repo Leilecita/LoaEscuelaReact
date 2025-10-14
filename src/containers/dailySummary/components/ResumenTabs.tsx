@@ -68,7 +68,7 @@ export const ResumenTabs = () => {
           },
           tabBarLabel: "Trabajos",
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="account-group" color={color} size={size} />
+            <MaterialCommunityIcons name="briefcase-check" color={color} size={size} />
           ),
         }}
       />

@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   ImageBackground,
   Alert,
+  ScrollView,
   Dimensions,
   Modal, TextInput,
 } from "react-native";
@@ -21,6 +22,7 @@ import { useJobs, DayJob } from "../hooks/useJobs";
 import { useUsers } from "../hooks/useUsers";
 import api from "../services/axiosClient";
 import { useNavigation } from '@react-navigation/native';
+import { FONT_SIZES } from 'core/constants/fonts';
 
 const screenWidth = Dimensions.get("window").width;
 const CARD_MARGIN = 10;
@@ -261,133 +263,162 @@ export const DailyJobsScreen: React.FC = () => {
     <ImageBackground source={require("../../../assets/fondo.png")} style={{ flex: 1 }} resizeMode="cover">
       <View style={styles.container}>
         {/* --- FILTROS --- */}
-        <View style={styles.filterBar}>
-         
-          {/* --- SELECTOR DE FECHA CON MODAL --- */}
-           <TouchableOpacity
-             onPress={() => setShowDatePicker(true)}
-             style={[styles.chip, { flexDirection: "row", alignItems: "center", paddingRight: 12, paddingLeft: 8, paddingVertical: 7 }]}
-           >
-             <MaterialCommunityIcons name="calendar" size={19} color={COLORS.darkLetter}/>
-             <Text
-               style={{
-                 marginLeft: 6,
-                 color: COLORS.darkLetter,
-                 fontFamily: "OpenSans-Light",
-                 fontSize: 15,
-               }}
-             >
-               {dayjs(selectedDate).format("DD/MM/YYYY")}
-             </Text>
-           </TouchableOpacity>
 
-           {/* Modal estilo iOS/Android */}
-           <Modal
-             transparent
-             visible={showDatePicker}
-             animationType="fade"
-             onRequestClose={() => setShowDatePicker(false)}
-             onShow={() => setTempDate(selectedDate)}
-           >
-             <View
-               style={{
-                 flex: 1,
-                 justifyContent: "center",
-                 alignItems: "center",
-                 backgroundColor: "rgba(0,0,0,0.4)",
-               }}
-             >
-               <View
-                 style={{
-                   backgroundColor: "#fff",
-                   borderRadius: 16,
-                   padding: 20,
-                   width: "85%",
-                   alignItems: "center",
-                 }}
-               >
-                 <Text
-                   style={{
-                     fontSize: 16,
-                     fontFamily: "OpenSans-SemiBold",
-                     color: COLORS.darkLetter,
-                     marginBottom: 12,
-                   }}
-                 >
-                   Seleccionar fecha
-                 </Text>
-
-                 <DateTimePicker
-                   value={tempDate}
-                   mode="date"
-                   display="spinner"
-                   onChange={(event, date) => {
-                     if (date) setTempDate(date);
-                   }}
-                 />
-
-                 <TouchableOpacity
-                   onPress={() => {
-                     setSelectedDate(tempDate);
-                     setShowDatePicker(false);
-                   }}
-                   style={{
-                     marginTop: 14,
-                     backgroundColor: COLORS.headerDate,
-                     paddingVertical: 10,
-                     paddingHorizontal: 30,
-                     borderRadius: 10,
-                   }}
-                 >
-                   <Text style={{ color: "white", fontFamily: "OpenSans-SemiBold" }}>Aceptar</Text>
-                 </TouchableOpacity>
-
-               </View>
-             </View>
-           </Modal>
-
-
-          {isAdmin ? (
+        <View style={[styles.filterWrapper, { backgroundColor: "rgba(255,255,255,0.32)" }]}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterContainer}
+          >
+            {/* --- SELECTOR DE FECHA CON MODAL --- */}
             <TouchableOpacity
-              onPress={() => {
-                const userNames = users.map((u) => u.label);
-                Alert.alert(
-                  "Seleccionar usuario",
-                  "",
-                  [
-                    ...userNames.map((name, idx) => ({
-                      text: name,
-                      onPress: () => setSelectedUser(users[idx].value),
-                    })),
-                    { text: "Cancelar", style: "cancel" },
-                  ],
-                  { cancelable: true }
-                );
-              }}
-              style={[styles.chip, styles.userChip]}
+              onPress={() => setShowDatePicker(true)}
+              style={[
+                styles.chip,
+                {
+                  flexDirection: "row",
+                  alignItems: "center",
+                  paddingRight: 12,
+                  paddingLeft: 8,
+                  paddingVertical: 7,
+                },
+              ]}
             >
-              <MaterialCommunityIcons name="account" size={19} color={COLORS.darkLetter} style={{ marginRight: 6 }} />
-              <Text style={styles.chipText}>
-                {users.find((u) => u.value === selectedUser)?.label || "Seleccionar usuario"}
+              <MaterialCommunityIcons name="calendar" size={19} color={COLORS.darkLetter} />
+              <Text
+                style={{
+                  marginLeft: 6,
+                  color: COLORS.darkLetter,
+                  fontFamily: "OpenSans-Light",
+                  fontSize: 15,
+                }}
+              >
+                {dayjs(selectedDate).format("DD/MM/YYYY")}
               </Text>
             </TouchableOpacity>
-          ) : (
-            <View style={[styles.chip, styles.userChip]}>
-              <MaterialCommunityIcons name="account" size={19} color={COLORS.darkLetter} style={{ marginRight: 6 }} />
-              <Text style={styles.chipText}>{userName || "Usuario"}</Text>
-            </View>
-          )}
 
-          <Chip
-            icon={() => <MaterialCommunityIcons name="plus" size={19} color={COLORS.darkLetter} />}
-            mode="flat"
-            selected
-            onPress={handleCreateJob}
-            style={styles.chip}
-            textStyle={{ color: COLORS.darkLetter, fontFamily: "OpenSans-Light", fontSize: 15 }}
-          >
-            Crear trabajo
-          </Chip>
+            {/* Modal estilo iOS/Android */}
+            <Modal
+              transparent
+              visible={showDatePicker}
+              animationType="fade"
+              onRequestClose={() => setShowDatePicker(false)}
+              onShow={() => setTempDate(selectedDate)}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "rgba(0,0,0,0.4)",
+                }}
+              >
+                <View
+                  style={{
+                    backgroundColor: "#fff",
+                    borderRadius: 16,
+                    padding: 20,
+                    width: "85%",
+                    alignItems: "center",
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontFamily: "OpenSans-SemiBold",
+                      color: COLORS.darkLetter,
+                      marginBottom: 12,
+                    }}
+                  >
+                    Seleccionar fecha
+                  </Text>
+
+                  <DateTimePicker
+                    value={tempDate}
+                    mode="date"
+                    display="spinner"
+                    onChange={(event, date) => {
+                      if (date) setTempDate(date);
+                    }}
+                  />
+
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelectedDate(tempDate);
+                      setShowDatePicker(false);
+                    }}
+                    style={{
+                      marginTop: 14,
+                      backgroundColor: COLORS.headerDate,
+                      paddingVertical: 10,
+                      paddingHorizontal: 30,
+                      borderRadius: 10,
+                    }}
+                  >
+                    <Text style={{ color: "white", fontFamily: "OpenSans-SemiBold" }}>Aceptar</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
+
+            {/* --- SELECTOR DE USUARIO --- */}
+            {isAdmin ? (
+              <TouchableOpacity
+                onPress={() => {
+                  const userNames = users.map((u) => u.label);
+                  Alert.alert(
+                    "Seleccionar usuario",
+                    "",
+                    [
+                      ...userNames.map((name, idx) => ({
+                        text: name,
+                        onPress: () => setSelectedUser(users[idx].value),
+                      })),
+                      { text: "Cancelar", style: "cancel" },
+                    ],
+                    { cancelable: true }
+                  );
+                }}
+                style={[styles.chip, styles.userChip]}
+              >
+                <MaterialCommunityIcons
+                  name="account"
+                  size={19}
+                  color={COLORS.darkLetter}
+                  style={{ marginRight: 6 }}
+                />
+                <Text style={styles.chipText}>
+                  {users.find((u) => u.value === selectedUser)?.label || "Seleccionar usuario"}
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <View style={[styles.chip, styles.userChip]}>
+                <MaterialCommunityIcons
+                  name="account"
+                  size={19}
+                  color={COLORS.darkLetter}
+                  style={{ marginRight: 6 }}
+                />
+                <Text style={styles.chipText}>{userName || "Usuario"}</Text>
+              </View>
+            )}
+
+            {/* --- BOTÓN CREAR TRABAJO --- */}
+            <Chip
+              icon={() => <MaterialCommunityIcons name="plus" size={19} color={COLORS.darkLetter} />}
+              mode="flat"
+              selected
+              onPress={handleCreateJob}
+              style={styles.chip}
+              textStyle={{
+                color: COLORS.darkLetter,
+                fontFamily: "OpenSans-Light",
+                fontSize: 15,
+              }}
+            >
+              Crear trabajo
+            </Chip>
+          </ScrollView>
         </View>
 
         {jobsLoading ? (
@@ -609,7 +640,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: (screenWidth - 32 - CARD_MARGIN) / 2,
-    marginBottom: 10,
+    marginBottom: 5,
     borderRadius: 15,
     padding: 12,
     backgroundColor: "rgba(255,255,255,0.9)",
@@ -621,10 +652,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(255,255,255,1)",
   },
   cardContent: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
-  jobTitle: { fontSize: 17, fontFamily: "OpenSans-Regular", color: COLORS.darkLetter },
+  jobTitle: { fontSize: FONT_SIZES.name, fontFamily: "OpenSans-Regular", color: COLORS.darkLetter },
   chip: {
     marginRight: 8,
-    marginBottom: 8,
+    marginBottom: 6,
+    marginTop: 6,
     backgroundColor: COLORS.chipGreenColor,
     borderRadius: 8,
   },
@@ -641,7 +673,7 @@ const styles = StyleSheet.create({
   chipText: { color: COLORS.darkLetter, fontFamily: "OpenSans-Light", fontSize: 15 },
   saveButton: {
     backgroundColor: COLORS.headerDate,
-    padding: 16,
+    padding: 12,
     borderRadius: 12,
     alignItems: "center",
     position: "absolute",
@@ -658,10 +690,10 @@ const styles = StyleSheet.create({
    justifyContent: "space-between",
    //backgroundColor: "rgba(223, 237, 71, 0.42)", // tono similar al de InformationStudentScreen
    backgroundColor: COLORS.transparentGreyColor,
-   paddingVertical: 6,
+   paddingVertical: 4,
    paddingHorizontal: 16,
    marginHorizontal: -12,
-   marginBottom: 16,
+   marginBottom: 10,
  },
  
  categoryHeaderText: {
@@ -669,5 +701,15 @@ const styles = StyleSheet.create({
    fontSize: 16,
    color: COLORS.darkLetter,
  },
+ filterWrapper: {
+  paddingVertical: 8,
+  marginBottom: 4,
+},
+filterContainer: {
+  flexDirection: "row",
+  alignItems: "center",
+  paddingHorizontal: 8,
+},
+
  
 });

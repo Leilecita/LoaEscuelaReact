@@ -122,10 +122,6 @@ export const PresentsSummaryScreen: React.FC = () => {
   // ----------------------
   // Render Item
   // ----------------------
- 
-
-  // En tu renderItem
-// En tu renderItem
 const renderItem: ListRenderItem<ReportResumAsist> = ({ item }) => {
  const planillas = item.planillas ?? [];
 
@@ -147,8 +143,6 @@ const renderItem: ListRenderItem<ReportResumAsist> = ({ item }) => {
      ) : (
        <DateHeader date={item.day.includes("T") ? item.day : item.day + "T00:00:00"} />
      )}
-
-
 
      {/* Total Colonia */}
      <TouchableOpacity

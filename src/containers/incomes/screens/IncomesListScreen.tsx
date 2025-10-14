@@ -20,8 +20,6 @@ import { useContext } from "react";
 import { AuthContext } from "../../../contexts/AuthContext";
 
 import { sendPdf } from "../services/incomeService"
-import RNFS from 'react-native-fs';
-import FileViewer from 'react-native-file-viewer';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
@@ -134,13 +132,12 @@ export default function IncomesListScreen() {
           {loading && visibleIncomes.length === 0 && (
             <ActivityIndicator size="large" style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} />
           )}
-        
 
         {/* 🔹 Lista de pagos */}
         {visibleIncomes.length === 0 ? (
-          <Text style={{ textAlign: "center", marginTop: 20 }}>
-            No hay pagos disponibles
-          </Text>
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>No hay pagos cargados</Text>
+          </View>
         ) : (
           <FlatList
             data={visibleIncomes} // 👈 usamos la lista filtrada
@@ -177,8 +174,6 @@ export default function IncomesListScreen() {
             }}
           />
         )}
-
-
         {/* 🔹 Modal de edición */}
         <EditIncomeModal
           visible={!!editingIncome}
@@ -209,5 +204,16 @@ const styles = StyleSheet.create({
   },
   background: {
     flex: 1,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyText: {
+    textAlign: "center",
+    color: "#555",
+    fontSize: 16,
+    fontWeight: "500",
   },
 });
