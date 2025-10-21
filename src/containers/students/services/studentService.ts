@@ -37,6 +37,21 @@ export type ReportStudent = {
   sub_category: string;
   current_student: string;
 
+  // ✅ Nuevos campos agregados
+  autorizado1_nombre: string | null;
+  autorizado1_dni: string | null;
+  autorizado1_parentesco: string | null;
+
+  autorizado2_nombre: string | null;
+  autorizado2_dni: string | null;
+  autorizado2_parentesco: string | null;
+
+  autorizado3_nombre: string | null;
+  autorizado3_dni: string | null;
+  autorizado3_parentesco: string | null;
+
+  salud: string | null;
+
 };
 
 export type Student = {

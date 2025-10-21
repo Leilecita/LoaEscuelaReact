@@ -108,9 +108,7 @@ export const DailyJobsScreen: React.FC = () => {
    }
  }, [selectedUser, selectedDate]);
 
-  // ----------------------
   // Toggle selección
-  // ----------------------
   const toggleJob = (id: number) => {
     setSelectedJobs((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -193,9 +191,7 @@ export const DailyJobsScreen: React.FC = () => {
     );
   };
 
-  // ----------------------
   // Agrupar trabajos por categoría
-  // ----------------------
   const groupedJobs: JobSection[] = Object.entries(
     jobs.reduce((acc: Record<string, DayJob[]>, job) => {
       const cat = job.category || "Sin categoría";
@@ -205,9 +201,6 @@ export const DailyJobsScreen: React.FC = () => {
     }, {})
   ).map(([title, data]) => ({ title, data }));
 
-  // ----------------------
-  // Render de cada trabajo
-  // ----------------------
   const renderJob = ({ item }: { item: DayJob }) => {
     const isSelected = selectedJobs.includes(item.id);
     return (
@@ -256,9 +249,6 @@ export const DailyJobsScreen: React.FC = () => {
     );
   };
 
-  // ----------------------
-  // Render principal
-  // ----------------------
   return (
     <ImageBackground source={require("../../../assets/fondo.png")} style={{ flex: 1 }} resizeMode="cover">
       <View style={styles.container}>
@@ -620,9 +610,6 @@ export const DailyJobsScreen: React.FC = () => {
   );
 };
 
-// ----------------------
-// Estilos
-// ----------------------
 const styles = StyleSheet.create({
   container: { flex: 1 },
   filterBar: { flexDirection: "row", alignItems: "center", marginBottom: 4, gap: 10, zIndex: 10, paddingHorizontal: 16, paddingTop:12 },
@@ -677,10 +664,9 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     position: "absolute",
-    bottom: 20,
+    bottom: 30,
     left: 16,
     right: 16,
-    marginBottom: 16,
   },
   saveButtonText: { color: "#fff", fontSize: 17, fontFamily: "OpenSans-Regular" },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
@@ -702,8 +688,7 @@ const styles = StyleSheet.create({
    color: COLORS.darkLetter,
  },
  filterWrapper: {
-  paddingVertical: 8,
-  marginBottom: 4,
+  paddingVertical: 4,
 },
 filterContainer: {
   flexDirection: "row",

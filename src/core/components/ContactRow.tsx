@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
   },
   contactName: {
     flex: 1, // Ocupa espacio proporcional
-    fontSize: 15,
+    fontSize: 16,
     fontFamily: 'OpenSans-Light',
     fontWeight: '500',
     color: COLORS.darkLetter,

@@ -107,6 +107,51 @@ const ItemStudentAssistViewComponent: React.FC<Props> = ({
           {student.tel_adulto && <ContactRow name={student.nombre} phone={student.tel_adulto} />}
           {student.nombre_mama && <ContactRow name={student.nombre_mama} phone={student.tel_mama} />}
           {student.nombre_papa && <ContactRow name={student.nombre_papa} phone={student.tel_papa} />}
+          
+      
+
+          {student.category?.toLowerCase() === 'colonia' && (
+            <View >
+              <View style={styles.separator} />
+
+              <Text style={styles.retiraTitulo}>Retira</Text>
+
+              {[
+                {
+                  nombre: student.autorizado1_nombre,
+                  dni: student.autorizado1_dni,
+                  parentesco: student.autorizado1_parentesco,
+                },
+                {
+                  nombre: student.autorizado2_nombre,
+                  dni: student.autorizado2_dni,
+                  parentesco: student.autorizado2_parentesco,
+                },
+                {
+                  nombre: student.autorizado3_nombre,
+                  dni: student.autorizado3_dni,
+                  parentesco: student.autorizado3_parentesco,
+                },
+              ]
+                .filter(a => a.nombre || a.dni || a.parentesco)
+                .map((a, index) => (
+                  <View key={index} style={styles.autorizadoRow}>
+                    <Text style={[styles.autorizadoTexto, { flex: 1 }]}>
+                      {a.nombre || '-'}
+                    </Text>
+                    <Text style={[styles.autorizadoTexto, { flex: 1, textAlign: 'center' }]}>
+                      {a.dni || '-'}
+                    </Text>
+                    <Text style={[styles.autorizadoTexto, { flex: 1, textAlign: 'right' }]}>
+                      (
+                      {a.parentesco || '-'})
+                    </Text>
+                  </View>
+                ))}
+            </View>
+          )}
+
+
 
           {isAdmin && (
             <Pressable
@@ -224,6 +269,31 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   checked: {},
+  retiraTitulo: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 16,
+    color: COLORS.darkLetter,
+    marginBottom: 6,
+    marginTop:10
+  },
+  autorizadoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginVertical: 6,
+  },
+  
+  autorizadoTexto: {
+    fontSize: FONT_SIZES.dni,
+    fontFamily: 'OpenSans-Light',
+    color: '#333',
+  },
+  
+  autorizadoLabel: {
+    color: '#000',
+  },
+  
+  
 });
 /*
 import React, { useContext } from 'react';
