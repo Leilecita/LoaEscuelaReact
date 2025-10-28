@@ -6,7 +6,9 @@ import {
   StyleSheet,
   ActivityIndicator,
   TouchableOpacity,
-  Platform
+  Platform,
+  KeyboardAvoidingView,
+  ScrollView
 } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { FAB, Button, TextInput } from 'react-native-paper'
@@ -44,7 +46,6 @@ async function postPlanilla(payload: Omit<PlanillaPost, 'id'>) {
    throw new Error(response.data?.message || 'Error creando planilla');
  }
 }
-
 
 async function fetchPlanillas(page: number): Promise<Planilla[]> {
   const response = await api.get('/planillas.php', {
@@ -158,177 +159,185 @@ return (
    <FAB icon="plus" style={styles.fab} onPress={() => setShowModal(true)} />
 
    {/* Modal */}
-   {showModal && (
-     <View style={styles.modalContent}>
-       <Text style={styles.modalTitle}>Nueva Planilla</Text>
+   <Modal
+     isVisible={showModal}
+     onBackdropPress={() => setShowModal(false)}
+     style={{ margin: 0 }}
+   >
+     <KeyboardAvoidingView
+       style={{ flex: 1 }}
+       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+     >
+       <ScrollView
+         contentContainerStyle={{ flexGrow: 1, padding: 20, justifyContent: 'center' }}
+         keyboardShouldPersistTaps="handled"
+       >
+         <View style={styles.modalContent}>
+           <Text style={styles.modalTitle}>Nueva Planilla</Text>
 
-       {/* Año */}
-       <TextInput
-         label="Año"
-         value={anio}
-         onChangeText={setAnio}
-         mode="outlined"
-         keyboardType="numeric"
-         style={styles.input}
-       />
-       <Text style={styles.helperText}>
-          Ingresar año temporada. Ej. 2026-2027 / 2027-2028
-        </Text>
+           {/* Año */}
+           <TextInput
+             label="Año"
+             value={anio}
+             onChangeText={setAnio}
+             mode="outlined"
+             style={styles.input}
+           />
+           <Text style={styles.helperText}>
+             Ingresar año temporada. Ej. 2026-2027 / 2027-2028
+           </Text>
 
-       {/* Fecha */}
-       <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-         <TextInput
-           label="Fecha"
-           value={formatDate(date)}
-           mode="outlined"
-           editable={false}
-           pointerEvents="none"
-           style={styles.input}
-           left={<TextInput.Icon icon="calendar" />}
-         />
-       </TouchableOpacity>
-       {showDatePicker && (
-         Platform.OS === 'ios' ? (
-           <Modal
-             isVisible={showDatePicker}
-             onBackdropPress={() => setShowDatePicker(false)}
-           >
-             <View style={{ backgroundColor: 'white', padding: 16, borderRadius: 8 }}>
+           {/* Fecha */}
+           <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+             <TextInput
+               label="Fecha"
+               value={formatDate(date)}
+               mode="outlined"
+               editable={false}
+               pointerEvents="none"
+               style={styles.input}
+               left={<TextInput.Icon icon="calendar" />}
+             />
+           </TouchableOpacity>
+           {showDatePicker && (
+             Platform.OS === 'ios' ? (
+               <Modal
+                 isVisible={showDatePicker}
+                 onBackdropPress={() => setShowDatePicker(false)}
+               >
+                 <View style={{ backgroundColor: 'white', padding: 16, borderRadius: 8 }}>
+                   <DateTimePicker
+                     value={date}
+                     mode="date"
+                     display="spinner"
+                     onChange={handleDateChange}
+                   />
+                   <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12 }}>
+                     <TouchableOpacity
+                       onPress={() => setShowDatePicker(false)}
+                       style={{
+                         paddingVertical: 8,
+                         paddingHorizontal: 16,
+                         borderRadius: 6,
+                         backgroundColor: '#eee',
+                         marginRight: 12,
+                         minWidth: 90,
+                         alignItems: 'center',
+                       }}
+                     >
+                       <Text>Cancelar</Text>
+                     </TouchableOpacity>
+                     <TouchableOpacity
+                       onPress={() => setShowDatePicker(false)}
+                       style={{
+                         paddingVertical: 8,
+                         paddingHorizontal: 16,
+                         borderRadius: 6,
+                         backgroundColor: COLORS.headerDate,
+                         minWidth: 90,
+                         alignItems: 'center',
+                       }}
+                     >
+                       <Text style={{ color: '#fff' }}>Aceptar</Text>
+                     </TouchableOpacity>
+                   </View>
+                 </View>
+               </Modal>
+             ) : (
                <DateTimePicker
                  value={date}
                  mode="date"
-                 display="spinner"
+                 display="calendar"
                  onChange={handleDateChange}
                />
-               <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 12 }}>
+             )
+           )}
+
+           {/* Categoría */}
+           <TouchableOpacity onPress={() => setShowCatOptions(!showCatOptions)}>
+             <TextInput
+               label="Categoría"
+               value={categoria}
+               mode="outlined"
+               editable={false}
+               pointerEvents="none"
+               style={styles.input}
+             />
+           </TouchableOpacity>
+           {showCatOptions && (
+             <View style={styles.dropdown}>
+               {categorias.map((c) => (
                  <TouchableOpacity
-                   onPress={() => setShowDatePicker(false)}
-                   style={{
-                     paddingVertical: 8,
-                     paddingHorizontal: 16,
-                     borderRadius: 6,
-                     backgroundColor: '#eee',
-                     marginRight: 12,
-                     minWidth: 90,
-                     alignItems: 'center',
+                   key={typeof c === 'string' ? c : c.value}
+                   style={styles.dropdownItem}
+                   onPress={() => {
+                     setCategoria(typeof c === 'string' ? c : c.value)
+                     setShowCatOptions(false)
                    }}
                  >
-                   <Text>Cancelar</Text>
+                   <Text>{typeof c === 'string' ? c : c.label}</Text>
                  </TouchableOpacity>
-                 <TouchableOpacity
-                   onPress={() => setShowDatePicker(false)}
-                   style={{
-                     paddingVertical: 8,
-                     paddingHorizontal: 16,
-                     borderRadius: 6,
-                     backgroundColor: COLORS.headerDate,
-                     minWidth: 90,
-                     alignItems: 'center',
-                   }}
-                 >
-                   <Text style={{ color: '#fff' }}>Aceptar</Text>
-                 </TouchableOpacity>
-               </View>
+               ))}
              </View>
-           </Modal>
-         ) : (
-           <DateTimePicker
-             value={date}
-             mode="date"
-             display="calendar"
-             onChange={handleDateChange}
-           />
-         )
-       )}
+           )}
 
+           {/* Subcategoría */}
+           <TouchableOpacity onPress={() => setShowSubOptions(!showSubOptions)}>
+             <TextInput
+               label="Subcategoría"
+               value={subcategoria}
+               mode="outlined"
+               editable={false}
+               pointerEvents="none"
+               style={styles.input}
+             />
+           </TouchableOpacity>
+           {showSubOptions && (
+             <View style={styles.dropdown}>
+               {subcategorias.map((s) => (
+                 <TouchableOpacity
+                   key={typeof s === 'string' ? s : s.value}
+                   style={styles.dropdownItem}
+                   onPress={() => {
+                     setSubcategoria(typeof s === 'string' ? s : s.value)
+                     setShowSubOptions(false)
+                   }}
+                 >
+                   <Text>{typeof s === 'string' ? s : s.label}</Text>
+                 </TouchableOpacity>
+               ))}
+             </View>
+           )}
 
-       {/* Categoría */}
-       <TouchableOpacity onPress={() => setShowCatOptions(!showCatOptions)}>
-         <TextInput
-           label="Categoría"
-           value={categoria}
-           mode="outlined"
-           editable={false}
-           pointerEvents="none"
-           style={styles.input}
-         />
-       </TouchableOpacity>
-
-       {showCatOptions && (
-         <View style={styles.dropdown}>
-           {categorias.map((c) => (
-             <TouchableOpacity
-               key={typeof c === 'string' ? c : c.value}  // ✅ clave segura
-               style={styles.dropdownItem}
-               onPress={() => {
-                 setCategoria(typeof c === 'string' ? c : c.value)
-                 setShowCatOptions(false)
+           {/* Botones */}
+           <View style={styles.modalActions}>
+             <Button onPress={() => setShowModal(false)}>Cancelar</Button>
+             <Button
+               mode="contained"
+               onPress={async () => {
+                 try {
+                   await postPlanilla({
+                     categoria,
+                     subcategoria,
+                     anio,
+                     date: formatDate(date),
+                   })
+                   setShowModal(false);
+                   reload();
+                 } catch (e: any) {
+                   console.error('Error creando planilla', e.message);
+                 }
                }}
              >
-               <Text>{typeof c === 'string' ? c : c.label}</Text>
-             </TouchableOpacity>
-           ))}
+               Guardar
+             </Button>
+           </View>
          </View>
-       )}
-
-       {/* Subcategoría */}
-       <TouchableOpacity onPress={() => setShowSubOptions(!showSubOptions)}>
-         <TextInput
-           label="Subcategoría"
-           value={subcategoria}
-           mode="outlined"
-           editable={false}
-           pointerEvents="none"
-           style={styles.input}
-         />
-       </TouchableOpacity>
-
-       {showSubOptions && (
-         <View style={styles.dropdown}>
-           {subcategorias.map((s) => (
-             <TouchableOpacity
-               key={typeof s === 'string' ? s : s.value}  // ✅ clave segura
-               style={styles.dropdownItem}
-               onPress={() => {
-                 setSubcategoria(typeof s === 'string' ? s : s.value)
-                 setShowSubOptions(false)
-               }}
-             >
-               <Text>{typeof s === 'string' ? s : s.label}</Text>
-             </TouchableOpacity>
-           ))}
-         </View>
-       )}
-
-       {/* Botones */}
-       <View style={styles.modalActions}>
-         <Button onPress={() => setShowModal(false)}>Cancelar</Button>
-         <Button
-           mode="contained"
-           onPress={async () => {
-             try {
-               await postPlanilla({
-                categoria,
-                subcategoria,
-                anio,
-                date: formatDate(date), // ✅ formato correcto
-              })
-               
-               setShowModal(false);
-               reload(); // refresca la lista
-             } catch (e: any) {
-               console.error('Error creando planilla', e.message);
-             }
-           }}
-         >
-           Guardar
-         </Button>
-       </View>
-     </View>
-   )}
+       </ScrollView>
+     </KeyboardAvoidingView>
+   </Modal>
  </View>
 )
-
 }
 
 const styles = StyleSheet.create({
@@ -347,12 +356,6 @@ const styles = StyleSheet.create({
     bottom: 30,
     right: 30,
     backgroundColor: COLORS.lightGreenColor,
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    padding: 16,
   },
   modalContent: {
     backgroundColor: '#fff',
@@ -382,9 +385,8 @@ const styles = StyleSheet.create({
  },
  helperText: {
   fontSize: 12,
-  color: '#888', // gris claro
+  color: '#888',
   marginBottom: 10,
   marginLeft: 4,
 },
- 
 })

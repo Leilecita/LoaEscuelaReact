@@ -8,6 +8,7 @@ import { COLORS } from '@core';
 import { Icon } from 'react-native-paper';
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale'
+import { FONT_SIZES } from 'core/constants/fonts';
 
 type NavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -189,29 +190,29 @@ const styles = StyleSheet.create({
   center: { flex: 3 },
   right: { flex: 2, alignItems: 'flex-end' },
   name: {
-    fontSize: 17,
+    fontSize: FONT_SIZES.name,
     fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
   },
   lastName: {
-    fontSize: 15,
+    fontSize: FONT_SIZES.dni,
     marginTop: 6, 
     fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter3,
   },
   concept: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.dni,
     fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
   },
   location: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.dni,
     fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter3,
     marginLeft: 6, 
   },
   amount: {
-    fontSize: 16,
+    fontSize: FONT_SIZES.dni,
     fontFamily: 'OpenSans-Regular',
     color: COLORS.darkLetter,
   },
@@ -220,28 +221,22 @@ const styles = StyleSheet.create({
     borderTopColor: '#ddd',
     paddingTop: 4,
   },
-  masInfoText: {
-    marginBottom: 8,
-    fontFamily: 'OpenSans-Regular',
-    fontSize: 18,
-    color: COLORS.darkLetter3,
-    textAlign: 'right',
-  },
+
   badge: {
     // opcional: estilo de fondo del ícono
   },
   day: {
-    width:20,
+    width:22,
     textAlign: 'center',
     fontFamily: 'OpenSans-Regular',
-    fontSize: 16,
+    fontSize: FONT_SIZES.dni,
     color: COLORS.darkLetter,
    },
 
    month: {
     fontFamily: 'OpenSans-Light',
     color: COLORS.darkLetter,
-    fontSize: 14,
+    fontSize: FONT_SIZES.dni,
     width:24,
     textAlign: 'center',
    },

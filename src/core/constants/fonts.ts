@@ -13,13 +13,27 @@ export function normalize(size: number): number {
   }
 }
 
+export function normalize2(size: number): number {
+  const newSize = size * scale;
+
+  const adjustedSize = Platform.OS === 'ios' ? newSize * 1.05 : newSize;
+
+  return Math.round(PixelRatio.roundToNearestPixel(adjustedSize));
+}
+
 export const FONT_SIZES = {
   xsmall: normalize(10),
   small: normalize(12),
   medium: normalize(16),
-  name: normalize(16),
-  dni: normalize(14),
-  date: normalize(15),
+
+  name: normalize2(16),
+  xname: normalize(17),
+  dni: normalize2(14),
+
+  paddingV : normalize2(6),
+
+  date: normalize2(15),
+
   large: normalize(20),
   xlarge: normalize(24),
   title: normalize(28),

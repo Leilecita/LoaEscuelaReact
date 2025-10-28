@@ -51,6 +51,8 @@ export type ReportStudent = {
   autorizado3_parentesco: string | null;
 
   salud: string | null;
+  deportes: string | null;
+  sabe_nadar: string | null;
 
 };
 

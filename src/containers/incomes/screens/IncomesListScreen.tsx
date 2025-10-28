@@ -56,7 +56,7 @@ export default function IncomesListScreen() {
   
       if (!response.pdf) throw new Error("No se recibió PDF del backend");
   
-      const fileUri = FileSystem.documentDirectory + `Orden-${name}.pdf`;
+      const fileUri = FileSystem.documentDirectory + `Comprobante-${name}.pdf`;
   
       // Guardar PDF
       await FileSystem.writeAsStringAsync(fileUri, response.pdf, {
@@ -140,17 +140,24 @@ export default function IncomesListScreen() {
           </View>
         ) : (
           <FlatList
-            data={visibleIncomes} // 👈 usamos la lista filtrada
+            data={visibleIncomes}
             keyExtractor={(item, index) => `${item.income_id}-${index}`}
-           // keyExtractor={(item) => item.income_id.toString()}
             onEndReached={loadMore}
             onEndReachedThreshold={0.5}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reload} />}
-            ListFooterComponent={loadingMore ? <ActivityIndicator size="small" /> : null}
+            ListFooterComponent={
+              // ⚡ Solo mostrar ActivityIndicator si hay items visibles y realmente se está cargando más
+              visibleIncomes.length > 0 && loadingMore ? (
+                <ActivityIndicator size="small" style={{ marginVertical: 8 }} />
+              ) : null
+            }
             contentContainerStyle={{ paddingTop: 60 }}
             renderItem={({ item, index }) => {
               const currentDate = new Date(item.income_created).toISOString().substring(0, 10);
-              const previousDate = index > 0 ? new Date(visibleIncomes[index - 1].income_created).toISOString().substring(0, 10) : null;
+              const previousDate =
+                index > 0
+                  ? new Date(visibleIncomes[index - 1].income_created).toISOString().substring(0, 10)
+                  : null;
 
               return (
                 <ItemIncomeView
@@ -165,15 +172,25 @@ export default function IncomesListScreen() {
                   income_id={item.income_id}
                   student_id={item.student_id}
                   class_course_id={item.class_course_id}
+                  income_class_course_id={item.income_class_course_id}
                   payment_place={item.payment_place}
                   showDateHeader={index === 0 || currentDate !== previousDate}
                   onEdit={(income) => setEditingIncome(income)}
-                  onSend={() => handleSendPdf(item.income_id, item.description, item.amount, item.detail, item.income_created)}
+                  onSend={(income_id, class_course_id, detailParaPdf) =>
+                    handleSendPdf(
+                      income_id,
+                      item.description,
+                      item.amount,
+                      detailParaPdf,
+                      item.income_created
+                    )
+                  }
                 />
               );
             }}
           />
         )}
+
         {/* 🔹 Modal de edición */}
         <EditIncomeModal
           visible={!!editingIncome}

@@ -2,20 +2,24 @@
   "expo": {
     "name": "LoaEscuela",
     "slug": "loaescuela",
+    
+    "platforms": ["ios", "android"],
+
+
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logoloa.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/logoloa.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#FFB421"
     },
     "ios": {
       "bundleIdentifier": "com.loasurf.loaescuela",
       "buildNumber": "1.0.0",
-      "icon": "./assets/icon.png",
+      "icon": "./assets/logoloa.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }

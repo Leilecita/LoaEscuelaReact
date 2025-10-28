@@ -5,13 +5,13 @@ export type Income = {
   income_id: number;
   student_id: number;
   class_course_id: number;
+  income_class_course_id: number;
   amount: number;
   description: string;
   income_created: string;
   detail: string;
   payment_method: string;
   payment_place: string;
-
   category: string;
   sub_category: string;
   course_amount: number;

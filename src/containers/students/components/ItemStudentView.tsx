@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 8,
     marginVertical: 2,
     paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingVertical: FONT_SIZES.paddingV,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
