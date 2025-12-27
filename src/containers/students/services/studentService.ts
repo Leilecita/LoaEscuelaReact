@@ -9,9 +9,11 @@ export type ReportSeasonPresent = {
   cant_buyed_classes: number;
   tot_amount: number;
   tot_paid_amount: number;
+  cant_gift_classes: number;
 };
 
 export type ReportPresent = {
+  id: number; 
   planilla: string;
   fecha_presente: number;
 };
@@ -237,6 +239,28 @@ export async function removePresent(id: number) {
     throw error
   }
 }
+
+export async function updatePresentObservacion(
+  planilla_presente_id: number,
+  observacion: string
+): Promise<boolean> {
+  try {
+    const response = await api.put('/planillas_presentes.php', {
+      id: planilla_presente_id,
+      observacion,
+    })
+
+    if (response.data.result !== 'success') {
+      throw new Error(response.data.message || 'Error al actualizar observación')
+    }
+
+    return true
+  } catch (error) {
+    throw error
+  }
+}
+
+
 
 export async function addStudentToAssist(studentData: {
   planilla_id: number;

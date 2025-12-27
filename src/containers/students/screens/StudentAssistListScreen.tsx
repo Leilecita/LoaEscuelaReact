@@ -16,6 +16,7 @@ import { RootStackParamList } from 'types'
 import { COLORS } from '@core'
 
 import { useRoute } from '@react-navigation/native';
+import { Keyboard } from 'react-native'
 
 
 type StudentListScreenNavigationProp = NativeStackNavigationProp<
@@ -43,6 +44,26 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
   const [activeFilter, setActiveFilter] = useState<'si' | 'no'>('si')
 
   const route = useRoute();
+
+  const [keyboardVisible, setKeyboardVisible] = useState(false)
+  const [keyboardHeight, setKeyboardHeight] = useState(0)
+
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardWillShow', (e) => {
+      setKeyboardHeight(e.endCoordinates.height)
+    })
+  
+    const hideSub = Keyboard.addListener('keyboardWillHide', () => {
+      setKeyboardHeight(0)
+    })
+  
+    return () => {
+      showSub.remove()
+      hideSub.remove()
+    }
+  }, [])
+  
 
     
   useFocusEffect(
@@ -281,6 +302,23 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
               )}
             />
             )}
+            {keyboardHeight > 0 && (
+              <FAB
+                icon="keyboard-off"
+                color={COLORS.fabTextColor}
+                style={{
+                  position: 'absolute',
+                  bottom: keyboardHeight + 2, // 👈 CLAVE
+                  left: 20,
+                  backgroundColor: COLORS.fabColor,
+                  opacity: 0.8,
+                  elevation: 10,
+                  zIndex: 999,
+                }}
+                onPress={() => Keyboard.dismiss()}
+              />
+            )}
+
             <FAB
                 icon="account-plus"
                 //color= "#6c8a35"

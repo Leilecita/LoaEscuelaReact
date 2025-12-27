@@ -28,7 +28,7 @@ export const FONT_SIZES = {
 
   name: normalize2(16),
   xname: normalize(17),
-  dni: normalize2(14),
+  dni: normalize2(15),
 
   paddingV : normalize2(6),
 

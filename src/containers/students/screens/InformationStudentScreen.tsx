@@ -20,6 +20,7 @@ type Resumen = {
   cant_presents: number;
   tot_paid_amount: number;
   tot_amount: number;
+  cant_gift_classes: number;
 };
 
 export default function InformationStudentScreen({ route }: Props) {
@@ -97,6 +98,12 @@ export default function InformationStudentScreen({ route }: Props) {
                   <PaperText style={styles.label}>Total clases tomadas</PaperText>
                   <PaperText style={styles.value}>{resumen.cant_presents}</PaperText>
                 </View>
+                {resumen.cant_gift_classes > 0 && (
+                  <View style={styles.rowResumen}>
+                    <PaperText style={styles.label}>Total clases regaladas</PaperText>
+                    <PaperText style={styles.value}>{resumen.cant_gift_classes}</PaperText>
+                  </View>
+                )}
                 <Divider style={{ marginVertical: 4 }} />
                 <View style={styles.rowResumen}>
                   <PaperText style={styles.label}>Total abonado</PaperText>
@@ -128,7 +135,9 @@ export default function InformationStudentScreen({ route }: Props) {
                 {loadingPresents && presents.length === 0 ? <ActivityIndicator size="large" /> : (
                   <FlatList
                     data={presents}
-                    keyExtractor={(item, index) => (item.present_id ?? index).toString()}
+                    keyExtractor={(item) => item.id.toString()}
+
+                   // keyExtractor={(item, index) => (item.id ?? index).toString()}
                     renderItem={({ item, index }) => (
                       <ItemPresentStudentView
                         item={item}

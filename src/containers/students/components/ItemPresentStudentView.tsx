@@ -1,16 +1,24 @@
 import { COLORS } from '@core';
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, {  useState } from 'react';
+
+import { View, StyleSheet, Alert } from 'react-native';
 import { Text as PaperText } from 'react-native-paper';
+import { Pressable } from 'react-native'
+import { Modal, Portal, TextInput, Button } from 'react-native-paper'
+import { updatePresentObservacion } from '../services/studentService'
+
 
 type ItemPresentViewProps = {
   item: {
+    id: number;
     planilla: string;
-    fecha_presente?: string;
+    fecha_presente?: string | number; // 👈 CLAVE
     class_name?: string;
+    observacion?: string;
   };
   index: number;
-  previousItem?: { fecha_presente?: string };
+  previousItem?: { fecha_presente?: string | number };
+
 };
 
 export const ItemPresentStudentView: React.FC<ItemPresentViewProps> = ({
@@ -20,7 +28,17 @@ export const ItemPresentStudentView: React.FC<ItemPresentViewProps> = ({
 }) => {
   if (!item.fecha_presente) return null;
 
-  const date = new Date(item.fecha_presente);
+  const parseLocalDate = (dateValue: string | number) => {
+    if (typeof dateValue === 'number') {
+      return new Date(dateValue)
+    }
+  
+    // "2025-03-26" → fecha LOCAL
+    const [year, month, day] = dateValue.split('-').map(Number)
+    return new Date(year, month - 1, day)
+  }
+
+  const date = parseLocalDate(item.fecha_presente)
   const day = date.toLocaleDateString('es-AR', { weekday: 'short' }).toUpperCase();
   const number = date.getDate().toString().padStart(2, '0');
   const month = date.toLocaleDateString('es-AR', { month: 'long' });
@@ -31,18 +49,102 @@ export const ItemPresentStudentView: React.FC<ItemPresentViewProps> = ({
     !previousItem.fecha_presente ||
     new Date(previousItem.fecha_presente).getFullYear() !== year;
 
+  const [modalVisible, setModalVisible] = useState(false)
+  const [selectedItem, setSelectedItem] = useState<any>(null)
+  const [observacion, setObservacion] = useState('')
+
+
+  const openEditModal = (item: any) => {
+    setSelectedItem(item)
+    setObservacion(item.observacion || '')
+    setModalVisible(true)
+  }
+  
+  const handleSave = async () => {
+
+    if (!selectedItem?.id) return
+  
+    try {
+     
+      const ok = await updatePresentObservacion( selectedItem.id, observacion)
+
+      if (ok) {
+        setModalVisible(false)
+      }
+  
+      // si después querés:
+      // refrescar lista o actualizar estado local
+    } catch (e) {
+      Alert.alert('Error', 'No se pudo guardar la observación')
+    }
+  }
+  
   return (
     <View>
+       <Portal>
+        <Modal
+          visible={modalVisible}
+          onDismiss={() => setModalVisible(false)}
+          contentContainerStyle={styles.modal}
+        >
+          {/* HEADER */}
+          <View style={styles.modalHeader}>
+            <PaperText style={styles.modalDay}>
+              {day} {number} · {month.charAt(0).toUpperCase() + month.slice(1)} · {item.planilla}
+            </PaperText>
+          </View>
+
+          {/* TAG RAPIDA */}
+          <Pressable
+            style={styles.quickTag}
+            onPress={() => setObservacion('regalo')}
+          >
+            <PaperText style={styles.quickTagText}>regalo</PaperText>
+          </Pressable>
+
+          {/* INPUT */}
+          <TextInput
+            value={observacion}
+            onChangeText={setObservacion}
+            mode="outlined"
+            multiline
+            numberOfLines={4}
+            placeholder="Agregar observación..."
+          />
+
+          {/* BOTONES */}
+          <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 16 }}>
+            <Button onPress={() => setModalVisible(false)}>
+              Cancelar
+            </Button>
+            <Button mode="contained" onPress={handleSave}>
+              Guardar
+            </Button>
+          </View>
+        </Modal>
+      </Portal>
+
       {showYearHeader && (
         <View style={styles.yearHeader}>
           <PaperText style={styles.yearText}>{year}</PaperText>
         </View>
       )}
 
-      <View style={styles.row}>
+      <Pressable
+        style={styles.row}
+        onLongPress={() => openEditModal(item)}
+        delayLongPress={300}
+      >
         {/* Día y número a la izquierda */}
           <PaperText style={styles.day}>{day}</PaperText>
           <PaperText style={styles.number}>{number}</PaperText>
+          <View style={styles.observacionRow}>
+            {item.observacion && item.observacion.trim() !== '' && (
+                <PaperText style={styles.observacionText}>
+                  {item.observacion}
+                </PaperText>
+            )}
+          </View>
 
         {/* Mes centrado */}
         <View style={styles.monthContainer}>
@@ -55,7 +157,11 @@ export const ItemPresentStudentView: React.FC<ItemPresentViewProps> = ({
         <View style={styles.categoryContainer}>
           <PaperText style={styles.category}>{item.planilla}</PaperText>
         </View>
-      </View>
+       
+      </Pressable>
+      
+
+     
     </View>
   );
 };
@@ -98,7 +204,6 @@ const styles = StyleSheet.create({
   },
   monthContainer: {
     flex: 1,
-    
     alignItems: 'center', // 👈 centrado horizontal
   },
   month: {
@@ -118,4 +223,53 @@ const styles = StyleSheet.create({
     fontSize: 15,
     marginRight: 8,
   },
+  modal: {
+    backgroundColor: 'white',
+    padding: 16,
+    margin: 24,
+    borderRadius: 8,
+  },
+  modalHeader: {
+    marginBottom: 12,
+  },
+  
+  modalDay: {
+    fontSize: 16,
+    fontFamily: 'OpenSans-SemiBold',
+    color: COLORS.darkLetter,
+  },
+  
+  modalClass: {
+    marginTop: 2,
+    fontSize: 14,
+    fontFamily: 'OpenSans-Regular',
+    color: COLORS.ligthLetter,
+  },
+  quickTag: {
+    alignSelf: 'flex-start',
+    backgroundColor: COLORS.buttonClear,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  
+  quickTagText: {
+    fontFamily: 'OpenSans-SemiBold',
+    fontSize: 14,
+    color: COLORS.buttonClearLetter,
+  },
+  observacionRow: {
+    marginLeft: 20, // alinea con el texto (después del día y número)
+    marginRight: 6,
+  },
+  
+  observacionText: {
+    fontFamily: 'OpenSans-Light',
+    fontSize: 13,
+    color: COLORS.darkLetter,
+  },
+  
+  
+  
 });

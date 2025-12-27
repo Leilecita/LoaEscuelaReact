@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
-import { getPresentsStudent } from '../services/studentService';
-import type { ReportPresent } from '../types';
+import { getPresentsStudent, ReportPresent } from '../services/studentService';
 
 export function usePresentsByStudents(studentId: number) {
   const [presents, setPresents] = useState<ReportPresent[]>([]);

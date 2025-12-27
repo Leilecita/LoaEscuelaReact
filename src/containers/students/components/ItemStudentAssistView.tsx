@@ -11,6 +11,11 @@ import { COLORS } from 'core/constants';
 import { FONT_SIZES } from 'core/constants/fonts';
 import { AuthContext } from '../../../contexts/AuthContext';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'; 
+import TextTicker from 'react-native-text-ticker'
+import { AuthorizedList } from '../../../core/components/AuthorizedList'
+import { formatDNI } from 'helpers/formatDNIHelper'
+import { Linking } from 'react-native';
+
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'InformationStudent'>;
 
@@ -49,6 +54,18 @@ const ItemStudentAssistViewComponent: React.FC<Props> = ({
     return clean.replace(/\B(?=(\d{3})+(?!\d))/g, '.'); // agrega puntos cada 3 cifras
   };
 
+  const openAutorizacionPDF = (dni: string | number) => {
+    const cleanDni = dni.toString().replace(/\D/g, '');
+    const url = `https://www.loasurf.com.ar/get_autorizacion.php?dni=${cleanDni}`;
+
+    //const url = `http://localhost/loaserver/web/get_autorizacion.php?dni=34797718`;
+
+  
+    Linking.openURL(url).catch(() => {
+      alert('No se pudo abrir la autorización');
+    });
+  };
+
   return (
     <View style={styles.itemContainer_check}>
       <Pressable
@@ -63,7 +80,7 @@ const ItemStudentAssistViewComponent: React.FC<Props> = ({
           <Text style={styles.name}>
             {student.nombre} {student.apellido}
           </Text>
-          <Text style={styles.dni}>{student.dni}</Text>
+          <Text style={styles.dni}>{formatDNI(student.dni)}</Text>
           {student.student_observation?.trim() !== '' && (
             <Text style={[styles.dni, { color: COLORS.darkLetter3, marginTop: 2 }]}>
               {student.student_observation}
@@ -98,18 +115,22 @@ const ItemStudentAssistViewComponent: React.FC<Props> = ({
 
       {isExpanded && (
         <View style={styles.extraInfo}>
-          <View style={styles.infoSection}>
-            <InformationRow
-              texto="clases tomadas"
-              numero={`${student.taken_classes[0].cant_presents ?? 0} de ${student.taken_classes[0].cant_buyed_classes ?? 0}`}
-            />
-            <InformationRow
-              texto="deuda"
-              numero={`$ ${(student.taken_classes[0].tot_amount ?? 0) - (student.taken_classes[0].tot_paid_amount ?? 0)}`}
-            />
-          </View>
-
+           {isAdmin && (
+            <View style={styles.infoSection}>
+              
+              <InformationRow
+                texto="clases tomadas"
+                numero={`${student.taken_classes[0].cant_presents ?? 0} de ${student.taken_classes[0].cant_buyed_classes ?? 0}`}
+              />
+              <InformationRow
+                texto="deuda"
+                numero={`$ ${(student.taken_classes[0].tot_amount ?? 0) - (student.taken_classes[0].tot_paid_amount ?? 0)}`}
+              />
+            </View>
+           )}
+          {isAdmin && (
           <View style={styles.separator} />
+          )}
 
           <Text style={styles.retiraTitulo}>Contacto</Text>
 
@@ -128,36 +149,7 @@ const ItemStudentAssistViewComponent: React.FC<Props> = ({
 
             <Text style={styles.retiraTitulo}>Retira</Text>
 
-            {[
-              {
-                nombre: student.autorizado1_nombre,
-                dni: student.autorizado1_dni,
-                parentesco: student.autorizado1_parentesco,
-              },
-              {
-                nombre: student.autorizado2_nombre,
-                dni: student.autorizado2_dni,
-                parentesco: student.autorizado2_parentesco,
-              },
-              {
-                nombre: student.autorizado3_nombre,
-                dni: student.autorizado3_dni,
-                parentesco: student.autorizado3_parentesco,
-              },
-            ]
-              .filter(a => a.nombre || a.dni || a.parentesco)
-              .map((a, index) => (
-                <View key={index} style={styles.autorizadoRow}>
-                  <Text style={[styles.autorizadoTexto, { flex: 1 }]}>{a.nombre || '-'}</Text>
-                  <Text style={[styles.autorizadoTexto, { flex: 1, textAlign: 'right', paddingRight: 16 }]}>
-                    {a.dni ? formatDNI(a.dni) : '-'}
-                  </Text>
-
-                  <Text style={[styles.autorizadoTexto, { flex: 1, textAlign: 'right' }]}>
-                    ({a.parentesco || '-'})
-                  </Text>
-                </View>
-              ))}
+            <AuthorizedList student={student} />
 
             {/* 🔹 Nueva sección con información adicional */}
             <View style={styles.separator} />
@@ -194,34 +186,64 @@ const ItemStudentAssistViewComponent: React.FC<Props> = ({
 
 
 
-          {isAdmin && (
-            <Pressable
-              onPress={() =>
-                navigation.navigate('InformationStudent', {
-                  studentId: student.student_id,
-                  firstName: student.nombre,
-                  lastName: student.apellido,
-                  category: student.category,
-                  sub_category: student.sub_category,
-                })
-              }
-              style={{
-                alignSelf: 'flex-end',
-                backgroundColor: COLORS.transparentGreenColor,
-                borderRadius: 6,
-                marginTop: 8,
-                marginBottom: 4,
-                paddingVertical: 4,
-                paddingHorizontal: 10,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-              android_ripple={{ color: '#ccc' }}
-              pointerEvents="box-none"
-            >
-              <Text style={styles.masInfoText}>+ info</Text>
-            </Pressable>
-          )}
+         {isAdmin && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'flex-end',
+                  alignItems: 'center',
+                  marginTop: 8,
+                }}
+              >
+                {/* 🧾 Ver autorización */}
+                <Pressable
+                  onPress={() => openAutorizacionPDF(student.dni)}
+                  style={{
+                    backgroundColor: '#eee',
+                    borderRadius: 6,
+                    paddingVertical: 4,
+                    paddingHorizontal: 10,
+                    marginRight: 6,
+                  }}
+                  android_ripple={{ color: '#ccc' }}
+                >
+                  <Text
+                    style={{
+                      fontFamily: 'OpenSans-Regular',
+                      fontSize: 14,
+                      color: COLORS.darkLetter,
+                    }}
+                  >
+                    autorización
+                  </Text>
+                </Pressable>
+
+                {/* ➕ Info */}
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate('InformationStudent', {
+                      studentId: student.student_id,
+                      firstName: student.nombre,
+                      lastName: student.apellido,
+                      category: student.category,
+                      sub_category: student.sub_category,
+                    })
+                  }
+                  style={{
+                    backgroundColor: COLORS.transparentGreenColor,
+                    borderRadius: 6,
+                    paddingVertical: 4,
+                    paddingHorizontal: 10,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}
+                  android_ripple={{ color: '#ccc' }}
+                >
+                  <Text style={styles.masInfoText}>+ info</Text>
+                </Pressable>
+              </View>
+            )}
+
         </View>
       )}
     </View>
@@ -278,12 +300,12 @@ const styles = StyleSheet.create({
     paddingTop: 8,
   },
   infoSection: {
-    marginBottom: 8,
+    marginVertical: 5,
   },
   separator: {
     height: 1,
     backgroundColor: '#ccc',
-    marginVertical: 8,
+    marginVertical: 10,
   },
   masInfoText: {
     fontFamily: 'OpenSans-Regular',
@@ -311,8 +333,8 @@ const styles = StyleSheet.create({
     fontFamily: 'OpenSans-Regular',
     fontSize: FONT_SIZES.dni,
     color: COLORS.darkLetter,
-    marginBottom: 6,
-    marginTop:10
+    marginVertical: 4,
+
   },
   autorizadoRow: {
     flexDirection: 'row',

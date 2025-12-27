@@ -71,7 +71,6 @@ const styles = StyleSheet.create({
   contactName: {
     fontSize: FONT_SIZES.dni,
     fontFamily: 'OpenSans-Light',
-    fontWeight: '500',
     color: COLORS.darkLetter,
   },
   phoneText: {
@@ -80,7 +79,6 @@ const styles = StyleSheet.create({
     color: COLORS.darkLetter,
     fontFamily: 'OpenSans-Light',
     textAlign: 'right',
-    marginRight: 10,
     textAlignVertical: 'center',
     includeFontPadding: false,
   },

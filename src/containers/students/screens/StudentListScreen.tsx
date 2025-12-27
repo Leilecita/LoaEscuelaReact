@@ -161,6 +161,7 @@ export const StudentListScreen: React.FC<Props> = ({ route }) => {
           <SectionList
             sections={sections}
             keyExtractor={(item) => item.id.toString()}
+            keyboardShouldPersistTaps="handled" // pasa el evento a traves del teclado
             renderItem={({ item }) =>
               modo === 'asistencias' ? (
                 <ItemStudentAddToAssistView

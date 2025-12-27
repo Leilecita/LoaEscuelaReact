@@ -142,7 +142,8 @@ export default function IncomesListScreen() {
           <FlatList
             data={visibleIncomes}
             keyExtractor={(item, index) => `${item.income_id}-${index}`}
-            onEndReached={loadMore}
+            onEndReached={isAdmin ? loadMore : undefined}
+
             onEndReachedThreshold={0.5}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={reload} />}
             ListFooterComponent={
