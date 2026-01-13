@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { useFocusEffect } from '@react-navigation/native';
 import { View, Text, ActivityIndicator, StyleSheet, Button, Alert, ImageBackground } from 'react-native'
 import { useStudents } from '../../../core/hooks/useStudents'
@@ -47,35 +47,44 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
 
   const [keyboardVisible, setKeyboardVisible] = useState(false)
   const [keyboardHeight, setKeyboardHeight] = useState(0)
+  const lastCountPresentes = useRef<number | null>(null)
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // 🔄 refresca SOLO el contador (liviano)
+      forzarRefrescoContador()
+    }, 15000) // cada 15 segundos
+
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     const showSub = Keyboard.addListener('keyboardWillShow', (e) => {
       setKeyboardHeight(e.endCoordinates.height)
     })
-  
+
     const hideSub = Keyboard.addListener('keyboardWillHide', () => {
       setKeyboardHeight(0)
     })
-  
+
     return () => {
       showSub.remove()
       hideSub.remove()
     }
   }, [])
-  
 
-    
+
+
   useFocusEffect(
     useCallback(() => {
       console.log('📌 useFocusEffect ejecutado - refrescando estudiantes');
       reload();
       forzarRefrescoContador();
     }, [only_date, showOnlyPresent, sortOrder])
-  ); 
- 
+  );
 
-  const { countActiveStudents ,countStudents, countPresentes, loading: loadingPresentes } = usePresentCount(
+
+  const { countActiveStudents, countStudents, countPresentes, loading: loadingPresentes } = usePresentCount(
     category,
     subcategoria,
     only_date,
@@ -102,11 +111,11 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
     const handler = setTimeout(() => {
       updateQuery(searchInput.toLowerCase())
     }, 400)
-  
-      return () => clearTimeout(handler)
-    }, [searchInput])
 
-    const toggleExpand = (id: number) => {
+    return () => clearTimeout(handler)
+  }, [searchInput])
+
+  const toggleExpand = (id: number) => {
     setExpandedStudentId((prev) => (prev === id ? null : id))
   }
 
@@ -114,6 +123,57 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
     reload()
     forzarRefrescoContador()
   }
+
+  useEffect(() => {
+    // Primera carga: solo inicializamos
+    if (lastCountPresentes.current === null) {
+      lastCountPresentes.current = countPresentes
+      return
+    }
+
+    // Si el contador cambió → refrescamos lista
+    if (countPresentes !== lastCountPresentes.current) {
+      console.log('🔄 Cambio en countPresentes, recargando lista')
+      reload()
+      lastCountPresentes.current = countPresentes
+    }
+  }, [countPresentes])
+  /*const togglePresente = async (student: ReportStudent) => {
+     if (!planillaId) {
+       return Alert.alert('Error', 'No se pudo determinar la planilla.')
+     }
+ 
+     const nuevoEstado = student.presente !== 'si'
+ 
+     try {
+       const responseData = await savePresent({
+         alumno_id: student.student_id,
+         planilla_id: planillaId,
+         fecha_presente: today,
+       })
+ 
+       const updatedStudent = {
+         ...student,
+         presente: nuevoEstado ? 'si' : 'no',
+         planilla_presente_id: nuevoEstado ? responseData.id || -1 : -1,
+         taken_classes: student.taken_classes
+           ? student.taken_classes.map((tc, index) =>
+               index === 0
+                 ? { ...tc, cant_presents: tc.cant_presents + (nuevoEstado ? 1 : -1) }
+                 : tc
+             )
+           : [],
+       }
+ 
+       forzarRefrescoContador()
+ 
+       setStudents((prev) =>
+         prev.map((s) => (s.student_id === student.student_id ? updatedStudent : s))
+       )
+     } catch (e) {
+       Alert.alert('Error', 'No se pudo actualizar la asistencia')
+     }
+   } */
 
   const togglePresente = async (student: ReportStudent) => {
     if (!planillaId) {
@@ -123,34 +183,83 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
     const nuevoEstado = student.presente !== 'si'
 
     try {
-      const responseData = await savePresent({
-        alumno_id: student.student_id,
-        planilla_id: planillaId,
-        fecha_presente: today,
-      })
+      // 👉 SOLO si pasa a PRESENTE
+      if (nuevoEstado) {
+        const responseData = await savePresent({
+          alumno_id: student.student_id,
+          planilla_id: planillaId,
+          fecha_presente: today,
+        })
 
-      const updatedStudent = {
-        ...student,
-        presente: nuevoEstado ? 'si' : 'no',
-        planilla_presente_id: nuevoEstado ? responseData.id || -1 : -1,
-        taken_classes: student.taken_classes
-          ? student.taken_classes.map((tc, index) =>
+        // 🔒 Ya existía → solo pintar, NO sumar
+        if (responseData?.result === 'already_exists') {
+          setStudents((prev) =>
+            prev.map((s) =>
+              s.student_id === student.student_id
+                ? { ...s, presente: 'si' }
+                : s
+            )
+          )
+          forzarRefrescoContador()
+          return
+        }
+
+        // ✔️ Insert real
+        const updatedStudent = {
+          ...student,
+          presente: 'si',
+          planilla_presente_id: responseData.id,
+          taken_classes: student.taken_classes
+            ? student.taken_classes.map((tc, index) =>
               index === 0
-                ? { ...tc, cant_presents: tc.cant_presents + (nuevoEstado ? 1 : -1) }
+                ? { ...tc, cant_presents: tc.cant_presents + 1 }
                 : tc
             )
-          : [],
+            : [],
+        }
+
+        setStudents((prev) =>
+          prev.map((s) =>
+            s.student_id === student.student_id ? updatedStudent : s
+          )
+        )
+
+        forzarRefrescoContador()
       }
+      // 👉 Si pasa a NO
+      else {
+        if (!student.planilla_presente_id || student.planilla_presente_id === -1) {
+          return
+        }
 
-      forzarRefrescoContador()
+        await removePresent(student.planilla_presente_id)
 
-      setStudents((prev) =>
-        prev.map((s) => (s.student_id === student.student_id ? updatedStudent : s))
-      )
+        const updatedStudent = {
+          ...student,
+          presente: 'no',
+          planilla_presente_id: -1,
+          taken_classes: student.taken_classes
+            ? student.taken_classes.map((tc, index) =>
+              index === 0 && tc.cant_presents > 0
+                ? { ...tc, cant_presents: tc.cant_presents - 1 }
+                : tc
+            )
+            : [],
+        }
+
+        setStudents((prev) =>
+          prev.map((s) =>
+            s.student_id === student.student_id ? updatedStudent : s
+          )
+        )
+
+        forzarRefrescoContador()
+      }
     } catch (e) {
       Alert.alert('Error', 'No se pudo actualizar la asistencia')
     }
   }
+
 
   const eliminarPresente = (student: ReportStudent) => {
     Alert.alert(
@@ -200,11 +309,10 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
   }
   const handleToggleActive = (student: ReportStudent) => {
     const nuevoEstado = student.current_student === 'si' ? 'no' : 'si';
-  
+
     Alert.alert(
       'Confirmar',
-      `¿Seguro que deseas marcar a ${student.nombre} ${student.apellido} como ${
-        nuevoEstado === 'si' ? 'Activo' : 'Inactivo'
+      `¿Seguro que deseas marcar a ${student.nombre} ${student.apellido} como ${nuevoEstado === 'si' ? 'Activo' : 'Inactivo'
       }?`,
       [
         { text: 'Cancelar', style: 'cancel' },
@@ -216,7 +324,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
               if (res.result && res.result !== 'success') {
                 return Alert.alert('Error', 'No se pudo actualizar el estado.')
               }
-  
+
               setStudents((prev) =>
                 prev.map((s) =>
                   s.planilla_alumno_id === student.planilla_alumno_id
@@ -225,7 +333,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
                 )
               );
 
-              reload(); 
+              reload();
             } catch (e) {
               Alert.alert('Error', 'No se pudo actualizar el estado.');
             }
@@ -234,8 +342,8 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
       ]
     );
   };
-  
-  
+
+
 
 
   return (
@@ -244,7 +352,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
       style={styles.background}
       resizeMode="cover"
     >
-      <View style={{ flex: 1, overflow: 'visible'}}>
+      <View style={{ flex: 1, overflow: 'visible' }}>
         <FilterBar
           date={selectedDate}
           onDateChange={setSelectedDate}
@@ -268,7 +376,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
           }
           enableActiveFilter
         />
-    
+
         {loading ? (
           <ActivityIndicator style={styles.center} size="large" />
         ) : error ? (
@@ -278,29 +386,29 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
           </View>
         ) : (
           <>
-           {!planillaId ? (
+            {!planillaId ? (
               <ActivityIndicator style={styles.center} size="large" />
             ) : (
               <FlatList
-              data={students}
-              keyExtractor={(item, index) => `${item.planilla_alumno_id}-${item.student_id}-${index}`}
-              keyboardShouldPersistTaps="handled"
-              onEndReached={loadMore}
-              onEndReachedThreshold={0.5}
-              ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
-              contentContainerStyle={{ paddingBottom: 120 }} // ✅ suficiente padding para el FAB
-              renderItem={({ item }) => (
-                <ItemStudentAssistView
-                  student={item}
-                  isExpanded={expandedStudentId === item.student_id}
-                  onToggleExpand={() => toggleExpand(item.student_id)}
-                  togglePresente={togglePresente}
-                  eliminarPresente={eliminarPresente}
-                  selectedDate={selectedDate}
-                  onLongPress={() => handleToggleActive(item)}
-                />
-              )}
-            />
+                data={students}
+                keyExtractor={(item, index) => `${item.planilla_alumno_id}-${item.student_id}-${index}`}
+                keyboardShouldPersistTaps="handled"
+                onEndReached={loadMore}
+                onEndReachedThreshold={0.5}
+                ListFooterComponent={loadingMore ? <ActivityIndicator style={{ margin: 10 }} /> : null}
+                contentContainerStyle={{ paddingBottom: 120 }} // ✅ suficiente padding para el FAB
+                renderItem={({ item }) => (
+                  <ItemStudentAssistView
+                    student={item}
+                    isExpanded={expandedStudentId === item.student_id}
+                    onToggleExpand={() => toggleExpand(item.student_id)}
+                    togglePresente={togglePresente}
+                    eliminarPresente={eliminarPresente}
+                    selectedDate={selectedDate}
+                    onLongPress={() => handleToggleActive(item)}
+                  />
+                )}
+              />
             )}
             {keyboardHeight > 0 && (
               <FAB
@@ -320,31 +428,31 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
             )}
 
             <FAB
-                icon="account-plus"
-                //color= "#6c8a35"
-                color= {COLORS.fabTextColor}
-                
-                style={{
-                  position: 'absolute',
-                  bottom: 30,
-                  right: 30,
-                  backgroundColor: COLORS.fabColor,
-                }}
-                onPress={() => navigation.navigate('ListaDeAlumnos', {
-                  
-                  category: 'category',
-                  subcategoria: 'subcategoria',
-                  modo: 'asistencias',
-                  planilla_id: planillaId,
-               
-                })}
-              />
+              icon="account-plus"
+              //color= "#6c8a35"
+              color={COLORS.fabTextColor}
+
+              style={{
+                position: 'absolute',
+                bottom: 30,
+                right: 30,
+                backgroundColor: COLORS.fabColor,
+              }}
+              onPress={() => navigation.navigate('ListaDeAlumnos', {
+
+                category: 'category',
+                subcategoria: 'subcategoria',
+                modo: 'asistencias',
+                planilla_id: planillaId,
+
+              })}
+            />
           </>
         )}
       </View>
     </ImageBackground>
   );
-  
+
 }
 
 const styles = StyleSheet.create({

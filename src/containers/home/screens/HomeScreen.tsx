@@ -33,7 +33,15 @@ export const HomeScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const [resumen, setResumen] = useState<ReportResumAsist | null>(null);
   const { userRole } = useContext(AuthContext);
+
   const isAdmin = userRole === 'admin';
+  const isEmpleado = userRole === 'empleado';
+  const isTrabajador = userRole === 'trabajador';
+
+  const canAsistencias = isAdmin || isEmpleado;
+  const canPagos = isAdmin;
+  const canResumen = isAdmin;
+  const canAlumnos = isAdmin; // listado alumnos
 
   const fetchResumen = async () => {
     try {
@@ -64,96 +72,131 @@ export const HomeScreen = () => {
       style={styles.background}
       resizeMode="cover"
     >
-    <View style={styles.container}>
-      {/* fila superior */}
-      <View style={styles.row}>
-        <TouchableOpacity onPress={() => navigation.navigate('Asistencias')} style={styles.button}>
-          <Image source={require('../../../../assets/asistencia.png')} style={styles.icon} />
-        </TouchableOpacity>
+      <View style={styles.container}>
+        {/* fila superior */}
+        <View style={styles.row}>
+          <TouchableOpacity
+            disabled={!canAsistencias}
+            onPress={() => {
+              if (!canAsistencias) return;
+              navigation.navigate('Asistencias');
+            }}
+            style={[
+              styles.button,
+              !canAsistencias && styles.disabledButton,
+            ]}
+          >
+            <Image source={require('../../../../assets/asistencia.png')} style={styles.icon} />
+          </TouchableOpacity>
 
+
+          <TouchableOpacity
+            disabled={!canPagos}
+            onPress={() => {
+              if (!canPagos) return;
+              navigation.navigate('ListaDeAlumnos', {
+                category: 'Todas',
+                subcategoria: 'Todas',
+                modo: 'cargarPago',
+              });
+            }}
+            style={[
+              styles.button,
+              !canPagos && styles.disabledButton,
+            ]}
+          >
+            <Image source={require('../../../../assets/crear_pago.png')} style={styles.icon} />
+          </TouchableOpacity>
+
+
+
+        </View>
+
+        {/* botón central */}
         <TouchableOpacity
-          onPress={() =>
-            navigation.navigate('ListaDeAlumnos', {
-              category: 'Todas',
-              subcategoria: 'Todas',
-              modo: 'cargarPago',
-            })
-          }
-          style={styles.button}
-        >
-          <Image source={require('../../../../assets/crear_pago.png')} style={styles.icon} />
-        </TouchableOpacity>
-
-      
-      </View>
-
-      {/* botón central */}
-      <View style={styles.center}>
-        <TouchableOpacity
-          onPress={() =>
+          disabled={!canAlumnos}
+          onPress={() => {
+            if (!canAlumnos) return;
             navigation.navigate('ListaDeAlumnos', {
               category: 'Todas',
               subcategoria: 'Todas',
               modo: 'lista',
-            })
-          }
-          style={styles.bigButton}
+            });
+          }}
+          style={[
+            styles.bigButton,
+            !canAlumnos && styles.disabledButton,
+          ]}
         >
           <Image source={require('../../../../assets/alumnos.png')} style={styles.bigIcon} />
         </TouchableOpacity>
-      </View>
 
-      {/* fila inferior */}
-      <View style={styles.row}>
-       
-        <TouchableOpacity
+
+        {/* fila inferior */}
+        <View style={styles.row}>
+
+          <TouchableOpacity
+            disabled={!canResumen}
             onPress={() => {
-              if (!isAdmin) {
-                Alert.alert('Acceso restringido', 'Solo los administradores pueden acceder aquí');
-                return;
-              }
+              if (!canResumen) return;
               navigation.navigate('ResumenTabs');
             }}
-          style={styles.button}
-        >
-          <Image source={require('../../../../assets/resumen_diario.png')} style={styles.icon} />
-        </TouchableOpacity>
+            style={[
+              styles.button,
+              !canResumen && styles.disabledButton,
+            ]}
+          >
+            <Image source={require('../../../../assets/resumen_diario.png')} style={styles.icon} />
+          </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate('ListaDePagos')} style={styles.button}>
-          <Image source={require('../../../../assets/listado_pagos.png')} style={styles.icon} />
-        </TouchableOpacity>
-      </View>
 
-      {/* recuadro transparente abajo */}
-      <View style={styles.transparentBox}>
-        {resumen ? (
-          <>
-            <View style={{ marginHorizontal: -5, marginTop:-18 }}>
-              <DateHeader 
-                date={
-                  resumen.day.includes('T')
-                    ? resumen.day
-                    : resumen.day + 'T00:00:00'
-                }
-              />
-            </View>
+          <TouchableOpacity
+            disabled={!canPagos}
+            onPress={() => {
+              if (!canPagos) return;
+              navigation.navigate('ListaDePagos');
+            }}
+            style={[
+              styles.button,
+              !canPagos && styles.disabledButton,
+            ]}
+          >
+            <Image source={require('../../../../assets/listado_pagos.png')} style={styles.icon} />
+          </TouchableOpacity>
 
-            <View style={styles.columnsContainer}>
-              {resumen.planillas?.map((p) => (
-                <View key={p.nombre_planilla} style={styles.columnItem}>
-                  <View style={styles.rowItem}>
-                    <Text style={styles.boxText}>{p.nombre_planilla}</Text>
-                    <Text style={styles.boxText}>{p.cant_presentes}</Text>
+
+        </View>
+
+        {/* recuadro transparente abajo */}
+        <View style={styles.transparentBox}>
+          {resumen ? (
+            <>
+              <View style={{ marginHorizontal: -5, marginTop: -18 }}>
+                <DateHeader
+                  date={
+                    resumen.day.includes('T')
+                      ? resumen.day
+                      : resumen.day + 'T00:00:00'
+                  }
+                />
+              </View>
+
+              <View style={styles.columnsContainer}>
+                {resumen.planillas?.map((p) => (
+                  <View key={p.nombre_planilla} style={styles.columnItem}>
+                    <View style={styles.rowItem}>
+                      <Text style={styles.boxText}>{p.nombre_planilla}</Text>
+                      <Text style={styles.boxText}>{p.cant_presentes}</Text>
+                    </View>
                   </View>
-                </View>
-              ))}
-            </View>
-          </>
-        ) : (
-          <Text style={styles.boxText}>Cargando resumen...</Text>
-        )}
+                ))}
+              </View>
+            </>
+          ) : (
+            <Text style={styles.boxText}>Cargando resumen...</Text>
+          )}
+        </View>
       </View>
-    </View>
     </ImageBackground>
   );
 };
@@ -177,9 +220,13 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     alignItems: 'flex-start',
   },
-  boxText: { color: COLORS.darkLetter, fontFamily: 'OpenSans-Light',  fontSize: FONT_SIZES.dni },
+  boxText: { color: COLORS.darkLetter, fontFamily: 'OpenSans-Light', fontSize: FONT_SIZES.dni },
   columnsContainer: { flexDirection: 'row', marginVertical: 1, flexWrap: 'wrap' },
   columnItem: { width: '50%', paddingRight: 10 },
   rowItem: { flexDirection: 'row', marginVertical: 4, justifyContent: 'space-between' },
   background: { flex: 1 },
+  disabledButton: {
+    opacity: 0.35,
+  },
+
 });

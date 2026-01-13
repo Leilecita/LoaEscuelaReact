@@ -114,7 +114,7 @@ export const DailyWorksScreen: React.FC = () => {
       <View style={styles.usersRow}>
         {item.users.map((user, userIndex) => (
           <View key={`${item.day}-${user.id}-${userIndex}`} style={styles.userCard}>
-            <Text style={styles.userName}>{user.name}</Text>
+            <Text style={styles.userName}>{user.name?.toUpperCase()}</Text>
 
             {user.jobs.length === 0 ? (
               <Text style={styles.noJobs}>No hay trabajos asignados</Text>
@@ -267,12 +267,12 @@ const styles = StyleSheet.create({
   jobName: {
     fontSize: FONT_SIZES.date,
     fontFamily: "OpenSans-Regular",
-    color: COLORS.darkLetter,
+    color: COLORS.darkLetter3,
   },
   jobCount: {
     fontSize: FONT_SIZES.date,
     fontFamily: "OpenSans-Bold",
-    color: COLORS.darkLetter,
+    color: COLORS.darkLetter3,
   },
   filterWrapper: {
     paddingVertical: 8,

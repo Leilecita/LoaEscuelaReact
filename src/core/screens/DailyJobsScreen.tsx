@@ -32,6 +32,10 @@ type JobSection = { title: string; data: DayJob[] };
 export const DailyJobsScreen: React.FC = () => {
   const { userId, userRole, userName } = useContext(AuthContext);
   const isAdmin = userRole === "admin";
+  const isEmpleado = userRole === "empleado";
+  const isTrabajador = userRole === "trabajador";
+
+  const isWorkerLike = isEmpleado || isTrabajador;
 
   const navigation = useNavigation<any>();
 
@@ -49,7 +53,8 @@ export const DailyJobsScreen: React.FC = () => {
   const formattedDate = dayjs(selectedDate).format("YYYY-MM-DD");
   const today = dayjs().format("YYYY-MM-DD");
   const isToday = formattedDate === today;
-  const canEdit = isAdmin || (userRole === "empleado" && isToday);
+  const canEdit = isAdmin || (isWorkerLike && isToday);
+
 
   const [showJobsModal, setShowJobsModal] = useState(false);
   const [hasShownJobsModal, setHasShownJobsModal] = useState(false);
@@ -59,54 +64,54 @@ export const DailyJobsScreen: React.FC = () => {
   const [newJobName, setNewJobName] = useState("");
   const [newJobCategory, setNewJobCategory] = useState("otro");
   const openCreateJobModal = () => {
-   setNewJobName("");
-   setNewJobCategory("otro");
-   setModalVisible(true);
- };
-
- const createJobFromModal = async () => {
-  if (!newJobName.trim()) {
-    return Alert.alert("Error", "El nombre no puede estar vacío");
-  }
-
-  const payload = {
-    name: newJobName.trim(),
-    category: isAdmin ? newJobCategory.trim() || "otro" : "otro",
+    setNewJobName("");
+    setNewJobCategory("otro");
+    setModalVisible(true);
   };
 
-  try {
-    setSaving(true);
-    const response = await api.post("/day_jobs.php", JSON.stringify(payload), {
-      headers: { "Content-Type": "application/json" },
-    });
-
-    if (response.data.result !== "success") {
-      throw new Error(response.data.message || "Error al crear trabajo");
+  const createJobFromModal = async () => {
+    if (!newJobName.trim()) {
+      return Alert.alert("Error", "El nombre no puede estar vacío");
     }
 
-    await fetchJobs();
-    Alert.alert("Éxito", `Trabajo "${newJobName}" creado correctamente`);
-    setModalVisible(false);
-  } catch (error) {
-    console.error(error);
-    Alert.alert("Error", "No se pudo crear el trabajo");
-  } finally {
-    setSaving(false);
-  }
-};
+    const payload = {
+      name: newJobName.trim(),
+      category: isAdmin ? newJobCategory.trim() || "otro" : "otro",
+    };
+
+    try {
+      setSaving(true);
+      const response = await api.post("/day_jobs.php", JSON.stringify(payload), {
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.data.result !== "success") {
+        throw new Error(response.data.message || "Error al crear trabajo");
+      }
+
+      await fetchJobs();
+      Alert.alert("Éxito", `Trabajo "${newJobName}" creado correctamente`);
+      setModalVisible(false);
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Error", "No se pudo crear el trabajo");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   // ----------------------
   // Cargar trabajos seleccionados
   // ----------------------
- 
+
   useEffect(() => {
-   if (selectedUser !== null) {
-     setSelectedJobs([]);
-     fetchSelectedJobs(selectedUser, selectedDate).then((jobsFetched) => {
-       setInitialJobsCount(jobsFetched.length);
-     });
-   }
- }, [selectedUser, selectedDate]);
+    if (selectedUser !== null) {
+      setSelectedJobs([]);
+      fetchSelectedJobs(selectedUser, selectedDate).then((jobsFetched) => {
+        setInitialJobsCount(jobsFetched.length);
+      });
+    }
+  }, [selectedUser, selectedDate]);
 
   // Toggle selección
   const toggleJob = (id: number) => {
@@ -114,18 +119,18 @@ export const DailyJobsScreen: React.FC = () => {
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
     );
   };
- 
- useEffect(() => {
-  if (initialJobsCount > 0 && !hasShownJobsModal && isToday) {
-    setShowJobsModal(true);
-    setHasShownJobsModal(true);
-  }
-}, [initialJobsCount, hasShownJobsModal]);
+
+  useEffect(() => {
+    if (initialJobsCount > 0 && !hasShownJobsModal && isToday) {
+      setShowJobsModal(true);
+      setHasShownJobsModal(true);
+    }
+  }, [initialJobsCount, hasShownJobsModal]);
 
   const handleCreateJob = () => {
     openCreateJobModal();
   };
- 
+
   // Guardar trabajos seleccionados
   const handleSave = async () => {
     if (saving || !canEdit) return;
@@ -216,14 +221,14 @@ export const DailyJobsScreen: React.FC = () => {
   };
 
   const renderSection = ({ section }: { section: JobSection }) => {
-    const isOpen = openSections[section.title] ?? section.title.toLowerCase() !== "otro"; 
+    const isOpen = openSections[section.title] ?? section.title.toLowerCase() !== "otro";
     const toggleSection = () => {
       setOpenSections((prev) => ({ ...prev, [section.title]: !isOpen }));
     };
 
     return (
-     
-     <View style={{ marginTop: 4 }}>
+
+      <View style={{ marginTop: 4 }}>
         <TouchableOpacity style={styles.categoryHeader} onPress={toggleSection}>
           <Text style={styles.categoryHeaderText}>
             {section.title}
@@ -236,7 +241,7 @@ export const DailyJobsScreen: React.FC = () => {
             />
           )}
         </TouchableOpacity>
-      
+
         {isOpen && (
           <View style={styles.sectionContent}>
             {section.data.map((job) => (
@@ -245,7 +250,7 @@ export const DailyJobsScreen: React.FC = () => {
           </View>
         )}
       </View>
-   
+
     );
   };
 
@@ -426,7 +431,7 @@ export const DailyJobsScreen: React.FC = () => {
             renderItem={() => null}
             renderSectionHeader={renderSection}
             stickySectionHeadersEnabled={false}
-            contentContainerStyle={{ paddingBottom: 100, paddingHorizontal:12 }}
+            contentContainerStyle={{ paddingBottom: 100, paddingHorizontal: 12 }}
           />
         )}
 
@@ -532,87 +537,87 @@ export const DailyJobsScreen: React.FC = () => {
 
 
       {showJobsModal && (
-         <Modal
-           transparent
-           animationType="fade"
-           visible={showJobsModal}
-           onRequestClose={() => setShowJobsModal(false)}
-         >
-           <View style={{
-             flex: 1,
-             justifyContent: "center",
-             alignItems: "center",
-             backgroundColor: "rgba(0,0,0,0.5)",
-           }}>
-             <View style={{
-               width: "85%",
-               padding: 20,
-               backgroundColor: "white",
-               borderRadius: 12,
-               shadowColor: "#000",
-               shadowOffset: { width: 0, height: 2 },
-               shadowOpacity: 0.25,
-               shadowRadius: 4,
-               elevation: 5,
-             }}>
-               <Text style={{ fontSize: 18, fontFamily: "OpenSans-SemiBold", color: COLORS.darkLetter, marginBottom: 12 }}>
-                 ⚠️ Trabajos ya cargados
-               </Text>
+        <Modal
+          transparent
+          animationType="fade"
+          visible={showJobsModal}
+          onRequestClose={() => setShowJobsModal(false)}
+        >
+          <View style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0,0,0,0.5)",
+          }}>
+            <View style={{
+              width: "85%",
+              padding: 20,
+              backgroundColor: "white",
+              borderRadius: 12,
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 4,
+              elevation: 5,
+            }}>
+              <Text style={{ fontSize: 18, fontFamily: "OpenSans-SemiBold", color: COLORS.darkLetter, marginBottom: 12 }}>
+                ⚠️ Trabajos ya cargados
+              </Text>
 
-               <View style={{ maxHeight: 200, marginBottom: 20 }}>
-                 {selectedJobs.map((jobId) => {
-                   const job = jobs.find((j) => j.id === jobId);
-                   if (!job) return null;
-                   return (
-                     <Text key={jobId} style={{ fontFamily: "OpenSans-Regular", fontSize: 16, color: COLORS.darkLetter }}>
-                       • {job.name} ({job.category || "Sin categoría"})
-                     </Text>
-                   );
-                 })}
-               </View>
+              <View style={{ maxHeight: 200, marginBottom: 20 }}>
+                {selectedJobs.map((jobId) => {
+                  const job = jobs.find((j) => j.id === jobId);
+                  if (!job) return null;
+                  return (
+                    <Text key={jobId} style={{ fontFamily: "OpenSans-Regular", fontSize: 16, color: COLORS.darkLetter }}>
+                      • {job.name} ({job.category || "Sin categoría"})
+                    </Text>
+                  );
+                })}
+              </View>
 
-               <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 10 }}>
-                 {/* Cerrar: ir al Home */}
-                 <TouchableOpacity
-                   style={{
-                     paddingVertical: 10,
-                     paddingHorizontal: 16,
-                     borderRadius: 8,
-                     backgroundColor: COLORS.transparentGreenColor,
-                   }}
-                   onPress={() => {
-                     setShowJobsModal(false);
-                     setTimeout(() => navigation.navigate("MainApp"), 100);
-                   }}
-                 >
-                   <Text style={{ color: COLORS.darkLetter, fontFamily: "OpenSans-SemiBold" }}>Cerrar</Text>
-                 </TouchableOpacity>
+              <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 10 }}>
+                {/* Cerrar: ir al Home */}
+                <TouchableOpacity
+                  style={{
+                    paddingVertical: 10,
+                    paddingHorizontal: 16,
+                    borderRadius: 8,
+                    backgroundColor: COLORS.transparentGreenColor,
+                  }}
+                  onPress={() => {
+                    setShowJobsModal(false);
+                    setTimeout(() => navigation.navigate("MainApp"), 100);
+                  }}
+                >
+                  <Text style={{ color: COLORS.darkLetter, fontFamily: "OpenSans-SemiBold" }}>Cerrar</Text>
+                </TouchableOpacity>
 
-                 {/* Editar: cerrar modal y quedarse */}
-                 <TouchableOpacity
-                   style={{
-                     paddingVertical: 10,
-                     paddingHorizontal: 16,
-                     borderRadius: 8,
-                     backgroundColor: COLORS.headerDate,
-                   }}
-                   onPress={() => setShowJobsModal(false)}
-                 >
-                   <Text style={{ color: "white", fontFamily: "OpenSans-SemiBold" }}>Editar</Text>
-                 </TouchableOpacity>
-               </View>
+                {/* Editar: cerrar modal y quedarse */}
+                <TouchableOpacity
+                  style={{
+                    paddingVertical: 10,
+                    paddingHorizontal: 16,
+                    borderRadius: 8,
+                    backgroundColor: COLORS.headerDate,
+                  }}
+                  onPress={() => setShowJobsModal(false)}
+                >
+                  <Text style={{ color: "white", fontFamily: "OpenSans-SemiBold" }}>Editar</Text>
+                </TouchableOpacity>
+              </View>
 
-             </View>
-           </View>
-         </Modal>
-       )}
+            </View>
+          </View>
+        </Modal>
+      )}
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  filterBar: { flexDirection: "row", alignItems: "center", marginBottom: 4, gap: 10, zIndex: 10, paddingHorizontal: 16, paddingTop:12 },
+  filterBar: { flexDirection: "row", alignItems: "center", marginBottom: 4, gap: 10, zIndex: 10, paddingHorizontal: 16, paddingTop: 12 },
   sectionHeader: {
     fontSize: 18,
     fontFamily: "OpenSans-SemiBold",
@@ -671,30 +676,30 @@ const styles = StyleSheet.create({
   saveButtonText: { color: "#fff", fontSize: 17, fontFamily: "OpenSans-Regular" },
   centered: { flex: 1, justifyContent: "center", alignItems: "center" },
   categoryHeader: {
-   flexDirection: "row",
-   alignItems: "center",
-   justifyContent: "space-between",
-   //backgroundColor: "rgba(223, 237, 71, 0.42)", // tono similar al de InformationStudentScreen
-   backgroundColor: COLORS.transparentGreyColor,
-   paddingVertical: 4,
-   paddingHorizontal: 16,
-   marginHorizontal: -12,
-   marginBottom: 10,
- },
- 
- categoryHeaderText: {
-   fontFamily: "OpenSans-Regular",
-   fontSize: 16,
-   color: COLORS.darkLetter,
- },
- filterWrapper: {
-  paddingVertical: 4,
-},
-filterContainer: {
-  flexDirection: "row",
-  alignItems: "center",
-  paddingHorizontal: 8,
-},
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    //backgroundColor: "rgba(223, 237, 71, 0.42)", // tono similar al de InformationStudentScreen
+    backgroundColor: COLORS.transparentGreyColor,
+    paddingVertical: 4,
+    paddingHorizontal: 16,
+    marginHorizontal: -12,
+    marginBottom: 10,
+  },
 
- 
+  categoryHeaderText: {
+    fontFamily: "OpenSans-Regular",
+    fontSize: 16,
+    color: COLORS.darkLetter,
+  },
+  filterWrapper: {
+    paddingVertical: 4,
+  },
+  filterContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 8,
+  },
+
+
 });

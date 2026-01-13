@@ -12,6 +12,13 @@ export function CustomDrawerContent(props: any) {
   const { navigation } = props;
   const { userRole } = useContext(AuthContext);
   const isAdmin = userRole === 'admin';
+  const isEmpleado = userRole === 'empleado';
+  const isTrabajador = userRole === 'trabajador';
+
+  const canAsistencias = isAdmin || isEmpleado;
+  const canPagos = isAdmin;
+  const canResumen = isAdmin;
+  const canAlumnos = isAdmin; // listado alumnos
 
   const { signOut } = useContext(AuthContext)
 
@@ -21,23 +28,28 @@ export function CustomDrawerContent(props: any) {
         <Text style={styles.userName}>Leila</Text>
       </View>
 
-      {/* Sección General */}
-      <Text style={styles.sectionTitle}>General</Text>
-
-      
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Asistencias')}>
-        <MaterialCommunityIcons name="account-check" size={22} color="#fff" />
-        <Text style={styles.menuText}>Asistencias</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('ListaDePagos')}>
-        <MaterialCommunityIcons name="hand-coin" size={22} color="#fff" />
-        <Text style={styles.menuText}>Lista pagos</Text>
-      </TouchableOpacity>
 
 
       {isAdmin && (
         <>
+          {/* Sección General */}
+          <Text style={styles.sectionTitle}>General</Text>
+
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Asistencias')}>
+            <MaterialCommunityIcons name="account-check" size={22} color="#fff" />
+            <Text style={styles.menuText}>Asistencias</Text>
+          </TouchableOpacity>
+
+        </>
+      )}
+
+
+      {isAdmin && (
+        <>
+          <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('ListaDePagos')}>
+            <MaterialCommunityIcons name="hand-coin" size={22} color="#fff" />
+            <Text style={styles.menuText}>Lista pagos</Text>
+          </TouchableOpacity>
           <Text style={styles.sectionTitle}>Resumen diario</Text>
 
           <TouchableOpacity
@@ -70,7 +82,7 @@ export function CustomDrawerContent(props: any) {
       <TouchableOpacity
         style={styles.menuItem}
         onPress={() => {
-          
+
           navigation.navigate('DailyJobsScreen');
         }}
       >
@@ -81,30 +93,30 @@ export function CustomDrawerContent(props: any) {
         <MaterialCommunityIcons name="briefcase-check" size={22} color="#fff" />
         <Text style={styles.menuText}>Lista de trabajos</Text>
       </TouchableOpacity>
-      
+
 
       <Text style={styles.sectionTitle}>Admin</Text>
       {isAdmin && (
         <>
-      <TouchableOpacity
-        style={styles.menuItem}
-        onPress={() => {
-          navigation.navigate('AttendanceSheetScreen');
-        }}
-      >
-        <MaterialCommunityIcons name="book-open" size={22} color="#fff" />
-        <Text style={styles.menuText}>Planillas</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.menuItem}
-        onPress={() => {
-          navigation.navigate('CreateUserScreen'); 
-        }}
-      >
-        <MaterialCommunityIcons name="account-plus" size={22} color="#fff" />
-        <Text style={styles.menuText}>Crear usuario</Text>
-      </TouchableOpacity>
-      </>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => {
+              navigation.navigate('AttendanceSheetScreen');
+            }}
+          >
+            <MaterialCommunityIcons name="book-open" size={22} color="#fff" />
+            <Text style={styles.menuText}>Planillas</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => {
+              navigation.navigate('CreateUserScreen');
+            }}
+          >
+            <MaterialCommunityIcons name="account-plus" size={22} color="#fff" />
+            <Text style={styles.menuText}>Crear usuario</Text>
+          </TouchableOpacity>
+        </>
       )}
 
       <TouchableOpacity style={styles.menuItem} onPress={signOut}>
