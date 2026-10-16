@@ -48,12 +48,14 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
   const [keyboardVisible, setKeyboardVisible] = useState(false)
   const [keyboardHeight, setKeyboardHeight] = useState(0)
   const lastCountPresentes = useRef<number | null>(null)
+  const accionLocal = useRef(false)
 
+
+  // este refresh es cada 15 segundos y refresca solo contador
   useEffect(() => {
     const interval = setInterval(() => {
-      // 🔄 refresca SOLO el contador (liviano)
       forzarRefrescoContador()
-    }, 15000) // cada 15 segundos
+    }, 15000)
 
     return () => clearInterval(interval)
   }, [])
@@ -72,7 +74,6 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
       hideSub.remove()
     }
   }, [])
-
 
 
   useFocusEffect(
@@ -124,7 +125,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
     forzarRefrescoContador()
   }
 
-  useEffect(() => {
+  /*useEffect(() => {
     // Primera carga: solo inicializamos
     if (lastCountPresentes.current === null) {
       lastCountPresentes.current = countPresentes
@@ -137,7 +138,28 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
       reload()
       lastCountPresentes.current = countPresentes
     }
+  }, [countPresentes])*/
+
+  useEffect(() => {
+    if (lastCountPresentes.current === null) {
+      lastCountPresentes.current = countPresentes
+      return
+    }
+
+    if (countPresentes !== lastCountPresentes.current) {
+      if (!accionLocal.current) {
+        console.log('👥 Cambio externo detectado → recargando lista')
+        reload()
+      } else {
+        console.log('👤 Cambio propio → no recargar')
+      }
+
+      lastCountPresentes.current = countPresentes
+      accionLocal.current = false
+    }
   }, [countPresentes])
+
+
   /*const togglePresente = async (student: ReportStudent) => {
      if (!planillaId) {
        return Alert.alert('Error', 'No se pudo determinar la planilla.')
@@ -185,6 +207,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
     try {
       // 👉 SOLO si pasa a PRESENTE
       if (nuevoEstado) {
+        accionLocal.current = true
         const responseData = await savePresent({
           alumno_id: student.student_id,
           planilla_id: planillaId,
@@ -231,7 +254,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
         if (!student.planilla_presente_id || student.planilla_presente_id === -1) {
           return
         }
-
+        accionLocal.current = true
         await removePresent(student.planilla_presente_id)
 
         const updatedStudent = {
@@ -275,7 +298,7 @@ export const StudentAssistListScreen: React.FC<Props> = ({ category, subcategori
               if (!student.planilla_presente_id || student.planilla_presente_id === -1) {
                 return Alert.alert('Error', 'No hay presente registrado para eliminar.')
               }
-
+              accionLocal.current = true
               const res = await removePresent(student.planilla_presente_id)
               if (res.result && res.result !== 'success') {
                 return Alert.alert('Error', 'No se pudo eliminar el presente.')

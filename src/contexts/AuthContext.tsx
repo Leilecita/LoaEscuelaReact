@@ -1,13 +1,17 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { registerForPushNotifications } from '../core/services/pushNotifications';
+
+
+
 
 type AuthContextType = {
   userToken: string | null;
   userRole: string | null;   // 👈 agregamos rol
-  userCategory: string | null; 
-  userName: string | null; 
+  userCategory: string | null;
+  userName: string | null;
   userId: number | null;
-  signIn: (token: string, level: string, userName: string, category: string, userId: number) => void; 
+  signIn: (token: string, level: string, userName: string, category: string, userId: number) => void;
   signOut: () => void;
 };
 
@@ -16,9 +20,9 @@ export const AuthContext = createContext<AuthContextType>({
   userRole: null,
   userCategory: null,
   userName: null,
-  userId: null, 
-  signIn: () => {},
-  signOut: () => {},
+  userId: null,
+  signIn: () => { },
+  signOut: () => { },
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -44,6 +48,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     loadAuth();
   }, []);
 
+  useEffect(() => {
+    console.log('👤 userId actual:', userId);
+
+    if (userId) {
+      registerForPushNotifications(userId);
+    }
+  }, [userId]);
+
+
   const signIn = async (token: string, role: string, userName: string, category: string, userId: number) => {
     await AsyncStorage.setItem('userToken', token);
     await AsyncStorage.setItem('userRole', role);
@@ -55,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUserName(userName);
     setUserCategory(category);
     setUserId(userId);
-    
+
   };
 
   const signOut = async () => {

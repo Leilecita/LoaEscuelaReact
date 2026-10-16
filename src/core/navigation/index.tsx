@@ -53,8 +53,8 @@ function AuthStack() {
 // --- Drawer Main App ---
 function MainDrawer() {
   return (
-    
-    
+
+
     <Drawer.Navigator
       drawerContent={(props) => <CustomDrawerContent {...props} />}
 
@@ -66,7 +66,7 @@ function MainDrawer() {
           ...(Platform.OS === 'android' ? { height: 56 } : {}),
         } as any,
         headerTintColor: '#fff',
-        
+
         headerTitleStyle: { fontFamily: 'OpenSans-Regular', fontSize: 17 },
         drawerStyle: {
           width: 200,
@@ -74,7 +74,7 @@ function MainDrawer() {
         },
       }}
     >
-     <Drawer.Screen
+      <Drawer.Screen
         name="Home"
         component={HomeScreen}
         options={{
@@ -91,10 +91,10 @@ function MainDrawer() {
         }}
       />
     </Drawer.Navigator>
-        
-      );
+
+  );
 }
- 
+
 // --- NavigationApp completo ---
 export function NavigationApp() {
   const { userToken } = React.useContext(AuthContext);
@@ -110,7 +110,7 @@ export function NavigationApp() {
       {/* StatusBar fina */}
       <RNStatusBar
         translucent={false}
-        
+
         backgroundColor={Platform.OS === 'android' ? COLORS.darkGreenColor : 'transparent'} //
         barStyle="light-content"
       />
@@ -124,13 +124,13 @@ export function NavigationApp() {
               headerTitleStyle: {
                 fontFamily: 'OpenSans-Regular',
                 fontSize: 17,
-                
+
               },
               headerTitleAlign: Platform.OS === 'android' ? 'left' : 'center', // solo Android a la izquierda
-            
+
             }}
           >
-          
+
             <RootStack.Screen
               name="MainApp"
               component={MainDrawer}
@@ -141,11 +141,11 @@ export function NavigationApp() {
               component={AppTabs}
               options={{
                 title: 'Asistencias',
-                
+
                 headerBackTitle: 'Volver',
-              
-                headerRight: () => <MenuHeader iconColor="#fff" 
-                
+
+                headerRight: () => <MenuHeader iconColor="#fff"
+
                 />,
               }}
             />
@@ -205,7 +205,7 @@ export function NavigationApp() {
               component={AttendanceSheetScreen}
               options={{ title: 'Planillas' }}
             />
-             <RootStack.Screen
+            <RootStack.Screen
               name="DailyJobsScreen"
               component={DailyJobsScreen}
               options={{ title: 'Trabajos' }}
@@ -215,7 +215,7 @@ export function NavigationApp() {
               component={DailyWorksScreen}
               options={{ title: 'ListaDeTrabajos' }}
             />
-            
+
             <RootStack.Screen
               name="CreateUserScreen"
               component={CreateUserScreen}

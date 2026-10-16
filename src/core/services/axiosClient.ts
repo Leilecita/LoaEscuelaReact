@@ -2,14 +2,14 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const api = axios.create({
-   //baseURL: 'http://192.168.0.242/loa_school',
-  baseURL: 'https://school.loasurf.com.ar/',
+  baseURL: 'http://192.168.0.150/loa_school',
+  //baseURL: 'https://school.loasurf.com.ar/',
 });
 
 api.interceptors.request.use(
   async (config) => {
     const token = await AsyncStorage.getItem('userToken');
-    console.log('TOKEN para request:', token);  
+    console.log('TOKEN para request:', token);
     if (token) {
       config.headers['Session'] = token; // <-- Esto agrega la cabecera 'Session'
     }

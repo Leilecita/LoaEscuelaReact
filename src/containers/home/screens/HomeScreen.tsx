@@ -10,6 +10,9 @@ import { COLORS } from '@core';
 import { AuthContext } from '../../../contexts/AuthContext';
 import { FONT_SIZES } from 'core/constants/fonts';
 
+import { registerForPushNotifications } from '../../../core/services/pushNotifications';
+
+
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 type RootStackNavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -32,7 +35,8 @@ type ReportResumAsist = {
 export const HomeScreen = () => {
   const navigation = useNavigation<RootStackNavigationProp>();
   const [resumen, setResumen] = useState<ReportResumAsist | null>(null);
-  const { userRole } = useContext(AuthContext);
+  const { userRole, userId } = useContext(AuthContext);
+
 
   const isAdmin = userRole === 'admin';
   const isEmpleado = userRole === 'empleado';
@@ -196,6 +200,41 @@ export const HomeScreen = () => {
             <Text style={styles.boxText}>Cargando resumen...</Text>
           )}
         </View>
+
+
+        {isAdmin && (
+          <View style={{ marginTop: 20 }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: '#000',
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 8,
+              }}
+              onPress={async () => {
+                if (!userId) {
+                  Alert.alert('Error', 'No hay userId');
+                  return;
+                }
+
+                Alert.alert('Push', 'Intentando registrar push token…');
+
+                try {
+                  await registerForPushNotifications(userId);
+                  Alert.alert('Push', 'Función ejecutada, revisá la base');
+                } catch (e) {
+                  Alert.alert('Error', 'Falló el registro');
+                  console.log(e);
+                }
+              }}
+            >
+              <Text style={{ color: '#fff', fontSize: 14 }}>
+                🔔 Registrar Push Token (DEBUG)
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
       </View>
     </ImageBackground>
   );
